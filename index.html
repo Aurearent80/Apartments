@@ -104,9 +104,9 @@
       cursor: pointer;
     }
 
+    /* HERO LIMPIO SIN FOTOS DE STOCK */
     .hero {
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(30, 41, 59, 0.85)),
-                  url('https://images.unsplash.com/photo-1560185127-6ed189bf02f4?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #0369a1 100%);
       color: var(--white);
       padding: 40px 16px 46px;
       text-align: center;
@@ -307,7 +307,7 @@
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(15, 23, 42, 0.68);
+      background: rgba(15, 23, 42, 0.72);
       color: var(--white);
       border: none;
       width: 32px;
@@ -1061,10 +1061,10 @@
           ontouchend="handleModalTouchEnd(event)"
         >
           <button class="slider-arrow prev" onclick="stepModalPhoto(-1)">&#10094;</button>
-          <img id="modalMainImg" src="" alt="Interior del apartamento" onerror="handleImgError(this, 0)" />
+          <img id="modalMainImg" referrerpolicy="no-referrer" src="" alt="Interior del apartamento" onerror="replaceBrokenCraigslistImg(this)" />
           <button class="slider-arrow next" onclick="stepModalPhoto(1)">&#10095;</button>
           <div class="modal-caption">
-            <span id="modalRoomCaption">Sala Interior</span>
+            <span id="modalRoomCaption">Interior del Apartamento</span>
             <span id="modalCounterCaption">1 / 5</span>
           </div>
         </div>
@@ -1179,79 +1179,231 @@
     ];
 
     // ============================================================================
-    // 36 FOTOS DISTINTAS VERIFICADAS DE INTERIORES DE APARTAMENTOS (CERO PERSONAS,
-    // CERO LIMONES, CERO SILLAS SUELTAS, CERO FACHADAS EXTERIORES).
-    // CADA UNO DE LOS 30 APARTAMENTOS DE UNA CIUDAD TIENE SU PROPIA PORTADA ÚNICA.
+    // MOTOR DIRECTO DE FOTOS DE CRAIGSLIST.ORG (CERO UNSPLASH, CERO REPETIDAS)
+    // Conecta con los lotes reales de apartamentos de Craigslist (sapi.craigslist.org)
+    // y asigna a cada propiedad 5 fotos de interior únicas de images.craigslist.org
     // ============================================================================
-    const POOL_SALAS = [
-      "https://images.unsplash.com/photo-1560185127-6ed189bf02f4",
-      "https://images.unsplash.com/photo-1560184897-ae75f418493e",
-      "https://images.unsplash.com/photo-1513694203232-719a280e022f",
-      "https://images.unsplash.com/photo-1493809842364-78817add7ffb",
-      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
-      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
-      "https://images.unsplash.com/photo-1560448075-bb485b067938",
-      "https://images.unsplash.com/photo-1554995207-c18c203602cb",
-      "https://images.unsplash.com/photo-1536376072261-38c75010e6c9",
-      "https://images.unsplash.com/photo-1502672023488-70e25813eb80",
-      "https://images.unsplash.com/photo-1600585154526-990dced4db0d",
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c"
-    ];
+    const CRAIGSLIST_AREA_IDS = {
+      NJ: [168, 249, 170, 250], // North Jersey, Central NJ, South Jersey, Jersey Shore
+      FL: [20, 39, 37, 50, 127, 237, 238, 208, 333], // Miami/South FL, Orlando, Tampa, Jacksonville, Fort Myers, Sarasota, Daytona, Lakeland, Treasure Coast
+      CA: [7, 8, 1, 12, 103, 104, 43, 63, 97, 209], // Los Angeles, San Diego, SF Bay, Sacramento, Inland Empire, Orange County, Fresno, Bakersfield, Stockton, Ventura
+      PA: [17, 26, 169, 167, 247, 275, 276, 325, 274] // Philadelphia, Pittsburgh, Allentown, Harrisburg, Lancaster, Reading, Scranton, York, Erie
+    };
 
-    const POOL_COCINAS = [
-      "https://images.unsplash.com/photo-1484154218962-a197022b5858",
-      "https://images.unsplash.com/photo-1556909212-d5b604d0c90d",
-      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136",
-      "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1",
-      "https://images.unsplash.com/photo-1565538810643-b5bdb714032a",
-      "https://images.unsplash.com/photo-1600585152220-90363fe7e115",
-      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3",
-      "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d",
-      "https://images.unsplash.com/photo-1556909172-54557c7e4fb7"
-    ];
+    // Registro global estricto para garantizar que NINGUNA foto de Craigslist se repita jamás
+    const usedCraigslistPhotoIds = new Set();
+    const stateCraigslistPhotoGroups = { NJ: [], FL: [], CA: [], PA: [] };
+    const stateCraigslistReservePool = { NJ: [], FL: [], CA: [], PA: [] };
+    const areaFetchStatus = {};
 
-    const POOL_HABITACIONES = [
-      "https://images.unsplash.com/photo-1560185008-b033106af5c3",
-      "https://images.unsplash.com/photo-1560185007-cde436f6a4d0",
-      "https://images.unsplash.com/photo-1540518614846-7ede433c4573",
-      "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf",
-      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85",
-      "https://images.unsplash.com/photo-1616594039964-ae9021a400a0",
-      "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af",
-      "https://images.unsplash.com/photo-1598928506311-c55ded91a20c"
-    ];
-
-    const POOL_BANOS = [
-      "https://images.unsplash.com/photo-1584622650111-993a426fbf0a",
-      "https://images.unsplash.com/photo-1584622781564-1d987f7333c1",
-      "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14",
-      "https://images.unsplash.com/photo-1620626011761-996317b8d101",
-      "https://images.unsplash.com/photo-1507652313519-d4e9174996dd",
-      "https://images.unsplash.com/photo-1600566752355-35792bedcfea",
-      "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b"
-    ];
-
-    // Lista combinada de 36 fotos distintas para garantizar que las 30 unidades de una ciudad tengan todas diferente portada
-    const ALL_36_UNIQUE_COVERS = [
-      ...POOL_SALAS.map(u => ({ base: u, label: "Sala Interior y Piso de Madera", short: "Sala" })),
-      ...POOL_COCINAS.map(u => ({ base: u, label: "Cocina — Gabinetes y Estufa", short: "Cocina" })),
-      ...POOL_HABITACIONES.map(u => ({ base: u, label: "Habitación y Closet", short: "Habitación" })),
-      ...POOL_BANOS.map(u => ({ base: u, label: "Baño — Lavamanos y Ducha", short: "Baño" }))
-    ];
-
-    function formatPhoneCameraUrl(baseUrl, seedNum, slotNum) {
-      const s = seedNum + slotNum * 19;
-      const flipParam = (s % 2 === 1) ? "&flip=h" : "";
-      const fpx = [0.30, 0.42, 0.50, 0.58, 0.70][s % 5];
-      const fpy = [0.45, 0.50, 0.56][(s >> 1) % 3];
-      const fpz = [1.0, 1.08, 1.15, 1.22][(s >> 2) % 4];
-      return `${baseUrl}?auto=format&w=680&h=510&fit=crop&crop=focalpoint&fp-x=${fpx}&fp-y=${fpy}&fp-z=${fpz}${flipParam}&q=78`;
+    // Placeholder instantáneo en memoria mientras llega el lote de images.craigslist.org (~0.4s)
+    function createLoadingPlaceholderDataUri(aptRef) {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450" viewBox="0 0 600 450">
+        <rect width="600" height="450" fill="#1e293b"/>
+        <rect x="20" y="20" width="560" height="410" rx="10" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+        <text x="300" y="215" fill="#38bdf8" font-family="sans-serif" font-size="20" font-weight="bold" text-anchor="middle">Cargando Fotos de Craigslist.org...</text>
+        <text x="300" y="248" fill="#94a3b8" font-family="sans-serif" font-size="14" text-anchor="middle">Unidad Verificada • Ref #${aptRef}</text>
+      </svg>`;
+      return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
     }
 
-    function handleImgError(imgEl, backupIdx) {
+    function clIdToUrl(clId) {
+      return `https://images.craigslist.org/${clId}_600x450.jpg`;
+    }
+
+    // Extrae todas las publicaciones con múltiples fotos de un lote de Craigslist SAPI
+    function parseCraigslistBatchResponse(rawText, stateCode) {
+      const ID_REGEX = /0[01][a-zA-Z0-9][01][a-zA-Z0-9]_[a-zA-Z0-9_-]{10,13}/g;
+
+      try {
+        const parsed = JSON.parse(rawText);
+        const items = parsed?.data?.items || [];
+        if (Array.isArray(items) && items.length > 0) {
+          for (let i = 0; i < items.length; i++) {
+            const itemStr = JSON.stringify(items[i]);
+            const matches = itemStr.match(ID_REGEX);
+            if (!matches) continue;
+
+            // Filtrar IDs únicos dentro de esta publicación de Craigslist
+            const uniqueInPosting = [];
+            for (const m of matches) {
+              if (!uniqueInPosting.includes(m) && !usedCraigslistPhotoIds.has(m)) {
+                uniqueInPosting.push(m);
+              }
+            }
+
+            // Solo tomamos publicaciones que tengan al menos 6 fotos en Craigslist
+            // y saltamos la foto #0 (que suele ser fachada exterior) para usar las 5 fotos interiores (índices 1 al 5)
+            if (uniqueInPosting.length >= 6) {
+              const interiorFive = uniqueInPosting.slice(1, 6);
+              interiorFive.forEach(id => usedCraigslistPhotoIds.add(id));
+              stateCraigslistPhotoGroups[stateCode].push(interiorFive);
+
+              // Guardar las fotos sobrantes (índice 6 en adelante) en la reserva anti-errores sin repetir
+              for (let r = 6; r < uniqueInPosting.length; r++) {
+                usedCraigslistPhotoIds.add(uniqueInPosting[r]);
+                stateCraigslistReservePool[stateCode].push(uniqueInPosting[r]);
+              }
+            }
+          }
+          if (stateCraigslistPhotoGroups[stateCode].length > 0) return true;
+        }
+      } catch (e) {}
+
+      // Respaldo: extracción directa por regex sobre todo el bloque devuelto por Craigslist
+      const allMatches = rawText.match(ID_REGEX) || [];
+      const freshIds = [];
+      for (const m of allMatches) {
+        if (!usedCraigslistPhotoIds.has(m)) {
+          usedCraigslistPhotoIds.add(m);
+          freshIds.push(m);
+        }
+      }
+
+      for (let i = 0; i + 5 <= freshIds.length; i += 5) {
+        stateCraigslistPhotoGroups[stateCode].push(freshIds.slice(i, i + 5));
+      }
+      return stateCraigslistPhotoGroups[stateCode].length > 0;
+    }
+
+    // Consulta en paralelo los endpoints de Craigslist para traer cientos de apartamentos reales con fotos
+    async function fetchCraigslistAreaBatch(stateCode, areaId, offset = 0) {
+      const fetchKey = `${stateCode}_${areaId}_${offset}`;
+      if (areaFetchStatus[fetchKey]) return areaFetchStatus[fetchKey];
+
+      const sapiUrl = `https://sapi.craigslist.org/web/v8/postings/search/full?batch=${areaId}-${offset}-360-0-0&cc=us&lang=en&searchPath=apa&hasPic=1&min_price=1050&max_price=2000`;
+
+      const tryDirect = async () => {
+        const r = await fetch(sapiUrl);
+        if (!r.ok) throw new Error("Direct failed");
+        const t = await r.text();
+        if (!/0[01][a-zA-Z0-9][01][a-zA-Z0-9]_/.test(t)) throw new Error("No CL IDs");
+        return t;
+      };
+
+      const tryCorsProxyIo = async () => {
+        const r = await fetch(`https://corsproxy.io/?${encodeURIComponent(sapiUrl)}`);
+        if (!r.ok) throw new Error("CorsProxy failed");
+        const t = await r.text();
+        if (!/0[01][a-zA-Z0-9][01][a-zA-Z0-9]_/.test(t)) throw new Error("No CL IDs");
+        return t;
+      };
+
+      const tryAllOriginsRaw = async () => {
+        const r = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(sapiUrl)}`);
+        if (!r.ok) throw new Error("AllOriginsRaw failed");
+        const t = await r.text();
+        if (!/0[01][a-zA-Z0-9][01][a-zA-Z0-9]_/.test(t)) throw new Error("No CL IDs");
+        return t;
+      };
+
+      const tryAllOriginsGet = async () => {
+        const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(sapiUrl)}`);
+        if (!r.ok) throw new Error("AllOriginsGet failed");
+        const j = await r.json();
+        const t = j.contents || "";
+        if (!/0[01][a-zA-Z0-9][01][a-zA-Z0-9]_/.test(t)) throw new Error("No CL IDs");
+        return t;
+      };
+
+      const tryCodeTabs = async () => {
+        const r = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(sapiUrl)}`);
+        if (!r.ok) throw new Error("CodeTabs failed");
+        const t = await r.text();
+        if (!/0[01][a-zA-Z0-9][01][a-zA-Z0-9]_/.test(t)) throw new Error("No CL IDs");
+        return t;
+      };
+
+      areaFetchStatus[fetchKey] = Promise.any([
+        tryDirect(),
+        tryCorsProxyIo(),
+        tryAllOriginsRaw(),
+        tryAllOriginsGet(),
+        tryCodeTabs()
+      ]).then(rawText => {
+        parseCraigslistBatchResponse(rawText, stateCode);
+        assignCraigslistPhotosToPendingApartments(stateCode);
+        return true;
+      }).catch(() => false);
+
+      return areaFetchStatus[fetchKey];
+    }
+
+    // Asegura suficientes grupos únicos de 5 fotos de Craigslist para el estado activo
+    async function ensureCraigslistPhotosForState(stateCode, neededGroupsCount) {
+      const areaIds = CRAIGSLIST_AREA_IDS[stateCode] || CRAIGSLIST_AREA_IDS.FL;
+      let aIdx = 0;
+      let offset = 0;
+
+      while (stateCraigslistPhotoGroups[stateCode].length < neededGroupsCount && aIdx < areaIds.length * 2) {
+        const currentAreaId = areaIds[aIdx % areaIds.length];
+        const currentOffset = Math.floor(aIdx / areaIds.length) * 360;
+        await fetchCraigslistAreaBatch(stateCode, currentAreaId, currentOffset);
+        aIdx++;
+      }
+    }
+
+    // Asigna un paquete único de 5 fotos de Craigslist (nunca repetidas) a cada propiedad que aún no tenga
+    function assignCraigslistPhotosToPendingApartments(stateCode) {
+      const roomLabels = [
+        { label: "Interior del Apartamento — Vista 1", short: "Foto 1" },
+        { label: "Interior del Apartamento — Vista 2", short: "Foto 2" },
+        { label: "Interior del Apartamento — Vista 3", short: "Foto 3" },
+        { label: "Interior del Apartamento — Vista 4", short: "Foto 4" },
+        { label: "Interior del Apartamento — Vista 5", short: "Foto 5" }
+      ];
+
+      let updatedAny = false;
+      for (const apt of allApartments) {
+        if (apt.state === stateCode && !apt.hasRealCraigslistPhotos) {
+          const group = stateCraigslistPhotoGroups[stateCode].shift();
+          if (!group) break;
+
+          apt.clPhotoIds = group;
+          apt.hasRealCraigslistPhotos = true;
+          apt.photos = group.map((clId, idx) => ({
+            clId,
+            url: clIdToUrl(clId),
+            label: roomLabels[idx].label,
+            short: roomLabels[idx].short
+          }));
+          updatedAny = true;
+
+          // Actualizar en vivo el DOM si la tarjeta ya está visible en pantalla
+          const imgEl = document.getElementById(`card-img-${apt.id}`);
+          if (imgEl) {
+            const currentIdx = cardPhotoIndexMap[apt.id] || 0;
+            imgEl.src = apt.photos[currentIdx].url;
+          }
+          const waBtn = document.getElementById(`card-wa-${apt.id}`);
+          if (waBtn) {
+            waBtn.href = createWhatsAppLink(apt, "CITA");
+          }
+        }
+      }
+
+      if (updatedAny && currentModalApt && currentModalApt.state === stateCode) {
+        refreshModalGallery();
+      }
+    }
+
+    // Si una imagen de Craigslist devuelve error, la reemplaza inmediatamente por una nueva de la reserva sin dejar espacios
+    function replaceBrokenCraigslistImg(imgEl, aptId, photoIdx) {
       imgEl.onerror = null;
-      const fallbackBase = POOL_SALAS[(backupIdx || 0) % POOL_SALAS.length];
-      imgEl.src = `${fallbackBase}?auto=format&w=680&h=510&fit=crop&q=78`;
+      const apt = aptId ? allApartments.find(a => a.id === aptId) : currentModalApt;
+      const st = apt ? apt.state : "FL";
+      const reserveId = stateCraigslistReservePool[st]?.shift();
+
+      if (reserveId) {
+        const newUrl = clIdToUrl(reserveId);
+        imgEl.src = newUrl;
+        if (apt && typeof photoIdx === "number" && apt.photos[photoIdx]) {
+          apt.photos[photoIdx].clId = reserveId;
+          apt.photos[photoIdx].url = newUrl;
+        }
+      } else {
+        imgEl.src = createLoadingPlaceholderDataUri(apt ? apt.id : 100000);
+      }
     }
 
     // ============================================================================
@@ -1453,7 +1605,6 @@
       "Front St","Water St","Bridge St","Depot St","Division St","Summit Ave","Hillcrest Dr","Fairview Ave","Woodland Dr","Colonial Way"
     ];
 
-    // 30 TÍTULOS REALISTAS ESTILO CRAIGSLIST / ALQUILER LOCAL (SIN REPETIRSE EN LA CIUDAD)
     const REALISTIC_TITLES_1BED = [
       "Apartamento 1 Hab / 1 Baño — Piso Laminado Nuevo",
       "Unidad en 1er Piso — 1 Habitación, Recién Pintado",
@@ -1465,8 +1616,8 @@
       "Apartamento Cómodo 1 Hab — Cocina Equipada y Baño Nuevo",
       "Unidad Renovada 1 Habitación — Todos los Biles Incluidos",
       "Apartamento 1 Hab / 1 Baño — Entrada Inmediata",
-      "1 Habitación con Closet de Espejo — Cocina y Sala Amplia",
-      "Unidad Residencial 1 Hab — Baño con Ducha de Vidrio",
+      "1 Habitación con Closet — Cocina y Sala Amplia",
+      "Unidad Residencial 1 Hab — Baño Completo Remodelado",
       "Apartamento Tranquilo 1 Hab / 1 Baño — Estacionamiento Asignado",
       "1 Habitación — Pisos de Madera, Estufa y Refrigerador",
       "Unidad Lista para Habitar — 1 Habitación y 1 Baño Completo"
@@ -1491,7 +1642,7 @@
     ];
 
     // ============================================================================
-    // GENERADOR DE 30 APARTAMENTOS ÚNICOS POR CIUDAD (CERO PORTADAS REPETIDAS)
+    // GENERADOR DE 30 APARTAMENTOS POR CIUDAD CON FOTOS ÚNICAS DE CRAIGSLIST
     // ============================================================================
     const allApartments = [];
     const generatedCitiesSet = new Set();
@@ -1537,43 +1688,23 @@
         ? `Apartamento residencial sin amueblar con disponibilidad inmediata en ${cityName}. Incluye todos los biles en la renta mensual (agua, luz, gas y calefacción), pisos laminados de madera, paredes recién pintadas, cocina con gabinetes y ${parkingText}.`
         : `Apartamento residencial semi-amueblado con disponibilidad inmediata en ${cityName}. Incluye todos los biles en la renta mensual (agua, luz, gas y calefacción), cocina equipada con electrodomésticos, barra desayunador y ${parkingText}.`;
 
-      // CADA UNO DE LOS 30 APARTAMENTOS (u = 0..29) RECIBE UNA PORTADA DISTINTA DE LAS 36 FOTOS BASE
-      const coverIndex = (u + (cIdx * 5)) % ALL_36_UNIQUE_COVERS.length;
-      const coverObj = ALL_36_UNIQUE_COVERS[coverIndex];
+      // Si ya tenemos un grupo único de 5 fotos de Craigslist en cola para este estado, lo asignamos de inmediato
+      const clGroup = stateCraigslistPhotoGroups[stateCode].shift();
+      const placeholderUri = createLoadingPlaceholderDataUri(id);
 
-      const salaBase = POOL_SALAS[(u + cIdx) % POOL_SALAS.length];
-      const cocinaBase = POOL_COCINAS[(u + cIdx * 2) % POOL_COCINAS.length];
-      const habBase = POOL_HABITACIONES[(u + cIdx * 3) % POOL_HABITACIONES.length];
-      const bano1Base = POOL_BANOS[(u + cIdx) % POOL_BANOS.length];
-      const bano2Base = POOL_BANOS[(u + cIdx + 3) % POOL_BANOS.length];
-
-      const rawRooms = [
-        { url: formatPhoneCameraUrl(coverObj.base, uniqueHash, 0), label: coverObj.label, short: coverObj.short },
-        { url: formatPhoneCameraUrl(salaBase, uniqueHash, 1), label: "Sala Interior y Piso de Madera", short: "Sala" },
-        { url: formatPhoneCameraUrl(cocinaBase, uniqueHash, 2), label: "Cocina — Gabinetes y Estufa", short: "Cocina" },
-        { url: formatPhoneCameraUrl(habBase, uniqueHash, 3), label: "Habitación con Closet y Ventana", short: "Habitación" },
-        { url: formatPhoneCameraUrl(bano1Base, uniqueHash, 4), label: "Baño — Lavamanos y Espejo", short: "Lavamanos" },
-        { url: formatPhoneCameraUrl(bano2Base, uniqueHash, 5), label: "Baño — Ducha y Cerámica", short: "Ducha" }
-      ];
-
-      // Eliminar cualquier duplicado si la foto de portada ya era esa misma Sala/Cocina
-      const seenBase = new Set();
-      const finalPhotos = [];
-      for (let r of rawRooms) {
-        const baseKey = r.url.split("?")[0];
-        if (!seenBase.has(baseKey) && finalPhotos.length < 5) {
-          seenBase.add(baseKey);
-          finalPhotos.push(r);
-        }
-      }
-      while (finalPhotos.length < 5) {
-        const extra = ALL_36_UNIQUE_COVERS[(coverIndex + finalPhotos.length + 7) % ALL_36_UNIQUE_COVERS.length];
-        finalPhotos.push({
-          url: formatPhoneCameraUrl(extra.base, uniqueHash, finalPhotos.length + 6),
-          label: extra.label,
-          short: extra.short
-        });
-      }
+      const photos = clGroup
+        ? clGroup.map((clId, idx) => ({
+            clId,
+            url: clIdToUrl(clId),
+            label: `Interior del Apartamento — Vista ${idx + 1}`,
+            short: `Foto ${idx + 1}`
+          }))
+        : [1, 2, 3, 4, 5].map(idx => ({
+            clId: null,
+            url: placeholderUri,
+            label: `Interior del Apartamento — Vista ${idx}`,
+            short: `Foto ${idx}`
+          }));
 
       return {
         id,
@@ -1590,46 +1721,36 @@
         condition,
         distribution,
         desc,
-        photos: finalPhotos
+        hasRealCraigslistPhotos: Boolean(clGroup),
+        clPhotoIds: clGroup || [],
+        photos
       };
-    }
-
-    // Buscar si un nombre corresponde a una ciudad real de nuestros 4 estados
-    function findOfficialCity(cityNameInput) {
-      const clean = (cityNameInput || "").trim().toLowerCase();
-      if (!clean) return null;
-      for (const stCode of ["NJ", "FL", "CA", "PA"]) {
-        const found = CITIES_BY_STATE[stCode].cities.find(c => c.toLowerCase() === clean);
-        if (found) return { city: found, stateCode: stCode };
-      }
-      return null;
     }
 
     function ensureCityApartmentsGenerated(stateCode, cityName) {
       const official = CITIES_BY_STATE[stateCode]?.cities.find(c => c.toLowerCase() === (cityName || "").toLowerCase());
-      if (!official) return; // JAMÁS genera ciudades falsas como "Santo Domingo, FL"
+      if (!official) return;
 
       const key = `${official.toLowerCase()}_${stateCode}`;
-      if (generatedCitiesSet.has(key)) return;
-      generatedCitiesSet.add(key);
+      if (!generatedCitiesSet.has(key)) {
+        generatedCitiesSet.add(key);
+        const stObj = CITIES_BY_STATE[stateCode];
+        const cIdx = stObj.cities.indexOf(official);
 
-      const stObj = CITIES_BY_STATE[stateCode];
-      const cIdx = stObj.cities.indexOf(official);
-
-      for (let u = 0; u < 30; u++) {
-        allApartments.push(buildSingleApartmentUnit(stateCode, stObj.name, stObj.zipPrefix, official, cIdx, u));
+        for (let u = 0; u < 30; u++) {
+          allApartments.push(buildSingleApartmentUnit(stateCode, stObj.name, stObj.zipPrefix, official, cIdx, u));
+        }
       }
-    }
 
-    function ensureStateSampleGenerated(stateCode) {
-      const stObj = CITIES_BY_STATE[stateCode];
-      for (let i = 0; i < Math.min(20, stObj.cities.length); i++) {
-        ensureCityApartmentsGenerated(stateCode, stObj.cities[i]);
+      // Contar cuántas unidades de este estado aún esperan su lote único de fotos de Craigslist
+      const pendingCount = allApartments.filter(a => a.state === stateCode && !a.hasRealCraigslistPhotos).length;
+      if (pendingCount > 0) {
+        ensureCraigslistPhotosForState(stateCode, pendingCount + 30);
       }
     }
 
     // ============================================================================
-    // DETECTOR DE UBICACIÓN ESTRICTO (BLOQUEA CIUDADES FUERA DE NJ, FL, CA, PA)
+    // DETECTOR DE UBICACIÓN ESTRICTO (SOLO CIUDADES VÁLIDAS DE NJ, FL, CA, PA)
     // ============================================================================
     function setSuggestedLocation(stateCode, verifiedCityName) {
       const stObj = CITIES_BY_STATE[stateCode] || CITIES_BY_STATE.FL;
@@ -1656,7 +1777,6 @@
           const regCode = (data.region_code || data.principalSubdivisionCode || "").toUpperCase().replace("US-", "");
           const city = (data.city || data.locality || "").trim();
 
-          // SOLO si el cliente está físicamente en EE. UU. dentro de NJ, FL, CA o PA y su ciudad existe en ese estado:
           if (country === "US" && ["NJ", "FL", "CA", "PA"].includes(regCode)) {
             const matched = CITIES_BY_STATE[regCode].cities.find(c => c.toLowerCase() === city.toLowerCase());
             setSuggestedLocation(regCode, matched || CITIES_BY_STATE[regCode].cities[0]);
@@ -1665,8 +1785,6 @@
         } catch (e) {}
       }
 
-      // Si el cliente entra desde otro país (ej. República Dominicana) o fuera de esos 4 estados,
-      // muestra directamente Miami, FL (ciudad real de EE. UU.) sin inventar ciudades inexistentes.
       setSuggestedLocation("FL", "Miami");
     }
 
@@ -1700,8 +1818,6 @@
       });
     });
 
-    ["FL", "NJ", "CA", "PA"].forEach(st => ensureStateSampleGenerated(st));
-
     function onLocationInput(val) {
       const box = document.getElementById("suggestionsBox");
       const q = val.trim().toLowerCase();
@@ -1734,6 +1850,8 @@
       if (stCode && val !== CITIES_BY_STATE[stCode].name) {
         ensureCityApartmentsGenerated(stCode, val);
         document.getElementById("suggestedLocText").textContent = `${val}, ${stCode}`;
+      } else if (stCode) {
+        ensureCityApartmentsGenerated(stCode, CITIES_BY_STATE[stCode].cities[0]);
       }
       document.getElementById("locationInput").value = val;
       document.getElementById("suggestionsBox").style.display = "none";
@@ -1751,9 +1869,11 @@
         ? "Hola Aurea Rent, me interesa agendar una cita para ver este apartamento:"
         : "Hola Aurea Rent, me gustaría recibir más información sobre este apartamento:";
 
+      const clCode = (apt.clPhotoIds && apt.clPhotoIds.length > 0) ? ` [CL:${apt.clPhotoIds.join(",")}]` : "";
+
       const text =
         `${headerLine}\n\n` +
-        `🔑 *Referencia:* Ref #${apt.id}\n` +
+        `🔑 *Referencia:* Ref #${apt.id}${clCode}\n` +
         `🏠 *Apartamento:* ${apt.title}\n` +
         `📍 *Ubicación:* ${apt.address}\n` +
         `💲 *Renta Mensual:* ${apt.price} / mes (Todos los biles incluidos)\n` +
@@ -1773,17 +1893,15 @@
     }
 
     function resetPortal() {
-      document.getElementById("locationInput").value = "";
+      document.getElementById("locationInput").value = "Miami";
       document.getElementById("conditionSelect").value = "ALL";
       document.getElementById("bedsSelect").value = "ALL";
       quickFilterCondition("ALL");
     }
 
-    function getOrBuildApartmentByRef(refNum) {
+    function getOrBuildApartmentByRef(refNum, customClIds = null) {
       let existing = allApartments.find(a => a.id === refNum);
-      if (existing) return existing;
-
-      if (refNum >= 100000 && refNum < 500000) {
+      if (!existing && refNum >= 100000 && refNum < 500000) {
         const offset = refNum - 100000;
         const sIdx = Math.floor(offset / 100000);
         const rem = offset % 100000;
@@ -1792,10 +1910,21 @@
         if (stateCode && CITIES_BY_STATE[stateCode].cities[cIdx]) {
           const cityName = CITIES_BY_STATE[stateCode].cities[cIdx];
           ensureCityApartmentsGenerated(stateCode, cityName);
-          return allApartments.find(a => a.id === refNum);
+          existing = allApartments.find(a => a.id === refNum);
         }
       }
-      return null;
+
+      if (existing && Array.isArray(customClIds) && customClIds.length > 0) {
+        existing.clPhotoIds = customClIds;
+        existing.hasRealCraigslistPhotos = true;
+        existing.photos = customClIds.map((clId, idx) => ({
+          clId,
+          url: clIdToUrl(clId),
+          label: `Interior del Apartamento — Vista ${idx + 1}`,
+          short: `Foto ${idx + 1}`
+        }));
+      }
+      return existing;
     }
 
     function applySearch(resetPagination) {
@@ -1810,15 +1939,16 @@
       document.getElementById("pillUnfurnished").classList.toggle("active", cond === "No Amueblado");
       document.getElementById("pillSemi").classList.toggle("active", cond === "Semi-Amueblado");
 
-      // Generar bajo demanda las ciudades reales que coincidan con lo que escribe el cliente
       if (q.length >= 2) {
-        Object.keys(CITIES_BY_STATE).forEach(stCode => {
-          CITIES_BY_STATE[stCode].cities.forEach(cName => {
-            if (cName.toLowerCase().includes(q)) {
-              ensureCityApartmentsGenerated(stCode, cName);
-            }
-          });
-        });
+        for (const stCode of ["NJ", "FL", "CA", "PA"]) {
+          const stObj = CITIES_BY_STATE[stCode];
+          if (stObj.name.toLowerCase().includes(q) || stCode.toLowerCase() === q) {
+            ensureCityApartmentsGenerated(stCode, stObj.cities[0]);
+            ensureCityApartmentsGenerated(stCode, stObj.cities[1]);
+          }
+          const matchedCities = stObj.cities.filter(cName => cName.toLowerCase().includes(q)).slice(0, 3);
+          matchedCities.forEach(cName => ensureCityApartmentsGenerated(stCode, cName));
+        }
       }
 
       const refDigits = rawQ.match(/\b(\d{6})\b/);
@@ -1902,10 +2032,11 @@
               <button class="slider-arrow prev" onclick="slideCardPhoto(${apt.id}, -1, event)">&#10094;</button>
               <img
                 id="card-img-${apt.id}"
+                referrerpolicy="no-referrer"
                 src="${currentPhoto.url}"
                 alt="${apt.title}"
                 loading="lazy"
-                onerror="handleImgError(this, ${apt.id})"
+                onerror="replaceBrokenCraigslistImg(this, ${apt.id}, ${photoIdx})"
                 onclick="openAptModal(${apt.id})"
               />
               <button class="slider-arrow next" onclick="slideCardPhoto(${apt.id}, 1, event)">&#10095;</button>
@@ -1934,7 +2065,7 @@
 
               <div class="card-actions">
                 <button class="btn-open-apt" onclick="openAptModal(${apt.id})">Ver Interior</button>
-                <a class="btn-wa-card" href="${createWhatsAppLink(apt, 'CITA')}" target="_blank" rel="noopener">
+                <a id="card-wa-${apt.id}" class="btn-wa-card" href="${createWhatsAppLink(apt, 'CITA')}" target="_blank" rel="noopener">
                   💬 WhatsApp
                 </a>
               </div>
@@ -2056,7 +2187,7 @@
 
       document.getElementById("modalThumbsRow").innerHTML = currentModalApt.photos.map((photo, idx) => `
         <div class="thumb-item ${idx === currentModalSlide ? "active" : ""}" onclick="pickModalThumb(${idx})">
-          <img src="${photo.url}" alt="${photo.label}" onerror="handleImgError(this, ${idx})" />
+          <img referrerpolicy="no-referrer" src="${photo.url}" alt="${photo.label}" onerror="replaceBrokenCraigslistImg(this, ${currentModalApt.id}, ${idx})" />
           <span>${photo.short}</span>
         </div>
       `).join("");
@@ -2099,8 +2230,12 @@
         return;
       }
 
+      // Si el mensaje de WhatsApp incluye las fotos exactas de Craigslist [CL:...], las reconstruye idénticas
+      const clMatch = rawText.match(/\[CL:([^\]]+)\]/);
+      const customClIds = clMatch ? clMatch[1].split(",").map(s => s.trim()).filter(Boolean) : null;
+
       const refNum = parseInt(match[1], 10);
-      const foundApt = getOrBuildApartmentByRef(refNum);
+      const foundApt = getOrBuildApartmentByRef(refNum, customClIds);
 
       if (!foundApt) {
         alert("No se encontró ningún apartamento con la referencia #" + refNum);
@@ -2167,9 +2302,9 @@
       return apts.map(apt => `
         <div class="chat-property-card">
           <div class="chat-photo-strip" onclick="openAptModal(${apt.id})">
-            <div class="chat-photo-col"><img src="${apt.photos[0].url}" alt="Interior 1" onerror="handleImgError(this, 1)" /></div>
-            <div class="chat-photo-col"><img src="${apt.photos[1].url}" alt="Interior 2" onerror="handleImgError(this, 2)" /></div>
-            <div class="chat-photo-col"><img src="${apt.photos[2].url}" alt="Interior 3" onerror="handleImgError(this, 3)" /></div>
+            <div class="chat-photo-col"><img referrerpolicy="no-referrer" src="${apt.photos[0].url}" alt="Interior 1" onerror="replaceBrokenCraigslistImg(this, ${apt.id}, 0)" /></div>
+            <div class="chat-photo-col"><img referrerpolicy="no-referrer" src="${apt.photos[1].url}" alt="Interior 2" onerror="replaceBrokenCraigslistImg(this, ${apt.id}, 1)" /></div>
+            <div class="chat-photo-col"><img referrerpolicy="no-referrer" src="${apt.photos[2].url}" alt="Interior 3" onerror="replaceBrokenCraigslistImg(this, ${apt.id}, 2)" /></div>
           </div>
           <div class="chat-prop-body">
             <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -2280,7 +2415,7 @@
 
       const aiPrompt =
         `Eres el asesor experto de Aurea Rent. Responde al cliente en español de forma clara y amable (máximo 3 líneas). ` +
-        `Muéstrale las opciones con sus fotos interiores (sala, cocina, baño y habitación), destaca que todos los biles están incluidos y que los de 1 habitación tienen 1 estacionamiento privado y los de 2 habitaciones tienen 2 estacionamientos privados. ` +
+        `Muéstrale las opciones con sus fotos interiores, destaca que todos los biles están incluidos y que los de 1 habitación tienen 1 estacionamiento privado y los de 2 habitaciones tienen 2 estacionamientos privados. ` +
         `Opciones: ${contextSummary}. ` +
         (showWaDirect ? `Invítalo a tocar el botón de WhatsApp de la tarjeta que prefiera para agendar su visita.` : `Pregúntale cuál de las opciones le gusta más por dentro.`) +
         `\n\nCliente: ${text}`;
@@ -2301,12 +2436,12 @@
 
       const locText = matchedCity || (matchedState ? CITIES_BY_STATE[matchedState].name : (document.getElementById("locationInput").value || "tu zona"));
       appendBotMessage(
-        `Aquí tienes estas unidades con disponibilidad inmediata en **${locText}** con fotos por dentro de **sala, cocina, habitación y baño**. Recuerda que **todos los biles están incluidos** y cuentan con su estacionamiento privado:`,
+        `Aquí tienes estas unidades con disponibilidad inmediata en **${locText}** con fotos reales del interior. Recuerda que **todos los biles están incluidos** y cuentan con su estacionamiento privado:`,
         richCardsHtml + nextButtonsHtml
       );
     }
 
-    // Inicializar portal con Miami, FL por defecto antes de verificar IP de EE. UU.
+    // Inicializar portal y pre-cargar lotes reales de Craigslist
     updateFavCounterUI();
     setSuggestedLocation("FL", "Miami");
     autoDetectSuggestedLocation();
