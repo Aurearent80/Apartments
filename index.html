@@ -37,7 +37,6 @@
       padding-bottom: 90px;
     }
 
-    /* CABECERA LIMPIA */
     header {
       background: var(--white);
       border-bottom: 1px solid var(--border);
@@ -105,17 +104,16 @@
       cursor: pointer;
     }
 
-    /* HERO PRINCIPAL */
     .hero {
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(30, 41, 59, 0.84)),
-                  url('https://images.unsplash.com/photo-1560185127-6ed189bf02f4?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(30, 41, 59, 0.85)),
+                  url('https://images.unsplash.com/photo-1560185127-6ed189bf02f4?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
       color: var(--white);
-      padding: 42px 16px 48px;
+      padding: 40px 16px 46px;
       text-align: center;
     }
 
     .hero h1 {
-      font-size: clamp(1.6rem, 3.8vw, 2.45rem);
+      font-size: clamp(1.55rem, 3.8vw, 2.4rem);
       font-weight: 900;
       margin-bottom: 8px;
       letter-spacing: -0.3px;
@@ -190,11 +188,6 @@
       white-space: nowrap;
     }
 
-    .btn-search:hover {
-      background: var(--accent-dark);
-    }
-
-    /* SUGERENCIAS DE CIUDAD SIN CONTADORES */
     .suggestions-box {
       position: absolute;
       top: 100%;
@@ -228,7 +221,6 @@
       color: var(--accent-dark);
     }
 
-    /* CONTENEDOR PRINCIPAL */
     .container {
       max-width: 1320px;
       margin: 0 auto;
@@ -273,10 +265,9 @@
       border-color: var(--primary);
     }
 
-    /* TARJETAS DE APARTAMENTOS */
     .listings-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(315px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
       gap: 22px;
     }
 
@@ -295,13 +286,23 @@
       transform: translateY(-3px);
     }
 
+    /* VISOR CON ESTÉTICA DE CÁMARA DE CELULAR */
     .card-slider {
       position: relative;
-      height: 230px;
+      height: 255px;
       background: #1e293b;
       overflow: hidden;
       user-select: none;
       touch-action: pan-y;
+    }
+
+    .card-slider::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      box-shadow: inset 0 0 28px rgba(0,0,0,0.22);
+      pointer-events: none;
+      z-index: 2;
     }
 
     .card-slider img {
@@ -316,7 +317,7 @@
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(15, 23, 42, 0.65);
+      background: rgba(15, 23, 42, 0.68);
       color: var(--white);
       border: none;
       width: 32px;
@@ -541,7 +542,7 @@
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.82);
+      background: rgba(15, 23, 42, 0.84);
       display: none;
       justify-content: center;
       align-items: center;
@@ -593,7 +594,7 @@
 
     .modal-viewer {
       position: relative;
-      height: clamp(240px, 45vw, 400px);
+      height: clamp(270px, 50vw, 440px);
       background: #0f172a;
       border-radius: 12px;
       overflow: hidden;
@@ -624,13 +625,13 @@
 
     .thumbs-row {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 7px;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
       margin-bottom: 16px;
     }
 
     .thumb-item {
-      height: 60px;
+      height: 62px;
       border-radius: 8px;
       overflow: hidden;
       border: 2.5px solid transparent;
@@ -655,9 +656,9 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.72);
       color: #fff;
-      font-size: 0.62rem;
+      font-size: 0.6rem;
       text-align: center;
       padding: 2px;
       font-weight: 700;
@@ -818,7 +819,7 @@
 
     .chat-photo-strip img {
       width: 100%;
-      height: 74px;
+      height: 78px;
       object-fit: cover;
       cursor: pointer;
     }
@@ -974,7 +975,7 @@
 </head>
 <body>
 
-  <!-- CABECERA LIMPIA CON UBICACIÓN SUGERIDA -->
+  <!-- CABECERA LIMPIA -->
   <header>
     <div class="nav-bar">
       <a href="#" class="brand" onclick="resetPortal(); return false;">Aurea<span>Rent</span></a>
@@ -990,7 +991,7 @@
   <!-- HERO PRINCIPAL -->
   <section class="hero">
     <h1>Apartamentos con Disponibilidad Inmediata</h1>
-    <p>Unidades residenciales listas para habitar con todos los biles incluidos y estacionamiento privado.</p>
+    <p>Unidades residenciales listas para mudarse con todos los biles incluidos y estacionamiento privado.</p>
 
     <div class="search-panel">
       <div class="search-grid">
@@ -1066,7 +1067,7 @@
           <button class="slider-arrow next" onclick="stepModalPhoto(1)">&#10095;</button>
           <div class="modal-caption">
             <span id="modalRoomCaption">Sala Interior</span>
-            <span id="modalCounterCaption">1 / 5</span>
+            <span id="modalCounterCaption">1 / 6</span>
           </div>
         </div>
 
@@ -1179,53 +1180,64 @@
       "https://api.bigdatacloud.net/data/reverse-geocode-client"
     ];
 
-    const FALLBACK_INTERIOR = "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?auto=format&fit=crop&w=900&q=80";
+    const FALLBACK_INTERIOR = "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?w=650&h=866&fit=crop&q=80";
 
     // ============================================================================
-    // FOTOS INTERNAS ESTILO NORMAL DE RECORRIDO (SIN SILLAS SUELTAS, SIN LUJO,
-    // CERO PERSONAS, EXCLUSIVAMENTE SALAS VACÍAS, COCINAS, HABITACIONES Y BAÑOS)
+    // MOTOR DE FOTOS REALES ESTILO CÁMARA DE CELULAR (VERTICAL 650x866)
+    // CERO PERSONAS, CERO COMIDA/LIMONES, CERO SILLAS SUELTAS, CERO EXTERIORES.
+    // CADA UNIDAD GENERA SU PROPIO ENCUADRE FOCAL, ORIENTACIÓN E ILUMINACIÓN INTERNA
     // ============================================================================
-    // 1. SALAS VACÍAS CON PISO DE MADERA / LAMINADO Y PAREDES GRISES/BLANCAS
-    const FOTOS_SALA_VACIA = [
-      "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1560184897-ae75f418493e?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?auto=format&fit=crop&w=1050&q=85",
-      "https://images.unsplash.com/photo-1560184897-ae75f418493e?auto=format&fit=crop&w=1050&q=85"
+    const CLEAN_SALA_BASES = [
+      "https://images.unsplash.com/photo-1560185127-6ed189bf02f4",
+      "https://images.unsplash.com/photo-1560184897-ae75f418493e"
     ];
 
-    // 2. COCINAS NORMALES RESIDENCIALES (GABINETES BLANCOS O DE MADERA, ESTUFA Y NEVERA)
-    const FOTOS_COCINA_PRINCIPAL = [
-      "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1556909212-d5b604d0c90d?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?auto=format&fit=crop&w=900&q=80"
+    const CLEAN_HABITACION_BASES = [
+      "https://images.unsplash.com/photo-1560185008-b033106af5c3",
+      "https://images.unsplash.com/photo-1560185007-cde436f6a4d0"
     ];
 
-    // 3. HABITACIONES VACÍAS / ALFOMBRA O PISO LAMINADO Y VENTANA CON PERSIANAS
-    const FOTOS_HABITACION_NORMAL = [
-      "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1540518614846-7ede433c4573?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&w=900&q=80"
+    const CLEAN_COCINA_BASES = [
+      "https://images.unsplash.com/photo-1484154218962-a197022b5858",
+      "https://images.unsplash.com/photo-1565538810643-b5bdb714032a"
     ];
 
-    // 4. BAÑOS RESIDENCIALES (MUEBLE DE LAVAMANOS BLANCO Y ESPEJO)
-    const FOTOS_BANO_LAVAMANOS = [
-      "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=900&q=80"
+    const CLEAN_BANO_LAVAMANOS_BASES = [
+      "https://images.unsplash.com/photo-1584622650111-993a426fbf0a",
+      "https://images.unsplash.com/photo-1584622781564-1d987f7333c1"
     ];
 
-    // 5. DUCHA CON PUERTA CORREDIZA DE VIDRIO / TINA BLANCA
-    const FOTOS_BANO_DUCHA = [
-      "https://images.unsplash.com/photo-1620626011761-996317b8d101?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1584622781564-1d987f7333c1?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=900&q=80"
+    const CLEAN_BANO_DUCHA_BASES = [
+      "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14",
+      "https://images.unsplash.com/photo-1620626011761-996317b8d101",
+      "https://images.unsplash.com/photo-1507652313519-d4e9174996dd"
     ];
+
+    // Genera un encuadre vertical de cámara de celular único para cada apartamento
+    function buildCellPhonePhoto(baseUrl, uniqueSeed, focalMode) {
+      const flipParam = (uniqueSeed % 2 === 1) ? "&flip=h" : "";
+      const fpxValues = [0.22, 0.35, 0.48, 0.58, 0.72, 0.80];
+      const fpyValues = [0.44, 0.50, 0.56, 0.62];
+      const fpzValues = [1.05, 1.15, 1.24, 1.32];
+
+      const fpx = fpxValues[(uniqueSeed + focalMode) % fpxValues.length];
+      const fpy = fpyValues[(uniqueSeed * 3 + focalMode) % fpyValues.length];
+      const fpz = fpzValues[(uniqueSeed * 5 + focalMode) % fpzValues.length];
+
+      // Variaciones sutiles de iluminación interior de cámara de celular (cálida / neutra / luz blanca)
+      const satValues = [-12, -6, 0, 5, -15];
+      const expValues = [-3, 0, 2, -2, 4];
+      const conValues = [-4, 0, 6, 3];
+
+      const sat = satValues[uniqueSeed % satValues.length];
+      const exp = expValues[(uniqueSeed + 2) % expValues.length];
+      const con = conValues[(uniqueSeed + 1) % conValues.length];
+
+      return `${baseUrl}?auto=format&w=650&h=866&fit=crop&crop=focalpoint&fp-x=${fpx}&fp-y=${fpy}&fp-z=${fpz}${flipParam}&sat=${sat}&exp=${exp}&con=${con}&q=78`;
+    }
 
     // ============================================================================
-    // MÁS DE 1,200 CIUDADES REALES SIN REPETIR EN NJ, FL, CA Y PA (300+ POR ESTADO)
+    // MÁS DE 1,200 CIUDADES REALES EN NJ, FL, CA Y PA
     // ============================================================================
     const CITIES_BY_STATE = {
       NJ: {
@@ -1245,28 +1257,28 @@
           "Lodi","Cliffside Park","Carteret","Mahwah","Glassboro","Secaucus","Rutherford","South Plainfield","Nutley","Roselle",
           "Harrison","Pleasantville","Morristown","Dover","Elmwood Park","Hawthorne","Palisades Park","Lyndhurst","Millville","Bridgeton",
           "Asbury Park","Ocean City","Margate City","Ventnor City","Wildwood","Cape May","Somers Point","Absecon","Brigantine","Hammonton",
-          "Northfield","Linwood","Egg Harbor City","Mays Landing","Buena","dumont","New Milford","Wyckoff","Ramsey","Fairview",
+          "Northfield","Linwood","Egg Harbor City","Mays Landing","Buena","Dumont","New Milford","Wyckoff","Ramsey","Fairview",
           "Saddle Brook","Oakland NJ","Wallington","Edgewater","Tenafly","Little Ferry","Hasbrouck Heights","Glen Rock","River Edge","Park Ridge",
           "Westwood","Waldwick","Maywood","Leonia","East Rutherford","Carlstadt","Wood-Ridge","Cresskill","Closter","Hillsdale",
-          "Bogota","Oradell","Montvale","Midland Park","Allendale","Upper Saddle River","Woodcliff Lake","Emerson","North Arlington","rochelle Park",
+          "Bogota","Oradell","Montvale","Midland Park","Allendale","Upper Saddle River","Woodcliff Lake","Emerson","North Arlington","Rochelle Park",
           "Burlington","Moorestown","Cinnaminson","Delran","Palmyra","Maple Shade","Bordentown","Mount Holly","Florence","Medford",
           "Pemberton","Lumberton","Riverside NJ","Edgewater Park","Southampton","Westampton","Beverly","Riverton","Haddonfield","Collingswood",
           "Gloucester City","Bellmawr","Runnemede","Haddon Township","Audubon","Lindenwold","Berlin","Pine Hill","Stratford","Somerdale",
-          "Barrington","Haddon Heights","Clementon","Oaklyn","Merchantville","Lawnside","Magnolia","woodlynne","Gibbsboro","Brooklawn",
+          "Barrington","Haddon Heights","Clementon","Oaklyn","Merchantville","Lawnside","Magnolia","Woodlynne","Gibbsboro","Brooklawn",
           "South Orange","Maplewood","Millburn","Verona","Cedar Grove","Glen Ridge","Caldwell","North Caldwell","West Caldwell","Fairfield NJ",
           "Roseland","Essex Fells","Woodbury","Pitman","Paulsboro","Clayton","Swedesboro","West Deptford","Mantua","Harrison Township",
           "Guttenberg","Weehawken","East Newark","Flemington","Raritan","Clinton","Lambertville","High Bridge","Hopewell","Pennington",
           "Hightstown","Lawrence","Robbinsville","East Windsor","West Windsor","South Amboy","Metuchen","Highland Park","Middlesex","Spotswood",
           "South River","Dunellen","Jamesburg","Milltown","Cranbury","Red Bank","Neptune","Wall Township","Eatontown","Keansburg",
           "Aberdeen","Hazlet","Tinton Falls","Matawan","Belmar","Manasquan","Keyport","Rumson","Fair Haven","Little Silver",
-          "Oceanport","Spring Lake","Highlands","Atlantic Highlands","Brielle","Bradley Beach","Boonton","Madison","Chatham","floham Park",
+          "Oceanport","Spring Lake","Highlands","Atlantic Highlands","Brielle","Bradley Beach","Boonton","Madison","Chatham","Florham Park",
           "Kinnelon","Lincoln Park","Butler NJ","Wharton","Rockaway","Mount Olive","Randolph","Roxbury","Denville","Jefferson",
           "Point Pleasant","Beachwood","Barnegat","Little Egg Harbor","Lacey","Stafford","Plumsted","Lakehurst","Seaside Heights","Tuckerton",
           "Ringwood","Wanaque","Pompton Lakes","Totowa","Little Falls","West Milford","Woodland Park","Haledon","Prospect Park","Bloomingdale",
-          "Salem","Penns Grove","Carneys Point","Woodstown","Somerville","Bound Brook","Manville","Bernardsville","Raritan NJ","Watchung",
-          "Warren NJ","Bernards","Montgomery NJ","Branchburg","Green Brook","Newton","Hopatcong","Sparta","Vernon","Summit",
-          "Cranford","New Providence","Scotch Plains","Springfield NJ","Berkeley Heights","Clark","Fanwood","Roselle Park","Kenilworth","Garwood",
-          "Mountainside","Phillipsburg","Hackettstown","Washington NJ","Belvidere","Lopatcong"
+          "Salem","Penns Grove","Carneys Point","Woodstown","Somerville","Bound Brook","Manville","Bernardsville","Watchung","Warren NJ",
+          "Bernards","Montgomery NJ","Branchburg","Green Brook","Newton","Hopatcong","Sparta","Vernon","Summit","Cranford",
+          "New Providence","Scotch Plains","Springfield NJ","Berkeley Heights","Clark","Fanwood","Roselle Park","Kenilworth","Garwood","Mountainside",
+          "Phillipsburg","Hackettstown","Washington NJ","Belvidere","Lopatcong"
         ]
       },
       FL: {
@@ -1334,7 +1346,7 @@
           "Diamond Bar","Woodland","Santee","Lake Elsinore","Porterville","Paramount","Eastvale","Rosemead","Hanford","Highland",
           "Brentwood","Novato","Colton","Cathedral City","Delano","Yucaipa","Watsonville","Placentia","Glendora","Gilroy",
           "Palm Desert","Cerritos","West Sacramento","Aliso Viejo","Poway","La Mirada","Rancho Santa Margarita","Cypress","Dublin","Covina",
-          "Azusa","Palm Springs","San Luis Obispo","ceres","San Jacinto","Lincoln","Newark CA","Lompoc","El Centro","Danville",
+          "Azusa","Palm Springs","San Luis Obispo","Ceres","San Jacinto","Lincoln","Newark CA","Lompoc","El Centro","Danville",
           "Bell Gardens","Coachella","Rancho Palos Verdes","San Bruno","Rohnert Park","Brea","La Puente","Campbell","San Gabriel","Beaumont",
           "Morgan Hill","Culver City","Calexico","Stanton","La Quinta","Pacifica","Montclair CA","Oakley","Monrovia","Los Banos",
           "Martinez","Indio Hills","Hollister","San Juan Capistrano","Claremont","Manhattan Beach","Beverly Hills","Dana Point","San Dimas","Seaside",
@@ -1343,12 +1355,12 @@
           "Los Altos","Monte Sereno","Capitola","Scotts Valley","Soledad","Greenfield","King City","Gonzales","Marina","Monterey",
           "Pacific Grove","Carmel","Paso Robles","Arroyo Grande","Grover Beach","Morro Bay","Pismo Beach","Goleta","Carpinteria","Solvang",
           "Guadalupe","Buellton","Ojai","Santa Paula","Fillmore","Moorpark","Port Hueneme","Agoura Hills","Calabasas","Hidden Hills",
-          "Malibu","Westlake Village","San Fernando","Burbank Hills","Universal City","West Hollywood","el Segundo","Hermosa Beach","Palos Verdes Estates","Rolling Hills",
+          "Malibu","Westlake Village","San Fernando","Burbank Hills","Universal City","West Hollywood","El Segundo","Hermosa Beach","Palos Verdes Estates","Rolling Hills",
           "Avalon","Lomita","Signal Hill","Artesia","Hawaiian Gardens","La Palma","Los Alamitos","Seal Beach","Villa Park","Laguna Beach",
-          "Laguna Woods","First Ranch","Norco","Calimesa","Canyon Lake","Desert Hot Springs","Indian Wells","Rancho Mirage","Blythe","Twentynine Palms",
-          "Yucca Valley","Barstow","Needles","Big Bear Lake","Loma Linda","Grand Terrace","Chino Valley","Sanger","Reedley","Selma",
-          "Parlier","Kingsburg","Kerman","Coalinga","Mendota","Firebaugh","Fowler","Orosi","Dinuba","Exeter CA",
-          "Lindsay","Woodlake","Corcoran","Lemoore","Avenal","Chowchilla","Atwater","Livingston CA","Gustine","Dos Palos"
+          "Laguna Woods","Norco","Calimesa","Canyon Lake","Desert Hot Springs","Indian Wells","Rancho Mirage","Blythe","Twentynine Palms","Yucca Valley",
+          "Barstow","Needles","Big Bear Lake","Loma Linda","Grand Terrace","Sanger","Reedley","Selma","Parlier","Kingsburg",
+          "Kerman","Coalinga","Mendota","Firebaugh","Fowler","Orosi","Dinuba","Exeter CA","Lindsay","Woodlake",
+          "Corcoran","Lemoore","Avenal","Chowchilla","Atwater","Livingston CA","Gustine","Dos Palos"
         ]
       },
       PA: {
@@ -1369,7 +1381,7 @@
           "Waynesboro","Gettysburg","Lewistown","Lock Haven","Oil City","Warren","Sunbury","Berwick","Kingston","Dunmore",
           "Nanticoke","Pittston","Carbondale","Old Forge","Archbald","Blakely","Dickson City","Taylor","Moosic","Swoyersville",
           "Plymouth PA","Edwardsville","Forty Fort","Luzerne","Exeter PA","West Pittston","Clarks Summit","Mountain Top","Dallas PA","Harveys Lake",
-          "Stroudsburg","East Stroudsburg","Mount Pocono","Tobyhanna","Tannersville","Brodheadsville","Effort","Saylorsburg"," Lehighton","Jim Thorpe",
+          "Stroudsburg","East Stroudsburg","Mount Pocono","Tobyhanna","Tannersville","Brodheadsville","Effort","Saylorsburg","Lehighton","Jim Thorpe",
           "Palmerton","Lansford","Summit Hill","Nesquehoning","Weatherly","Tamaqua","Mahanoy City","Shenandoah","Frackville","Minersville",
           "Schuylkill Haven","Orwigsburg","Pine Grove","Ashland","Coplay","Catasauqua","Fountain Hill","Slatington","Macungie","Alburtis",
           "Coopersburg","Hellertown","Nazareth","Northampton Borough","Bangor","Pen Argyl","Wind Gap","Bath","Wilson","West Easton",
@@ -1380,32 +1392,44 @@
           "Downingtown","Oxford","Kennett Square","West Grove","Avondale","Malvern","Paoli","Berwyn","Devon","Wayne PA",
           "Parkesburg","South Coatesville","Modena","Atglen","Honey Brook","Elverson","Spring City","Media","Swarthmore","Lansdowne",
           "Yeadon","Darby","Collingdale","Sharon Hill","Folcroft","Glenolden","Norwood","Prospect Park PA","Ridley Park","Eddystone",
-          "Upland PA","Brookhaven","Parkside","Aston","Middletown DE County","Concordville","Chadds Ford","Garnet Valley","Clifton Heights","Aldan",
-          "Morton","Rutledge","Rose Valley","Chester Heights","Marcus Hook","Trainer","Lower Chichester","Upper Chichester","Tinicum","broomall",
-          "Drexel Hill","Ardmore","Bryn Mawr","Haverford College","Villanova","Wynnewood","Bala Cynwyd","Merion Station","Narberth Borough","Glenside",
-          "Elkins Park","Wyncote","Willow Grove","Horsham PA","Fort Washington","Blue Bell","Plymouth Meeting","King of Prussia","Audubon PA","Oaks",
-          "Harleysville","Skippack","Lederach","Salford"," Sanatoga","Stowe","Gilbertsville","Boyertown","Kutztown","Fleetwood",
-          "Hamburg","Shillington","Wyomissing","West Reading","Sinking Spring","Wernersville","Robesonia","Womelsdorf","Birdsboro","Mount Penn",
-          "Laureldale","Muhlenberg","Leesport","Shoemakersville","Topton","Bally","Bechtelsville","Lititz","Manheim Borough","Mount Joy",
-          "Columbia","Millersville","Willow Street","Strasburg","Quarryville","New Holland","Denver PA","Akron PA","Adamstown","Terre Hill",
-          "Marietta","East Petersburg","Mountville","Red Lion","Dallastown","Yoe","Shrewsbury","New Freedom","Glen Rock PA","Spring Grove",
-          "Dillsburg","Wrightsville","Hallam","Manchester PA","Mount Wolf","Dover PA","Jacobus","Loganville","Stewartstown","Delta"
+          "Upland PA","Brookhaven","Parkside","Aston","Concordville","Chadds Ford","Garnet Valley","Clifton Heights","Aldan","Morton",
+          "Rutledge","Rose Valley","Chester Heights","Marcus Hook","Trainer","Lower Chichester","Upper Chichester","Tinicum","Broomall","Drexel Hill",
+          "Ardmore","Bryn Mawr","Villanova","Wynnewood","Bala Cynwyd","Merion Station","Glenside","Elkins Park","Wyncote","Willow Grove",
+          "Fort Washington","Blue Bell","Plymouth Meeting","King of Prussia","Audubon PA","Oaks","Harleysville","Skippack","Lederach","Salford",
+          "Sanatoga","Stowe","Gilbertsville","Boyertown","Kutztown","Fleetwood","Hamburg","Shillington","Wyomissing","West Reading",
+          "Sinking Spring","Wernersville","Robesonia","Womelsdorf","Birdsboro","Mount Penn","Laureldale","Muhlenberg","Leesport","Shoemakersville",
+          "Topton","Bally","Bechtelsville","Lititz","Manheim Borough","Mount Joy","Columbia","Millersville","Willow Street","Strasburg",
+          "Quarryville","New Holland","Denver PA","Akron PA","Adamstown","Terre Hill","Marietta","East Petersburg","Mountville","Red Lion",
+          "Dallastown","Yoe","Shrewsbury","New Freedom","Glen Rock PA","Spring Grove","Dillsburg","Wrightsville","Hallam","Manchester PA",
+          "Mount Wolf","Dover PA","Jacobus","Loganville","Stewartstown","Delta"
         ]
       }
     };
 
+    // AMPLIO BANCO DE CALLES Y EDIFICIOS PARA QUE NINGÚN APARTAMENTO SE REPITA
     const STREET_NAMES = [
-      "Oak St", "Maple Ave", "Washington Blvd", "Main St", "Park Ave", "Cedar Ln",
-      "Pine St", "Elm St", "Lakeview Dr", "Franklin Ave", "Jefferson St", "Adams Ave",
-      "Lincoln Rd", "Central Ave", "Highland Ave", "Madison St", "Monroe Ave", "Chestnut St",
-      "Walnut St", "Broad St", "Market St", "Union Ave", "Lafayette St", "Hamilton Ave",
-      "Harrison St", "Jackson Ave", "Wilson Blvd", "Grant St", "Fulton St", "Liberty Ave"
+      "Oak St","Maple Ave","Washington Blvd","Main St","Park Ave","Cedar Ln","Pine St","Elm St","Lakeview Dr","Franklin Ave",
+      "Jefferson St","Adams Ave","Lincoln Rd","Central Ave","Highland Ave","Madison St","Monroe Ave","Chestnut St","Walnut St","Broad St",
+      "Market St","Union Ave","Lafayette St","Hamilton Ave","Harrison St","Jackson Ave","Wilson Blvd","Grant St","Fulton St","Liberty Ave",
+      "Spring St","Commerce St"," Bergen Ave","clinton St","Sycamore Dr","Willow Ln","Ridge Rd","Valley View Dr","Meadow Ln","Forest Ave",
+      "Sunset Blvd","Sunrise Dr","River Rd","Prospect St","Grove St","Orchard St","Pearl St","State St","Church St","Mill Rd",
+      "Front St","Water St","Bridge St","depot St","Division St","Summit Ave","Hillcrest Dr","Fairview Ave","Woodland Dr","Colonial Way",
+      "Heritage Dr","Oxford St","Cambridge Rd","Lexington Ave","Concord St","Bunker Hill Rd","Hancock St","sherman Ave","Sheridan St","Garfield Ave",
+      "McKinley St","Roosevelt Blvd","Truman Way","kennedy Blvd","Marshal St","warren St","Mercer St","Somerset St","essex St","Sussex Ave",
+      "Cumberland St","York Rd","Lancaster Ave","Montgomery Ave","Bucks Ln","Berks St","Lehigh Ave","Cambria St","Tioga St","Venango St"
     ];
 
-    const BUILDING_TYPES = ["Residencial", "Apartments", "Commons", "Courts", "Gardens", "Flats", "Manor", "Place"];
+    const BUILDING_PREFIXES = [
+      "Parkside","Oakwood","Riverview","Highland","Meadowbrook","Pinecrest","Cedarwood","Maplewood","Westgate","Eastgate",
+      "Northgate","Southgate","Brookside","fairview","Hilltop","Sunnyvale","Greenwood","Silverlake","Clearview"," Bayside",
+      "Crestview","Valley","Central","Plaza","Terrace","Garden","Station","midtown","Uptown","Downtown",
+      "Belmont","Waverly","Kensington","Arlington","Lexington","clairmont","ridgemont","montclair","Fairmont","Woodmont"
+    ];
+
+    const BUILDING_TYPES = ["Apartments","Residences","Court","Gardens","Flats","Manor","Place","Commons","Suites","Townhomes"];
 
     // ============================================================================
-    // FUNCIÓN CREADORA DE 30 APARTAMENTOS POR CIUDAD CON REGLA EXACTA DE ESTACIONAMIENTO
+    // GENERADOR DE APARTAMENTOS ÚNICOS (SIN REPETICIÓN DE FOTOS NI NOMBRES)
     // ============================================================================
     const allApartments = [];
     const generatedCitiesSet = new Set();
@@ -1420,52 +1444,71 @@
 
       for (let u = 0; u < 30; u++) {
         const id = refSeq++;
-        const seed = (sIdx + 1) * 10000 + cIdx * 30 + u;
+        // Hash primo único para cada unidad
+        const uniqueHash = (sIdx + 1) * 19391 + (cIdx + 1) * 7919 + (u + 1) * 3571;
 
         const isUnfurnished = (u % 4 !== 3);
         const condition = isUnfurnished ? "No Amueblado" : "Semi-Amueblado";
 
-        // 1 Habitación o 2 Habitaciones
         const bedsNum = (u % 2 === 0) ? 1 : 2;
         const bathsNum = (bedsNum === 2 && u % 4 === 1) ? 2 : 1;
 
-        // REGLA EXACTA: 1 habitación = 1 estacionamiento privado | 2 habitaciones = 2 estacionamientos privados
+        // 1 habitación = 1 estacionamiento privado | 2 habitaciones = 2 estacionamientos privados
         const parkingText = bedsNum === 1 ? "1 estacionamiento privado" : "2 estacionamientos privados";
         const habText = bedsNum === 1 ? "1 habitación" : "2 habitaciones";
         const banoText = bathsNum === 1 ? "1 baño" : "2 baños";
         const distribution = `${parkingText} • ${habText} • ${banoText} • sala • cocina`;
 
-        // Rango estricto $1,100 a $1,950 según calidad
-        let qualityBonus = (u % 3 === 1) ? 95 : ((u % 3 === 2) ? 185 : 0);
-        let baseByBeds = bedsNum === 1
-          ? 1100 + ((u * 17 + cIdx * 7) % 190)
-          : 1380 + ((u * 19 + cIdx * 9) % 280);
+        // Rango $1,100 a $1,950 según calidad
+        const qualityBonus = (u % 3 === 1) ? 90 : ((u % 3 === 2) ? 175 : 0);
+        const baseByBeds = bedsNum === 1
+          ? 1100 + (uniqueHash % 185)
+          : 1380 + (uniqueHash % 275);
 
-        const semiExtra = isUnfurnished ? 0 : 45;
+        const semiExtra = isUnfurnished ? 0 : 40;
         const rawPrice = baseByBeds + qualityBonus + semiExtra;
         const finalPriceNum = Math.min(1950, Math.max(1100, Math.round(rawPrice / 5) * 5));
         const priceFormatted = `$${finalPriceNum.toLocaleString("en-US")}`;
 
-        const streetNumber = 105 + ((u * 41 + cIdx * 13) % 4500);
-        const streetName = STREET_NAMES[(u + cIdx) % STREET_NAMES.length];
-        const bldgType = BUILDING_TYPES[(u + sIdx) % BUILDING_TYPES.length];
-        const unitLetter = String.fromCharCode(65 + (u % 6));
-        const floorNum = (u % 3) + 1;
-        const zipFormatted = `${zipPrefix}${String((cIdx * 3 + (u % 3)) % 999).padStart(3, "0")}`;
+        // Dirección y nombre de edificio únicos sin repetirse
+        const streetNumber = 104 + (uniqueHash % 8800);
+        const streetName = STREET_NAMES[(cIdx * 17 + u * 7 + sIdx * 13) % STREET_NAMES.length];
+        const bldgPrefix = BUILDING_PREFIXES[(cIdx * 11 + u * 5 + sIdx * 3) % BUILDING_PREFIXES.length];
+        const bldgType = BUILDING_TYPES[(cIdx * 7 + u * 3 + sIdx * 5) % BUILDING_TYPES.length];
+        const unitLetter = String.fromCharCode(65 + ((u + cIdx) % 8));
+        const floorNum = ((u + cIdx) % 3) + 1;
+        const zipFormatted = `${zipPrefix}${String((cIdx * 7 + (u % 5)) % 999).padStart(3, "0")}`;
 
-        const title = `${streetName.split(" ")[0]} ${bldgType} — Apt ${floorNum}${unitLetter}`;
+        const title = `${bldgPrefix} ${bldgType} — Unidad ${floorNum}${unitLetter}`;
         const address = `${streetNumber} ${streetName}, Apt ${floorNum}${unitLetter}, ${cityName}, ${stateCode} ${zipFormatted}`;
 
         const desc = isUnfurnished
-          ? `Apartamento residencial sin amueblar con disponibilidad inmediata. Incluye todos los biles en la renta mensual (agua, luz, gas y calefacción), pisos laminados de madera, cocina equipada con gabinetes y ${parkingText}.`
-          : `Apartamento residencial semi-amueblado con disponibilidad inmediata. Incluye todos los biles en la renta mensual (agua, luz, gas y calefacción), línea blanca de cocina, desayunador y ${parkingText}.`;
+          ? `Apartamento residencial sin amueblar con disponibilidad inmediata. Incluye todos los biles en la renta mensual (agua, luz, gas y calefacción), pisos laminados de madera, paredes recién pintadas, cocina con gabinetes y ${parkingText}.`
+          : `Apartamento residencial semi-amueblado con disponibilidad inmediata. Incluye todos los biles en la renta mensual (agua, luz, gas y calefacción), cocina con electrodomésticos, barra desayunador y ${parkingText}.`;
 
-        // 5 Fotos distintas por dentro (Sala vacía, Cocina, Habitación con closet, Baño con lavamanos, Ducha de vidrio)
-        const fotoSala = FOTOS_SALA_VACIA[seed % FOTOS_SALA_VACIA.length];
-        const fotoCocina = FOTOS_COCINA_PRINCIPAL[(seed + u) % FOTOS_COCINA_PRINCIPAL.length];
-        const fotoHab = FOTOS_HABITACION_NORMAL[(seed + u * 2) % FOTOS_HABITACION_NORMAL.length];
-        const fotoBano = FOTOS_BANO_LAVAMANOS[(seed + u) % FOTOS_BANO_LAVAMANOS.length];
-        const fotoDucha = FOTOS_BANO_DUCHA[(seed + u) % FOTOS_BANO_DUCHA.length];
+        // 6 fotos interiores verticales estilo cámara de celular (Cero personas, cero limones, cero sillas sueltas)
+        const baseSala = CLEAN_SALA_BASES[uniqueHash % CLEAN_SALA_BASES.length];
+        const baseCocina = CLEAN_COCINA_BASES[(uniqueHash >> 1) % CLEAN_COCINA_BASES.length];
+        const baseGabinetes = CLEAN_COCINA_BASES[(uniqueHash >> 2) % CLEAN_COCINA_BASES.length];
+        const baseHab = CLEAN_HABITACION_BASES[(uniqueHash >> 3) % CLEAN_HABITACION_BASES.length];
+        const baseLavamanos = CLEAN_BANO_LAVAMANOS_BASES[(uniqueHash >> 4) % CLEAN_BANO_LAVAMANOS_BASES.length];
+        const baseDucha = CLEAN_BANO_DUCHA_BASES[(uniqueHash >> 5) % CLEAN_BANO_DUCHA_BASES.length];
+
+        const orderedRooms = [
+          { url: buildCellPhonePhoto(baseSala, uniqueHash + 1, 0), label: "Sala y Piso de Madera", short: "Sala" },
+          { url: buildCellPhonePhoto(baseCocina, uniqueHash + 2, 1), label: "Cocina y Electrodomésticos", short: "Cocina" },
+          { url: buildCellPhonePhoto(baseHab, uniqueHash + 3, 2), label: "Habitación y Closet", short: "Habitación" },
+          { url: buildCellPhonePhoto(baseLavamanos, uniqueHash + 4, 3), label: "Baño — Lavamanos y Espejo", short: "Lavamanos" },
+          { url: buildCellPhonePhoto(baseDucha, uniqueHash + 5, 4), label: "Baño — Ducha y Cerámica", short: "Ducha" },
+          { url: buildCellPhonePhoto(baseGabinetes, uniqueHash + 6, 5), label: "Gabinetes y Encimera de Cocina", short: "Gabinetes" }
+        ];
+
+        // Rotar con qué habitación empieza la portada para que en la cuadrícula se vean cocinas, salas, habitaciones y baños variados como en tus fotos
+        const startOffset = u % 4;
+        const rotatedPhotos = [
+          ...orderedRooms.slice(startOffset),
+          ...orderedRooms.slice(0, startOffset)
+        ];
 
         allApartments.push({
           id,
@@ -1482,18 +1525,11 @@
           condition,
           distribution,
           desc,
-          photos: [
-            { url: fotoSala, label: "Sala y Piso de Madera" },
-            { url: fotoCocina, label: "Cocina con Gabinetes y Electrodomésticos" },
-            { url: fotoHab, label: "Habitación con Closet y Persianas" },
-            { url: fotoBano, label: "Baño con Lavamanos y Espejo" },
-            { url: fotoDucha, label: "Ducha con Puerta Corrediza de Vidrio" }
-          ]
+          photos: rotatedPhotos
         });
       }
     }
 
-    // Generar las más de 1,200 ciudades iniciales
     Object.keys(CITIES_BY_STATE).forEach((stateCode) => {
       const stateInfo = CITIES_BY_STATE[stateCode];
       stateInfo.cities.forEach((cityName, cIdx) => {
@@ -1548,7 +1584,6 @@
       const stateObj = CITIES_BY_STATE[stateCode];
       let matchedCity = stateObj.cities.find(c => c.toLowerCase() === (detectedCity || "").toLowerCase());
 
-      // Si el cliente está en una ciudad de ese estado que no estaba en la lista, le creamos sus 30 apartamentos al instante
       if (!matchedCity && detectedCity && detectedCity.length > 2) {
         generate30ApartmentsForCity(stateCode, stateObj.name, stateObj.zipPrefix, detectedCity, stateObj.cities.length + 1);
         stateObj.cities.push(detectedCity);
@@ -1604,7 +1639,7 @@
     }
 
     // ============================================================================
-    // BUSCADOR INTELIGENTE + GENERADOR DINÁMICO PARA QUE NINGUNA CIUDAD QUEDE VACÍA
+    // BUSCADOR INTELIGENTE Y TARJETAS
     // ============================================================================
     const PAGE_SIZE = 24;
     let currentFilteredList = [];
@@ -1720,7 +1755,6 @@
       document.getElementById("pillUnfurnished").classList.toggle("active", cond === "No Amueblado");
       document.getElementById("pillSemi").classList.toggle("active", cond === "Semi-Amueblado");
 
-      // Búsqueda directa por número de referencia
       const refDigits = rawQ.match(/\b(\d{5,6})\b/);
       if (refDigits) {
         const targetId = parseInt(refDigits[1], 10);
@@ -1747,8 +1781,6 @@
         return matchLoc && matchCond && matchBeds;
       });
 
-      // SI EL CLIENTE ESCRIBE CUALQUIER CIUDAD QUE NO ESTABA EN LAS 1,200 INICIALES,
-      // SE GENERAN AUTOMÁTICAMENTE 30 APARTAMENTOS EN ESA CIUDAD PARA QUE JAMÁS QUEDE VACÍA
       if (currentFilteredList.length === 0 && rawQ.length >= 3 && !/\d/.test(rawQ)) {
         const formattedCity = rawQ.replace(/\b\w/g, l => l.toUpperCase());
         const stObj = CITIES_BY_STATE[currentDetectedState] || CITIES_BY_STATE.NJ;
@@ -1820,7 +1852,7 @@
               <div class="insta-dots">${dotsHtml}</div>
               <div class="photo-caption-bar">
                 <span id="card-cap-${apt.id}">${currentPhoto.label}</span>
-                <span id="card-cnt-${apt.id}">${photoIdx + 1}/5</span>
+                <span id="card-cnt-${apt.id}">${photoIdx + 1}/${apt.photos.length}</span>
               </div>
             </div>
 
@@ -1830,7 +1862,7 @@
                 <span class="ref-tag">Ref #${apt.id}</span>
               </div>
               <h3 class="apt-title" onclick="openAptModal(${apt.id})">${apt.title}</h3>
-              <p class="apt-location">📍 ${apt.city}, ${apt.state}</p>
+              <p class="apt-location">📍 ${apt.address}</p>
 
               <div class="distribution-box">
                 ${apt.distribution}
@@ -1960,11 +1992,10 @@
       document.getElementById("modalRoomCaption").textContent = p.label;
       document.getElementById("modalCounterCaption").textContent = `${currentModalSlide + 1} / ${currentModalApt.photos.length}`;
 
-      const shortNames = ["Sala", "Cocina", "Habitación", "Lavamanos", "Ducha"];
       document.getElementById("modalThumbsRow").innerHTML = currentModalApt.photos.map((photo, idx) => `
         <div class="thumb-item ${idx === currentModalSlide ? "active" : ""}" onclick="pickModalThumb(${idx})">
           <img src="${photo.url}" alt="${photo.label}" onerror="this.src=FALLBACK_INTERIOR" />
-          <span>${shortNames[idx]}</span>
+          <span>${photo.short}</span>
         </div>
       `).join("");
     }
@@ -1985,7 +2016,7 @@
     }
 
     // ============================================================================
-    // BUSCADOR OCULTO DE REFERENCIAS PARA TI (PEGA MENSAJE DE WHATSAPP O REF #)
+    // BUSCADOR OCULTO DE REFERENCIAS PARA TI (• Ref EN EL PIE DE PÁGINA)
     // ============================================================================
     function openAdminRefModal() {
       document.getElementById("adminRefInput").value = "";
@@ -2019,7 +2050,7 @@
     }
 
     // ============================================================================
-    // ASISTENTE DE IA POTENCIADO CON FOTOS INTERIORES, BILES Y REGLA DE ESTACIONAMIENTO
+    // ASISTENTE DE IA POTENCIADO
     // ============================================================================
     let chatTurn = 0;
 
@@ -2030,7 +2061,6 @@
 
       const msgContainer = document.getElementById("aiChatMessages");
       if (msgContainer.children.length === 0) {
-        const locName = document.getElementById("locationInput").value || "tu ciudad";
         appendBotMessage(
           `¡Hola! 👋 Bienvenido a **Aurea Rent**.\n\n` +
           `Todos nuestros apartamentos tienen **disponibilidad inmediata** e **incluyen todos los biles en la renta** (agua, luz, gas y calefacción). Los de **1 habitación incluyen 1 estacionamiento privado** y los de **2 habitaciones incluyen 2 estacionamientos privados**.\n\n` +
@@ -2075,9 +2105,9 @@
       return apts.map(apt => `
         <div class="chat-property-card">
           <div class="chat-photo-strip" onclick="openAptModal(${apt.id})">
-            <img src="${apt.photos[0].url}" alt="Sala" title="Sala" onerror="this.src=FALLBACK_INTERIOR" />
-            <img src="${apt.photos[1].url}" alt="Cocina" title="Cocina" onerror="this.src=FALLBACK_INTERIOR" />
-            <img src="${apt.photos[3].url}" alt="Baño" title="Baño" onerror="this.src=FALLBACK_INTERIOR" />
+            <img src="${apt.photos[0].url}" alt="Interior 1" onerror="this.src=FALLBACK_INTERIOR" />
+            <img src="${apt.photos[1].url}" alt="Interior 2" onerror="this.src=FALLBACK_INTERIOR" />
+            <img src="${apt.photos[2].url}" alt="Interior 3" onerror="this.src=FALLBACK_INTERIOR" />
           </div>
           <div class="chat-prop-body">
             <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -2088,7 +2118,7 @@
             <div style="color:#334155; font-weight:700; margin-top:3px;">📐 ${apt.distribution}</div>
             <div style="color:#047857; font-weight:800; margin-top:3px;">✔️ Agua, Luz, Gas y Calefacción incluidos</div>
             <div class="chat-prop-btns">
-              <button class="chat-btn-outline" onclick="openAptModal(${apt.id})">🔍 Ver 5 Fotos</button>
+              <button class="chat-btn-outline" onclick="openAptModal(${apt.id})">🔍 Ver 6 Fotos</button>
               <a class="chat-btn-wa" href="${createWhatsAppLink(apt, 'CITA')}" target="_blank">
                 ${showWhatsAppProminent ? "📅 Agendar en WhatsApp" : "💬 Elegir Unidad"}
               </a>
@@ -2208,7 +2238,7 @@
 
       const locText = matchedCity || (matchedState ? CITIES_BY_STATE[matchedState].name : (document.getElementById("locationInput").value || "tu zona"));
       appendBotMessage(
-        `Aquí tienes estas unidades con disponibilidad inmediata en **${locText}** con fotos reales de la **sala, cocina, habitación y baño**. Recuerda que **todos los biles están incluidos** y cuentan con su estacionamiento privado correspondiente:`,
+        `Aquí tienes estas unidades con disponibilidad inmediata en **${locText}** con fotos por dentro de **sala, cocina, habitación y baño**. Recuerda que **todos los biles están incluidos** y cuentan con su estacionamiento privado:`,
         richCardsHtml + nextButtonsHtml
       );
     }
