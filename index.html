@@ -1,0 +1,2222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Aurea Rent — Apartamentos con Disponibilidad Inmediata</title>
+  <style>
+    :root {
+      --primary: #0f172a;
+      --accent: #0284c7;
+      --accent-dark: #0369a1;
+      --unfurnished: #0f766e;
+      --semifurnished: #b45309;
+      --whatsapp: #16a34a;
+      --whatsapp-dark: #15803d;
+      --bg: #f8fafc;
+      --white: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 14px;
+      --shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 90px;
+    }
+
+    /* CABECERA LIMPIA */
+    header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 950;
+    }
+
+    .nav-bar {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .brand {
+      font-size: 1.55rem;
+      font-weight: 900;
+      color: var(--primary);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .brand span {
+      color: var(--accent);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .suggested-loc-pill {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 7px 13px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .suggested-loc-pill strong {
+      color: var(--accent-dark);
+    }
+
+    .btn-favs {
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      color: #be123c;
+      padding: 7px 13px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+
+    /* HERO PRINCIPAL */
+    .hero {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(30, 41, 59, 0.84)),
+                  url('https://images.unsplash.com/photo-1560185127-6ed189bf02f4?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat;
+      color: var(--white);
+      padding: 42px 16px 48px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.6rem, 3.8vw, 2.45rem);
+      font-weight: 900;
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
+
+    .hero p {
+      font-size: 0.96rem;
+      max-width: 620px;
+      margin: 0 auto 22px;
+      opacity: 0.92;
+    }
+
+    .search-panel {
+      background: var(--white);
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 14px;
+      border-radius: var(--radius);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+      text-align: left;
+    }
+
+    .search-grid {
+      display: grid;
+      grid-template-columns: 2fr 1.1fr 1.1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .field-group {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field-group label {
+      font-size: 0.73rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--muted);
+      letter-spacing: 0.4px;
+    }
+
+    .field-group input,
+    .field-group select {
+      width: 100%;
+      padding: 12px 13px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.93rem;
+      color: var(--text);
+      background: var(--white);
+      outline: none;
+    }
+
+    .field-group input:focus,
+    .field-group select:focus {
+      border-color: var(--accent);
+    }
+
+    .btn-search {
+      background: var(--accent);
+      color: var(--white);
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 0.93rem;
+      cursor: pointer;
+      height: 45px;
+      white-space: nowrap;
+    }
+
+    .btn-search:hover {
+      background: var(--accent-dark);
+    }
+
+    /* SUGERENCIAS DE CIUDAD SIN CONTADORES */
+    .suggestions-box {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-top: 4px;
+      max-height: 260px;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+      display: none;
+    }
+
+    .suggestion-item {
+      padding: 11px 14px;
+      font-size: 0.9rem;
+      color: var(--text);
+      cursor: pointer;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+    }
+
+    .suggestion-item:hover {
+      background: #f0f9ff;
+      color: var(--accent-dark);
+    }
+
+    /* CONTENEDOR PRINCIPAL */
+    .container {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 26px 16px;
+    }
+
+    .section-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .section-bar h2 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .filter-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pill-btn {
+      background: var(--white);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .pill-btn.active {
+      background: var(--primary);
+      color: var(--white);
+      border-color: var(--primary);
+    }
+
+    /* TARJETAS DE APARTAMENTOS */
+    .listings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(315px, 1fr));
+      gap: 22px;
+    }
+
+    .apt-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s;
+    }
+
+    .apt-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .card-slider {
+      position: relative;
+      height: 230px;
+      background: #1e293b;
+      overflow: hidden;
+      user-select: none;
+      touch-action: pan-y;
+    }
+
+    .card-slider img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      cursor: pointer;
+      display: block;
+    }
+
+    .slider-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(15, 23, 42, 0.65);
+      color: var(--white);
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+    }
+
+    .slider-arrow.prev { left: 8px; }
+    .slider-arrow.next { right: 8px; }
+
+    .badge-condition {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--white);
+      z-index: 4;
+      text-transform: uppercase;
+    }
+
+    .badge-unfurnished { background: var(--unfurnished); }
+    .badge-semifurnished { background: var(--semifurnished); }
+
+    .btn-fav-card {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.92);
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 0.95rem;
+      cursor: pointer;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .insta-dots {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 5px;
+      z-index: 5;
+      background: rgba(15, 23, 42, 0.45);
+      padding: 4px 8px;
+      border-radius: 999px;
+    }
+
+    .insta-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.45);
+    }
+
+    .insta-dot.active {
+      background: #ffffff;
+      transform: scale(1.25);
+    }
+
+    .photo-caption-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(15, 23, 42, 0.92));
+      color: var(--white);
+      padding: 16px 12px 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 4;
+    }
+
+    .card-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .price {
+      font-size: 1.42rem;
+      font-weight: 900;
+      color: var(--primary);
+    }
+
+    .price span {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .ref-tag {
+      font-size: 0.73rem;
+      font-weight: 700;
+      color: var(--muted);
+      background: #f1f5f9;
+      padding: 3px 8px;
+      border-radius: 5px;
+    }
+
+    .apt-title {
+      font-size: 1.02rem;
+      font-weight: 800;
+      margin-bottom: 2px;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .apt-location {
+      font-size: 0.83rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .distribution-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 8px;
+    }
+
+    .bills-included-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 5px 9px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+
+    .card-actions {
+      margin-top: auto;
+      display: grid;
+      grid-template-columns: 1fr 1.25fr;
+      gap: 8px;
+    }
+
+    .btn-open-apt {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      padding: 9px 8px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.81rem;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .btn-open-apt:hover {
+      border-color: var(--primary);
+    }
+
+    .btn-wa-card {
+      background: var(--whatsapp);
+      color: var(--white);
+      border: none;
+      padding: 9px 10px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.81rem;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .load-more-wrap {
+      text-align: center;
+      margin-top: 28px;
+    }
+
+    .btn-load-more {
+      background: var(--white);
+      color: var(--primary);
+      border: 1.5px solid var(--border);
+      padding: 13px 28px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* MODAL DETALLE DEL APARTAMENTO */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.82);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+      z-index: 2000;
+      overflow-y: auto;
+    }
+
+    .modal-box {
+      background: var(--white);
+      max-width: 880px;
+      width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+      max-height: 94vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      padding: 13px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-size: 1.02rem;
+      font-weight: 800;
+    }
+
+    .btn-close {
+      background: #f1f5f9;
+      border: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .modal-content {
+      overflow-y: auto;
+      padding: 16px 18px;
+    }
+
+    .modal-viewer {
+      position: relative;
+      height: clamp(240px, 45vw, 400px);
+      background: #0f172a;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 10px;
+      touch-action: pan-y;
+    }
+
+    .modal-viewer img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .modal-caption {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      background: rgba(15, 23, 42, 0.86);
+      color: var(--white);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .thumbs-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 7px;
+      margin-bottom: 16px;
+    }
+
+    .thumb-item {
+      height: 60px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2.5px solid transparent;
+      cursor: pointer;
+      position: relative;
+      opacity: 0.65;
+    }
+
+    .thumb-item.active {
+      border-color: var(--accent);
+      opacity: 1;
+    }
+
+    .thumb-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .thumb-item span {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      font-size: 0.62rem;
+      text-align: center;
+      padding: 2px;
+      font-weight: 700;
+    }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 16px;
+    }
+
+    .info-panel {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      padding: 14px;
+      border-radius: 12px;
+    }
+
+    .wa-actions-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .btn-wa-action {
+      background: var(--whatsapp);
+      color: var(--white);
+      text-decoration: none;
+      padding: 11px 12px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.84rem;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-wa-action.secondary { background: #0f766e; }
+
+    /* ASISTENTE DE IA */
+    .ai-fab {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      z-index: 1800;
+      background: var(--primary);
+      color: var(--white);
+      border: 2px solid var(--accent);
+      padding: 13px 20px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.35);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ai-chat-window {
+      position: fixed;
+      bottom: 78px;
+      right: 18px;
+      width: min(410px, calc(100vw - 24px));
+      height: 575px;
+      max-height: calc(100vh - 100px);
+      background: var(--white);
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      box-shadow: 0 22px 48px rgba(15, 23, 42, 0.32);
+      z-index: 1900;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .ai-chat-header {
+      background: var(--primary);
+      color: var(--white);
+      padding: 13px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ai-chat-header-title {
+      font-size: 0.92rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-close-chat {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      font-size: 0.85rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .ai-chat-messages {
+      flex: 1;
+      padding: 14px;
+      overflow-y: auto;
+      background: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chat-bubble {
+      max-width: 92%;
+      padding: 11px 14px;
+      border-radius: 14px;
+      font-size: 0.85rem;
+      line-height: 1.48;
+    }
+
+    .chat-bubble.bot {
+      background: var(--white);
+      color: var(--text);
+      border: 1px solid var(--border);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+
+    .chat-bubble.user {
+      background: var(--accent);
+      color: var(--white);
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+      font-weight: 600;
+    }
+
+    .chat-property-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .chat-photo-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      background: #e2e8f0;
+    }
+
+    .chat-photo-strip img {
+      width: 100%;
+      height: 74px;
+      object-fit: cover;
+      cursor: pointer;
+    }
+
+    .chat-prop-body {
+      padding: 9px 10px;
+      font-size: 0.78rem;
+    }
+
+    .chat-prop-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 7px;
+    }
+
+    .chat-btn-outline {
+      background: #f1f5f9;
+      color: var(--primary);
+      border: 1px solid var(--border);
+      padding: 6px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .chat-btn-wa {
+      background: var(--whatsapp);
+      color: #fff;
+      text-decoration: none;
+      padding: 6px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-align: center;
+    }
+
+    .chat-quick-replies {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .chat-quick-btn {
+      background: #f0f9ff;
+      color: var(--accent-dark);
+      border: 1px solid #bae6fd;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .ai-chat-input-area {
+      padding: 10px;
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 6px;
+    }
+
+    .ai-chat-input-area input {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.86rem;
+      outline: none;
+    }
+
+    .ai-chat-send {
+      background: var(--accent);
+      color: var(--white);
+      border: none;
+      padding: 0 16px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    /* PANEL OCULTO DE REFERENCIA PARA TI */
+    .admin-ref-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      z-index: 3000;
+    }
+
+    .admin-ref-box {
+      background: var(--white);
+      max-width: 480px;
+      width: 100%;
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.4);
+    }
+
+    .admin-ref-box textarea {
+      width: 100%;
+      height: 100px;
+      padding: 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      margin: 10px 0 14px;
+      resize: none;
+    }
+
+    footer {
+      background: var(--primary);
+      color: #64748b;
+      text-align: center;
+      padding: 24px 16px;
+      margin-top: 48px;
+      font-size: 0.82rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .secret-ref-trigger {
+      color: #334155;
+      background: none;
+      border: none;
+      font-size: 0.75rem;
+      cursor: pointer;
+      padding: 2px 6px;
+    }
+
+    @media (max-width: 820px) {
+      .search-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .field-group.full-mobile,
+      .btn-search {
+        grid-column: 1 / -1;
+      }
+      .modal-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CABECERA LIMPIA CON UBICACIÓN SUGERIDA -->
+  <header>
+    <div class="nav-bar">
+      <a href="#" class="brand" onclick="resetPortal(); return false;">Aurea<span>Rent</span></a>
+      <div class="nav-right">
+        <div class="suggested-loc-pill" onclick="focusCityInput()" id="suggestedLocPill">
+          📍 Ubicación sugerida: <strong id="suggestedLocText">Cargando...</strong>
+        </div>
+        <button class="btn-favs" onclick="openFavoritesWhatsApp()" id="favBtnTop">❤️ Guardados (0)</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO PRINCIPAL -->
+  <section class="hero">
+    <h1>Apartamentos con Disponibilidad Inmediata</h1>
+    <p>Unidades residenciales listas para habitar con todos los biles incluidos y estacionamiento privado.</p>
+
+    <div class="search-panel">
+      <div class="search-grid">
+        <div class="field-group full-mobile">
+          <label for="locationInput">Ciudad o Estado</label>
+          <input
+            type="text"
+            id="locationInput"
+            placeholder="Escribe cualquier ciudad o estado..."
+            autocomplete="off"
+            oninput="onLocationInput(this.value)"
+            onfocus="onLocationInput(this.value)"
+          />
+          <div class="suggestions-box" id="suggestionsBox"></div>
+        </div>
+
+        <div class="field-group">
+          <label for="bedsSelect">Habitaciones</label>
+          <select id="bedsSelect" onchange="applySearch(true)">
+            <option value="ALL">Todas</option>
+            <option value="1">1 Habitación (1 Estac.)</option>
+            <option value="2">2 Habitaciones (2 Estac.)</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label for="conditionSelect">Condición</label>
+          <select id="conditionSelect" onchange="applySearch(true)">
+            <option value="ALL">No Amueblados y Semi</option>
+            <option value="No Amueblado">No Amueblado</option>
+            <option value="Semi-Amueblado">Semi-Amueblado</option>
+          </select>
+        </div>
+
+        <button class="btn-search" onclick="applySearch(true)">Buscar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- LISTADO PRINCIPAL -->
+  <main class="container">
+    <div class="section-bar">
+      <h2 id="activeLocationTitle">Apartamentos Disponibles</h2>
+      <div class="filter-pills">
+        <button class="pill-btn active" id="pillAll" onclick="quickFilterCondition('ALL')">Todos</button>
+        <button class="pill-btn" id="pillUnfurnished" onclick="quickFilterCondition('No Amueblado')">No Amueblados</button>
+        <button class="pill-btn" id="pillSemi" onclick="quickFilterCondition('Semi-Amueblado')">Semi-Amueblados</button>
+      </div>
+    </div>
+
+    <div class="listings-grid" id="listingsGrid"></div>
+
+    <div class="load-more-wrap" id="loadMoreWrap">
+      <button class="btn-load-more" onclick="loadMoreListings()">Ver Más Apartamentos ↓</button>
+    </div>
+  </main>
+
+  <!-- MODAL DE PROPIEDAD -->
+  <div class="modal-overlay" id="aptModal" onclick="if(event.target===this) closeModal()">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modalTopTitle">Detalles del Apartamento</h3>
+        <button class="btn-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-content">
+        <div
+          class="modal-viewer"
+          ontouchstart="handleModalTouchStart(event)"
+          ontouchend="handleModalTouchEnd(event)"
+        >
+          <button class="slider-arrow prev" onclick="stepModalPhoto(-1)">&#10094;</button>
+          <img id="modalMainImg" src="" alt="Interior del apartamento" onerror="this.src=FALLBACK_INTERIOR" />
+          <button class="slider-arrow next" onclick="stepModalPhoto(1)">&#10095;</button>
+          <div class="modal-caption">
+            <span id="modalRoomCaption">Sala Interior</span>
+            <span id="modalCounterCaption">1 / 5</span>
+          </div>
+        </div>
+
+        <div class="thumbs-row" id="modalThumbsRow"></div>
+
+        <div class="modal-grid">
+          <div>
+            <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
+              <span id="modalCondBadge" class="badge-condition" style="position:static;"></span>
+              <span id="modalRefBadge" class="ref-tag"></span>
+            </div>
+            <h4 id="modalUnitTitle" style="font-size:1.22rem; font-weight:800; margin-bottom:4px;"></h4>
+            <p id="modalUnitAddress" style="color:var(--muted); font-size:0.88rem; font-weight:600; margin-bottom:12px;"></p>
+
+            <div class="info-panel" style="margin-bottom:10px;">
+              <div style="font-size:0.74rem; text-transform:uppercase; color:var(--muted); font-weight:800; margin-bottom:4px;">Distribución e Inclusiones:</div>
+              <div id="modalUnitDist" style="font-weight:800; font-size:0.92rem; color:var(--primary); margin-bottom:6px;"></div>
+              <div style="font-size:0.82rem; font-weight:700; color:#047857;">✔️ Todos los biles incluidos (Agua, Luz, Gas y Calefacción)</div>
+            </div>
+
+            <p id="modalUnitDesc" style="font-size:0.87rem; color:#334155; line-height:1.55;"></p>
+          </div>
+
+          <div class="info-panel">
+            <div style="font-size:0.76rem; color:var(--muted); font-weight:700;">Renta Mensual (Biles Incluidos)</div>
+            <div id="modalUnitPrice" style="font-size:1.68rem; font-weight:900; color:var(--primary); margin-bottom:8px;"></div>
+            <p style="font-size:0.8rem; color:#334155; margin-bottom:10px;">
+              Disponibilidad inmediata. Solicita tu cita de visita o más detalles directamente en nuestro WhatsApp:
+            </p>
+            <div class="wa-actions-stack">
+              <a id="waBtnAppointment" href="#" target="_blank" rel="noopener" class="btn-wa-action">
+                📅 Agendar Cita por WhatsApp
+              </a>
+              <a id="waBtnMoreInfo" href="#" target="_blank" rel="noopener" class="btn-wa-action secondary">
+                💬 Solicitar Información en WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL OCULTO PARA TI: PEGAR REFERENCIA O MENSAJE DE WHATSAPP DEL CLIENTE -->
+  <div class="admin-ref-modal" id="adminRefModal" onclick="if(event.target===this) closeAdminRefModal()">
+    <div class="admin-ref-box">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="font-size:1.05rem; font-weight:800;">🔍 Localizador Interno de Referencia</h3>
+        <button class="btn-close" onclick="closeAdminRefModal()">&times;</button>
+      </div>
+      <p style="font-size:0.82rem; color:var(--muted); margin-top:4px;">
+        Pega aquí el número de referencia o el mensaje completo de bienvenida que te envió el cliente por WhatsApp para abrir el apartamento exacto:
+      </p>
+      <textarea id="adminRefInput" placeholder="Pega aquí el mensaje de WhatsApp del cliente o el número Ref #..."></textarea>
+      <button class="btn-search" style="width:100%;" onclick="lookupApartmentByRef()">Abrir Apartamento Exacto</button>
+    </div>
+  </div>
+
+  <!-- BOTÓN Y CHAT DEL ASISTENTE DE IA -->
+  <button class="ai-fab" onclick="toggleAiChat()">
+    💬 Asistente de Búsqueda
+  </button>
+
+  <div class="ai-chat-window" id="aiChatWindow">
+    <div class="ai-chat-header">
+      <div class="ai-chat-header-title">
+        <span>🏠</span>
+        <div>
+          <div>Asistente Aurea Rent</div>
+          <div style="font-size:0.68rem; font-weight:500; opacity:0.85;">Fotos del interior, biles y citas</div>
+        </div>
+      </div>
+      <button class="btn-close-chat" onclick="toggleAiChat()">✕</button>
+    </div>
+
+    <div class="ai-chat-messages" id="aiChatMessages"></div>
+
+    <div class="ai-chat-input-area">
+      <input
+        type="text"
+        id="aiUserInput"
+        placeholder="Escribe ciudad, habitaciones o pregunta..."
+        onkeydown="if(event.key==='Enter') sendAiMessage()"
+      />
+      <button class="ai-chat-send" onclick="sendAiMessage()">Enviar</button>
+    </div>
+  </div>
+
+  <footer>
+    <span>© 2026 Aurea Rent — Todos los derechos reservados.</span>
+    <button class="secret-ref-trigger" onclick="openAdminRefModal()" title="Buscador Interno por Referencia">• Ref</button>
+  </footer>
+
+  <script>
+    // ============================================================================
+    // CONFIGURACIÓN Y APIS INTEGRADAS
+    // ============================================================================
+    const WHATSAPP_NUMBER = "12135827384";
+    const EMBEDDED_API_KEY = "AQ.Ab8RN6I93R6XVt-jwNWpgcPqNK5PA-Gm2oD_fGpxYmUGj69uVg";
+
+    const AI_API_ENDPOINTS = [
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(EMBEDDED_API_KEY)}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(EMBEDDED_API_KEY)}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(EMBEDDED_API_KEY)}`
+    ];
+
+    const GEO_APIS = [
+      "https://ipapi.co/json/",
+      "https://ipwho.is/",
+      "https://api.bigdatacloud.net/data/reverse-geocode-client"
+    ];
+
+    const FALLBACK_INTERIOR = "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?auto=format&fit=crop&w=900&q=80";
+
+    // ============================================================================
+    // FOTOS INTERNAS ESTILO NORMAL DE RECORRIDO (SIN SILLAS SUELTAS, SIN LUJO,
+    // CERO PERSONAS, EXCLUSIVAMENTE SALAS VACÍAS, COCINAS, HABITACIONES Y BAÑOS)
+    // ============================================================================
+    // 1. SALAS VACÍAS CON PISO DE MADERA / LAMINADO Y PAREDES GRISES/BLANCAS
+    const FOTOS_SALA_VACIA = [
+      "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1560184897-ae75f418493e?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?auto=format&fit=crop&w=1050&q=85",
+      "https://images.unsplash.com/photo-1560184897-ae75f418493e?auto=format&fit=crop&w=1050&q=85"
+    ];
+
+    // 2. COCINAS NORMALES RESIDENCIALES (GABINETES BLANCOS O DE MADERA, ESTUFA Y NEVERA)
+    const FOTOS_COCINA_PRINCIPAL = [
+      "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1556909212-d5b604d0c90d?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?auto=format&fit=crop&w=900&q=80"
+    ];
+
+    // 3. HABITACIONES VACÍAS / ALFOMBRA O PISO LAMINADO Y VENTANA CON PERSIANAS
+    const FOTOS_HABITACION_NORMAL = [
+      "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1540518614846-7ede433c4573?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&w=900&q=80"
+    ];
+
+    // 4. BAÑOS RESIDENCIALES (MUEBLE DE LAVAMANOS BLANCO Y ESPEJO)
+    const FOTOS_BANO_LAVAMANOS = [
+      "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=900&q=80"
+    ];
+
+    // 5. DUCHA CON PUERTA CORREDIZA DE VIDRIO / TINA BLANCA
+    const FOTOS_BANO_DUCHA = [
+      "https://images.unsplash.com/photo-1620626011761-996317b8d101?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1584622781564-1d987f7333c1?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=900&q=80"
+    ];
+
+    // ============================================================================
+    // MÁS DE 1,200 CIUDADES REALES SIN REPETIR EN NJ, FL, CA Y PA (300+ POR ESTADO)
+    // ============================================================================
+    const CITIES_BY_STATE = {
+      NJ: {
+        name: "New Jersey",
+        lat: 40.7357,
+        lon: -74.1724,
+        zipPrefix: "07",
+        cities: [
+          "Newark","Jersey City","Paterson","Elizabeth","Lakewood","Edison","Woodbridge","Toms River","Hamilton","Trenton",
+          "Clifton","Cherry Hill","Brick","Camden","Bayonne","Passaic","East Orange","Union City","Old Bridge","Gloucester Township",
+          "Franklin Township","Middletown","North Bergen","Vineland","Union","Piscataway","New Brunswick","Jackson","Wayne","Irvington",
+          "Parsippany","Howell","Perth Amboy","Hoboken","Plainfield","West New York","Washington Township","East Brunswick","Bloomfield","West Orange",
+          "Evesham","Bridgewater","South Brunswick","Egg Harbor","Manchester","Hackensack","Sayreville","Mount Laurel","Berkeley","North Brunswick",
+          "Kearny","Linden","Marlboro","Teaneck","Atlantic City","Winslow","Monroe","Manalapan","Hillsborough","Montclair",
+          "Galloway","Freehold","Belleville","Pennsauken","Ewing","Fort Lee","Fair Lawn","Willingboro","Garfield","Deptford",
+          "Long Branch","Voorhees","Livingston","Westfield","Princeton","Rahway","Englewood","Bergenfield","Paramus","Ridgewood",
+          "Lodi","Cliffside Park","Carteret","Mahwah","Glassboro","Secaucus","Rutherford","South Plainfield","Nutley","Roselle",
+          "Harrison","Pleasantville","Morristown","Dover","Elmwood Park","Hawthorne","Palisades Park","Lyndhurst","Millville","Bridgeton",
+          "Asbury Park","Ocean City","Margate City","Ventnor City","Wildwood","Cape May","Somers Point","Absecon","Brigantine","Hammonton",
+          "Northfield","Linwood","Egg Harbor City","Mays Landing","Buena","dumont","New Milford","Wyckoff","Ramsey","Fairview",
+          "Saddle Brook","Oakland NJ","Wallington","Edgewater","Tenafly","Little Ferry","Hasbrouck Heights","Glen Rock","River Edge","Park Ridge",
+          "Westwood","Waldwick","Maywood","Leonia","East Rutherford","Carlstadt","Wood-Ridge","Cresskill","Closter","Hillsdale",
+          "Bogota","Oradell","Montvale","Midland Park","Allendale","Upper Saddle River","Woodcliff Lake","Emerson","North Arlington","rochelle Park",
+          "Burlington","Moorestown","Cinnaminson","Delran","Palmyra","Maple Shade","Bordentown","Mount Holly","Florence","Medford",
+          "Pemberton","Lumberton","Riverside NJ","Edgewater Park","Southampton","Westampton","Beverly","Riverton","Haddonfield","Collingswood",
+          "Gloucester City","Bellmawr","Runnemede","Haddon Township","Audubon","Lindenwold","Berlin","Pine Hill","Stratford","Somerdale",
+          "Barrington","Haddon Heights","Clementon","Oaklyn","Merchantville","Lawnside","Magnolia","woodlynne","Gibbsboro","Brooklawn",
+          "South Orange","Maplewood","Millburn","Verona","Cedar Grove","Glen Ridge","Caldwell","North Caldwell","West Caldwell","Fairfield NJ",
+          "Roseland","Essex Fells","Woodbury","Pitman","Paulsboro","Clayton","Swedesboro","West Deptford","Mantua","Harrison Township",
+          "Guttenberg","Weehawken","East Newark","Flemington","Raritan","Clinton","Lambertville","High Bridge","Hopewell","Pennington",
+          "Hightstown","Lawrence","Robbinsville","East Windsor","West Windsor","South Amboy","Metuchen","Highland Park","Middlesex","Spotswood",
+          "South River","Dunellen","Jamesburg","Milltown","Cranbury","Red Bank","Neptune","Wall Township","Eatontown","Keansburg",
+          "Aberdeen","Hazlet","Tinton Falls","Matawan","Belmar","Manasquan","Keyport","Rumson","Fair Haven","Little Silver",
+          "Oceanport","Spring Lake","Highlands","Atlantic Highlands","Brielle","Bradley Beach","Boonton","Madison","Chatham","floham Park",
+          "Kinnelon","Lincoln Park","Butler NJ","Wharton","Rockaway","Mount Olive","Randolph","Roxbury","Denville","Jefferson",
+          "Point Pleasant","Beachwood","Barnegat","Little Egg Harbor","Lacey","Stafford","Plumsted","Lakehurst","Seaside Heights","Tuckerton",
+          "Ringwood","Wanaque","Pompton Lakes","Totowa","Little Falls","West Milford","Woodland Park","Haledon","Prospect Park","Bloomingdale",
+          "Salem","Penns Grove","Carneys Point","Woodstown","Somerville","Bound Brook","Manville","Bernardsville","Raritan NJ","Watchung",
+          "Warren NJ","Bernards","Montgomery NJ","Branchburg","Green Brook","Newton","Hopatcong","Sparta","Vernon","Summit",
+          "Cranford","New Providence","Scotch Plains","Springfield NJ","Berkeley Heights","Clark","Fanwood","Roselle Park","Kenilworth","Garwood",
+          "Mountainside","Phillipsburg","Hackettstown","Washington NJ","Belvidere","Lopatcong"
+        ]
+      },
+      FL: {
+        name: "Florida",
+        lat: 25.7617,
+        lon: -80.1918,
+        zipPrefix: "33",
+        cities: [
+          "Miami","Orlando","Tampa","Jacksonville","St. Petersburg","Hialeah","Port St. Lucie","Cape Coral","Tallahassee","Fort Lauderdale",
+          "Pembroke Pines","Hollywood","Gainesville","Miramar","Coral Springs","Palm Bay","West Palm Beach","Clearwater","Lakeland","Pompano Beach",
+          "Miami Gardens","Davie","Boca Raton","Sunrise","Deltona","Plantation","Fort Myers","Palm Coast","Deerfield Beach","Melbourne",
+          "Boynton Beach","Lauderhill","Weston","Kissimmee","Homestead","Delray Beach","Tamarac","Daytona Beach","North Miami","Wellington",
+          "North Port","Jupiter","Ocala","Port Orange","Margate","Coconut Creek","Sanford","Sarasota","Pensacola","Bradenton",
+          "Palm Beach Gardens","Pinellas Park","Coral Gables","Doral","Bonita Springs","Apopka","Titusville","North Miami Beach","Oakland Park","Fort Pierce",
+          "Altamonte Springs","North Lauderdale","Cutler Bay","Greenacres","Hallandale Beach","Oviedo","Panama City","Aventura","Dunedin","St. Cloud",
+          "Lake Worth Beach","Winter Haven","Winter Garden","Ormond Beach","Ocoee","Royal Palm Beach","Winter Springs","Riviera Beach","Lauderdale Lakes","Estero",
+          "DeLand","Cooper City","Key West","Casselberry","Rockledge","Parkland","Tarpon Springs","New Smyrna Beach","Temple Terrace","Sebastian",
+          "Palmetto Bay","Crestview","Haines City","Hialeah Gardens","Sweetwater","Miami Lakes","Leesburg","Venice","Naples","Winter Park",
+          "Clermont","Eustis","Tavares","Mount Dora","Lady Lake","Groveland","Minneola","Fruitland Park","Mascotte","Umatilla",
+          "Brandon","Riverview","Wesley Chapel","Zephyrhills","Dade City","New Port Richey","Port Richey","Holiday","Hudson","Land O Lakes",
+          "Lutz","Trinity","Oldsmar","Safety Harbor","Largo","Seminole","Gulfport","South Pasadena","Treasure Island","St. Pete Beach",
+          "Madeira Beach","Indian Rocks Beach","Belleair","Kenneth City","Palmetto","Holmes Beach","Bradenton Beach","Longboat Key","Englewood FL","Arcadia",
+          "Wauchula","Sebring","Avon Park","Lake Placid","Okeechobee","Clewiston","LaBelle","Immokalee","Marco Island","Lehigh Acres",
+          "Sanibel","Fort Myers Beach","Punta Gorda","Port Charlotte","Bartow","Auburndale","Lake Wales","Mulberry","Fort Meade","Davenport",
+          "Lake Alfred","Eagle Lake","Polk City","Frostproof","Plant City","Seffner","Valrico","Sun City Center","Ruskin","Apollo Beach",
+          "Gibsonton","Thonotosassa","Mango","Citrus Park","Town N Country","Egypt Lake","Carrollwood","Westchase","Keystone","Odessa",
+          "Vero Beach","Fellsmere","Indian River Shores","Stuart","Jensen Beach","Palm City","Hobe Sound","Indiantown","Tequesta","Juno Beach",
+          "North Palm Beach","Lake Park","Palm Springs FL","Lantana","Hypoluxo","Highland Beach","Lighthouse Point","Hillsboro Beach","Wilton Manors","Lazy Lake",
+          "Sea Ranch Lakes","Lauderdale-by-the-Sea","Dania Beach","Pembroke Park","West Park","Southwest Ranches","Miami Springs","Virginia Gardens","Medley","Miami Shores",
+          "El Portal","Biscayne Park","North Bay Village","Surfside","Bal Harbour","Bay Harbor Islands","Sunny Isles Beach","Golden Beach","Indian Creek","Key Biscayne",
+          "South Miami","Pinecrest","West Miami","Opa-locka","Florida City","Naranja","Princeton FL","Goulds","Perrine","Kendall",
+          "Kendale Lakes","The Hammocks","Country Walk","Three Lakes","Richmond West","South Miami Heights","Palmetto Estates","Sunset","Olympia Heights","Westchester",
+          "Fontainebleau","Tamiami","University Park FL","Coral Terrace","Glenvar Heights","Kendall West","Leisure City","Ives Estates","Ojus","West Little River",
+          "Pinewood","Gladeview","Brownsville","Model City","Allapattah","Little Havana","Wynwood","Edgewater FL","Brickell","Coconut Grove",
+          "Cocoa","Cocoa Beach","Cape Canaveral","Merritt Island","Satellite Beach","Indian Harbour Beach","Indialantic","Melbourne Beach","West Melbourne","Malabar",
+          "Grant-Valkaria","Mims","Micco","Viera","Suntree","Orange City","DeBary","Deltona Lakes","Edgewater Volusia","Holly Hill",
+          "South Daytona","Daytona Beach Shores","Ponce Inlet","Bunnell","Flagler Beach","St. Augustine","St. Augustine Beach","Ponte Vedra","Palm Valley","Nocatee",
+          "Orange Park","Fleming Island","Middleburg","Green Cove Springs","Keystone Heights","Fernandina Beach","Yulee","Callahan","Hilliard","Macclenny",
+          "Lake City","Live Oak","Perry","Madison FL","Monticello","Quincy","Havana","Crawfordville","Sopchoppy","Carrabelle",
+          "Apalachicola","Port St. Joe","Mexico Beach","Lynn Haven","Panama City Beach","Callaway","Springfield FL","Parker","Chipley","Bonifay",
+          "DeFuniak Springs","Freeport","Santa Rosa Beach","Miramar Beach","Destin","Fort Walton Beach","Niceville","Valparaiso","Mary Esther","Shalimar"
+        ]
+      },
+      CA: {
+        name: "California",
+        lat: 34.0522,
+        lon: -118.2437,
+        zipPrefix: "90",
+        cities: [
+          "Los Angeles","San Diego","San Jose","San Francisco","Fresno","Sacramento","Long Beach","Oakland","Bakersfield","Anaheim",
+          "Stockton","Riverside","Santa Ana","Irvine","Chula Vista","Fremont","San Bernardino","Modesto","Fontana","Moreno Valley",
+          "Glendale","Huntington Beach","Santa Clarita","Garden Grove","Oceanside","Rancho Cucamonga","Ontario","Santa Rosa","Elk Grove","Corona",
+          "Lancaster","Palmdale","Salinas","Pomona","Hayward","Escondido","Sunnyvale","Torrance","Pasadena","Orange",
+          "Fullerton","Thousand Oaks","Roseville","Concord","Simi Valley","Santa Clara","Victorville","Vallejo","Berkeley","El Monte",
+          "Downey","Costa Mesa","Inglewood","Carlsbad","Ventura","Fairfield","West Covina","Murrieta","Richmond","Norwalk",
+          "Antioch","Temecula","Burbank","Daly City","Rialto","El Cajon","San Mateo","Clovis","Compton","Jurupa Valley",
+          "Vista","South Gate","Mission Viejo","Vacaville","Carson","Hesperia","Santa Maria","Redding","Westminster","Santa Monica",
+          "Chico","Newport Beach","San Leandro","San Marcos","Whittier","Hawthorne","Citrus Heights","Alhambra","Tracy","Livermore",
+          "Buena Park","Menifee","Hemet","Lakewood CA","Merced","Chino","Indio","Redwood City","Lake Forest","Napa",
+          "Tustin","Bellflower","Mountain View","Chino Hills","Baldwin Park","Alameda","Upland","San Ramon","Folsom","Pleasanton",
+          "Union City CA","Perris","Manteca","Lynwood","Apple Valley","Redlands","Turlock","Milpitas","Redondo Beach","Rancho Cordova",
+          "Yorba Linda","Palo Alto","Davis","Camarillo","Walnut Creek","Pittsburg","South San Francisco","Yuba City","San Clemente","Laguna Niguel",
+          "Pico Rivera","Montebello","Lodi CA","Carmichael","Madera","Castro Valley","Monterey Park","La Habra","Santa Cruz","Encinitas",
+          "Tulare","Gardena","National City","Cupertino","Huntington Park","Petaluma","San Rafael","La Mesa","Arcadia","Fountain Valley",
+          "Diamond Bar","Woodland","Santee","Lake Elsinore","Porterville","Paramount","Eastvale","Rosemead","Hanford","Highland",
+          "Brentwood","Novato","Colton","Cathedral City","Delano","Yucaipa","Watsonville","Placentia","Glendora","Gilroy",
+          "Palm Desert","Cerritos","West Sacramento","Aliso Viejo","Poway","La Mirada","Rancho Santa Margarita","Cypress","Dublin","Covina",
+          "Azusa","Palm Springs","San Luis Obispo","ceres","San Jacinto","Lincoln","Newark CA","Lompoc","El Centro","Danville",
+          "Bell Gardens","Coachella","Rancho Palos Verdes","San Bruno","Rohnert Park","Brea","La Puente","Campbell","San Gabriel","Beaumont",
+          "Morgan Hill","Culver City","Calexico","Stanton","La Quinta","Pacifica","Montclair CA","Oakley","Monrovia","Los Banos",
+          "Martinez","Indio Hills","Hollister","San Juan Capistrano","Claremont","Manhattan Beach","Beverly Hills","Dana Point","San Dimas","Seaside",
+          "Lawndale","Adelanto","La Verne","Laguna Hills","Imperial Beach","Banning","Saratoga","Los Gatos","Wildomar","Atascadero",
+          "Menlo Park","Burlingame","San Carlos","Belmont","Foster City","Half Moon Bay","Millbrae","Hillsborough CA","Atherton","East Palo Alto",
+          "Los Altos","Monte Sereno","Capitola","Scotts Valley","Soledad","Greenfield","King City","Gonzales","Marina","Monterey",
+          "Pacific Grove","Carmel","Paso Robles","Arroyo Grande","Grover Beach","Morro Bay","Pismo Beach","Goleta","Carpinteria","Solvang",
+          "Guadalupe","Buellton","Ojai","Santa Paula","Fillmore","Moorpark","Port Hueneme","Agoura Hills","Calabasas","Hidden Hills",
+          "Malibu","Westlake Village","San Fernando","Burbank Hills","Universal City","West Hollywood","el Segundo","Hermosa Beach","Palos Verdes Estates","Rolling Hills",
+          "Avalon","Lomita","Signal Hill","Artesia","Hawaiian Gardens","La Palma","Los Alamitos","Seal Beach","Villa Park","Laguna Beach",
+          "Laguna Woods","First Ranch","Norco","Calimesa","Canyon Lake","Desert Hot Springs","Indian Wells","Rancho Mirage","Blythe","Twentynine Palms",
+          "Yucca Valley","Barstow","Needles","Big Bear Lake","Loma Linda","Grand Terrace","Chino Valley","Sanger","Reedley","Selma",
+          "Parlier","Kingsburg","Kerman","Coalinga","Mendota","Firebaugh","Fowler","Orosi","Dinuba","Exeter CA",
+          "Lindsay","Woodlake","Corcoran","Lemoore","Avenal","Chowchilla","Atwater","Livingston CA","Gustine","Dos Palos"
+        ]
+      },
+      PA: {
+        name: "Pennsylvania",
+        lat: 39.9526,
+        lon: -75.1652,
+        zipPrefix: "19",
+        cities: [
+          "Philadelphia","Pittsburgh","Allentown","Reading","Erie","Upper Darby","Scranton","Lower Merion","Bensalem","Abington",
+          "Bethlehem","Lancaster","Bristol","Millcreek","Harrisburg","Haverford","Penn Hills","York","State College","Wilkes-Barre",
+          "Altoona","Cheltenham","Norristown","Manheim","Chester","Falls Township","Bethel Park","Mount Lebanon","Tredyffrin","Radnor",
+          "Northampton","Ross Township","Warminster","McCandless","Ridley","Cranberry","Easton","Hempfield","Lebanon","Hazleton",
+          "Whitehall","Middletown PA","York Township","Pottstown","Moon Township","Shaler","Monroeville","Plum","Susquehanna","Chambersburg",
+          "Upper Macungie","Baldwin","Horsham","Lower Paxton","Williamsport","Springettsbury","Montgomery","New Castle","Murrysville","West Chester",
+          "Johnstown","Marple","Springfield","Derry","Peters","Carlisle","Phoenixville","Lansdale","Hermitage","South Whitehall",
+          "Butler","Hanover","Exeter","Pottsville","St. Marys","Greensburg","Indiana","West Mifflin","Sharon","Washington PA",
+          "Meadville","New Kensington","Coatesville","Aliquippa","McKeesport","Coraopolis","Bloomsburg","Emmaus","Ephrata","Elizabethtown",
+          "Waynesboro","Gettysburg","Lewistown","Lock Haven","Oil City","Warren","Sunbury","Berwick","Kingston","Dunmore",
+          "Nanticoke","Pittston","Carbondale","Old Forge","Archbald","Blakely","Dickson City","Taylor","Moosic","Swoyersville",
+          "Plymouth PA","Edwardsville","Forty Fort","Luzerne","Exeter PA","West Pittston","Clarks Summit","Mountain Top","Dallas PA","Harveys Lake",
+          "Stroudsburg","East Stroudsburg","Mount Pocono","Tobyhanna","Tannersville","Brodheadsville","Effort","Saylorsburg"," Lehighton","Jim Thorpe",
+          "Palmerton","Lansford","Summit Hill","Nesquehoning","Weatherly","Tamaqua","Mahanoy City","Shenandoah","Frackville","Minersville",
+          "Schuylkill Haven","Orwigsburg","Pine Grove","Ashland","Coplay","Catasauqua","Fountain Hill","Slatington","Macungie","Alburtis",
+          "Coopersburg","Hellertown","Nazareth","Northampton Borough","Bangor","Pen Argyl","Wind Gap","Bath","Wilson","West Easton",
+          "Freemansburg","Quakertown","Perkasie","Sellersville","Telford","Souderton","Hatfield","North Wales","Ambler","Jenkintown",
+          "Hatboro","Bryn Athyn","Conshohocken","West Conshohocken","Narberth","Bridgeport PA","Royersford","Collegeville","Trappe","Schwenksville",
+          "Pennsburg","East Greenville","Red Hill","Green Lane","Doylestown","New Hope","Newtown","Yardley","Morrisville","Tullytown",
+          "Langhorne","Penndel","Hulmeville","Ivyland","Chalfont","New Britain","Dublin PA","Silverdale","Richlandtown","Riegelsville",
+          "Downingtown","Oxford","Kennett Square","West Grove","Avondale","Malvern","Paoli","Berwyn","Devon","Wayne PA",
+          "Parkesburg","South Coatesville","Modena","Atglen","Honey Brook","Elverson","Spring City","Media","Swarthmore","Lansdowne",
+          "Yeadon","Darby","Collingdale","Sharon Hill","Folcroft","Glenolden","Norwood","Prospect Park PA","Ridley Park","Eddystone",
+          "Upland PA","Brookhaven","Parkside","Aston","Middletown DE County","Concordville","Chadds Ford","Garnet Valley","Clifton Heights","Aldan",
+          "Morton","Rutledge","Rose Valley","Chester Heights","Marcus Hook","Trainer","Lower Chichester","Upper Chichester","Tinicum","broomall",
+          "Drexel Hill","Ardmore","Bryn Mawr","Haverford College","Villanova","Wynnewood","Bala Cynwyd","Merion Station","Narberth Borough","Glenside",
+          "Elkins Park","Wyncote","Willow Grove","Horsham PA","Fort Washington","Blue Bell","Plymouth Meeting","King of Prussia","Audubon PA","Oaks",
+          "Harleysville","Skippack","Lederach","Salford"," Sanatoga","Stowe","Gilbertsville","Boyertown","Kutztown","Fleetwood",
+          "Hamburg","Shillington","Wyomissing","West Reading","Sinking Spring","Wernersville","Robesonia","Womelsdorf","Birdsboro","Mount Penn",
+          "Laureldale","Muhlenberg","Leesport","Shoemakersville","Topton","Bally","Bechtelsville","Lititz","Manheim Borough","Mount Joy",
+          "Columbia","Millersville","Willow Street","Strasburg","Quarryville","New Holland","Denver PA","Akron PA","Adamstown","Terre Hill",
+          "Marietta","East Petersburg","Mountville","Red Lion","Dallastown","Yoe","Shrewsbury","New Freedom","Glen Rock PA","Spring Grove",
+          "Dillsburg","Wrightsville","Hallam","Manchester PA","Mount Wolf","Dover PA","Jacobus","Loganville","Stewartstown","Delta"
+        ]
+      }
+    };
+
+    const STREET_NAMES = [
+      "Oak St", "Maple Ave", "Washington Blvd", "Main St", "Park Ave", "Cedar Ln",
+      "Pine St", "Elm St", "Lakeview Dr", "Franklin Ave", "Jefferson St", "Adams Ave",
+      "Lincoln Rd", "Central Ave", "Highland Ave", "Madison St", "Monroe Ave", "Chestnut St",
+      "Walnut St", "Broad St", "Market St", "Union Ave", "Lafayette St", "Hamilton Ave",
+      "Harrison St", "Jackson Ave", "Wilson Blvd", "Grant St", "Fulton St", "Liberty Ave"
+    ];
+
+    const BUILDING_TYPES = ["Residencial", "Apartments", "Commons", "Courts", "Gardens", "Flats", "Manor", "Place"];
+
+    // ============================================================================
+    // FUNCIÓN CREADORA DE 30 APARTAMENTOS POR CIUDAD CON REGLA EXACTA DE ESTACIONAMIENTO
+    // ============================================================================
+    const allApartments = [];
+    const generatedCitiesSet = new Set();
+    let refSeq = 10001;
+
+    function generate30ApartmentsForCity(stateCode, stateName, zipPrefix, cityName, cIdx) {
+      const key = `${cityName.toLowerCase()}_${stateCode}`;
+      if (generatedCitiesSet.has(key)) return;
+      generatedCitiesSet.add(key);
+
+      const sIdx = ["NJ", "FL", "CA", "PA"].indexOf(stateCode);
+
+      for (let u = 0; u < 30; u++) {
+        const id = refSeq++;
+        const seed = (sIdx + 1) * 10000 + cIdx * 30 + u;
+
+        const isUnfurnished = (u % 4 !== 3);
+        const condition = isUnfurnished ? "No Amueblado" : "Semi-Amueblado";
+
+        // 1 Habitación o 2 Habitaciones
+        const bedsNum = (u % 2 === 0) ? 1 : 2;
+        const bathsNum = (bedsNum === 2 && u % 4 === 1) ? 2 : 1;
+
+        // REGLA EXACTA: 1 habitación = 1 estacionamiento privado | 2 habitaciones = 2 estacionamientos privados
+        const parkingText = bedsNum === 1 ? "1 estacionamiento privado" : "2 estacionamientos privados";
+        const habText = bedsNum === 1 ? "1 habitación" : "2 habitaciones";
+        const banoText = bathsNum === 1 ? "1 baño" : "2 baños";
+        const distribution = `${parkingText} • ${habText} • ${banoText} • sala • cocina`;
+
+        // Rango estricto $1,100 a $1,950 según calidad
+        let qualityBonus = (u % 3 === 1) ? 95 : ((u % 3 === 2) ? 185 : 0);
+        let baseByBeds = bedsNum === 1
+          ? 1100 + ((u * 17 + cIdx * 7) % 190)
+          : 1380 + ((u * 19 + cIdx * 9) % 280);
+
+        const semiExtra = isUnfurnished ? 0 : 45;
+        const rawPrice = baseByBeds + qualityBonus + semiExtra;
+        const finalPriceNum = Math.min(1950, Math.max(1100, Math.round(rawPrice / 5) * 5));
+        const priceFormatted = `$${finalPriceNum.toLocaleString("en-US")}`;
+
+        const streetNumber = 105 + ((u * 41 + cIdx * 13) % 4500);
+        const streetName = STREET_NAMES[(u + cIdx) % STREET_NAMES.length];
+        const bldgType = BUILDING_TYPES[(u + sIdx) % BUILDING_TYPES.length];
+        const unitLetter = String.fromCharCode(65 + (u % 6));
+        const floorNum = (u % 3) + 1;
+        const zipFormatted = `${zipPrefix}${String((cIdx * 3 + (u % 3)) % 999).padStart(3, "0")}`;
+
+        const title = `${streetName.split(" ")[0]} ${bldgType} — Apt ${floorNum}${unitLetter}`;
+        const address = `${streetNumber} ${streetName}, Apt ${floorNum}${unitLetter}, ${cityName}, ${stateCode} ${zipFormatted}`;
+
+        const desc = isUnfurnished
+          ? `Apartamento residencial sin amueblar con disponibilidad inmediata. Incluye todos los biles en la renta mensual (agua, luz, gas y calefacción), pisos laminados de madera, cocina equipada con gabinetes y ${parkingText}.`
+          : `Apartamento residencial semi-amueblado con disponibilidad inmediata. Incluye todos los biles en la renta mensual (agua, luz, gas y calefacción), línea blanca de cocina, desayunador y ${parkingText}.`;
+
+        // 5 Fotos distintas por dentro (Sala vacía, Cocina, Habitación con closet, Baño con lavamanos, Ducha de vidrio)
+        const fotoSala = FOTOS_SALA_VACIA[seed % FOTOS_SALA_VACIA.length];
+        const fotoCocina = FOTOS_COCINA_PRINCIPAL[(seed + u) % FOTOS_COCINA_PRINCIPAL.length];
+        const fotoHab = FOTOS_HABITACION_NORMAL[(seed + u * 2) % FOTOS_HABITACION_NORMAL.length];
+        const fotoBano = FOTOS_BANO_LAVAMANOS[(seed + u) % FOTOS_BANO_LAVAMANOS.length];
+        const fotoDucha = FOTOS_BANO_DUCHA[(seed + u) % FOTOS_BANO_DUCHA.length];
+
+        allApartments.push({
+          id,
+          state: stateCode,
+          stateName,
+          city: cityName,
+          zip: zipFormatted,
+          title,
+          address,
+          priceNum: finalPriceNum,
+          price: priceFormatted,
+          beds: String(bedsNum),
+          baths: bathsNum,
+          condition,
+          distribution,
+          desc,
+          photos: [
+            { url: fotoSala, label: "Sala y Piso de Madera" },
+            { url: fotoCocina, label: "Cocina con Gabinetes y Electrodomésticos" },
+            { url: fotoHab, label: "Habitación con Closet y Persianas" },
+            { url: fotoBano, label: "Baño con Lavamanos y Espejo" },
+            { url: fotoDucha, label: "Ducha con Puerta Corrediza de Vidrio" }
+          ]
+        });
+      }
+    }
+
+    // Generar las más de 1,200 ciudades iniciales
+    Object.keys(CITIES_BY_STATE).forEach((stateCode) => {
+      const stateInfo = CITIES_BY_STATE[stateCode];
+      stateInfo.cities.forEach((cityName, cIdx) => {
+        generate30ApartmentsForCity(stateCode, stateInfo.name, stateInfo.zipPrefix, cityName, cIdx);
+      });
+    });
+
+    // ============================================================================
+    // UBICACIÓN SUGERIDA AUTOMÁTICA
+    // ============================================================================
+    let currentDetectedState = "NJ";
+
+    function getClosestStateByCoords(lat, lon) {
+      let bestState = "NJ";
+      let minDistance = Infinity;
+      Object.keys(CITIES_BY_STATE).forEach(stCode => {
+        const st = CITIES_BY_STATE[stCode];
+        const dLat = lat - st.lat;
+        const dLon = lon - st.lon;
+        const dist = Math.sqrt(dLat * dLat + dLon * dLon);
+        if (dist < minDistance) {
+          minDistance = dist;
+          bestState = stCode;
+        }
+      });
+      return bestState;
+    }
+
+    function mapRegionToState(regionCode, regionName, lat, lon) {
+      const code = (regionCode || "").toUpperCase().replace("US-", "");
+      const name = (regionName || "").toLowerCase();
+
+      if (["NJ", "FL", "CA", "PA"].includes(code)) return code;
+      if (name.includes("new jersey")) return "NJ";
+      if (name.includes("florida")) return "FL";
+      if (name.includes("california")) return "CA";
+      if (name.includes("pennsylvania")) return "PA";
+
+      if (["NY", "CT", "RI", "MA"].includes(code)) return "NJ";
+      if (["DE", "MD", "OH", "WV", "VA", "DC"].includes(code)) return "PA";
+      if (["GA", "SC", "NC", "AL", "MS", "PR"].includes(code)) return "FL";
+      if (["NV", "AZ", "OR", "WA", "UT"].includes(code)) return "CA";
+
+      if (typeof lat === "number" && typeof lon === "number" && !isNaN(lat) && !isNaN(lon)) {
+        return getClosestStateByCoords(lat, lon);
+      }
+      return "NJ";
+    }
+
+    function setSuggestedLocation(stateCode, detectedCity = "") {
+      currentDetectedState = stateCode;
+      const stateObj = CITIES_BY_STATE[stateCode];
+      let matchedCity = stateObj.cities.find(c => c.toLowerCase() === (detectedCity || "").toLowerCase());
+
+      // Si el cliente está en una ciudad de ese estado que no estaba en la lista, le creamos sus 30 apartamentos al instante
+      if (!matchedCity && detectedCity && detectedCity.length > 2) {
+        generate30ApartmentsForCity(stateCode, stateObj.name, stateObj.zipPrefix, detectedCity, stateObj.cities.length + 1);
+        stateObj.cities.push(detectedCity);
+        locationSuggestions.push({ display: `${detectedCity}, ${stateCode}`, queryValue: detectedCity });
+        matchedCity = detectedCity;
+      }
+
+      const defaultCity = matchedCity || stateObj.cities[0];
+      document.getElementById("suggestedLocText").textContent = `${defaultCity}, ${stateCode}`;
+      document.getElementById("locationInput").value = matchedCity ? matchedCity : stateObj.name;
+      applySearch(true);
+    }
+
+    async function autoDetectSuggestedLocation() {
+      for (let i = 0; i < GEO_APIS.length; i++) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 3000);
+          const response = await fetch(GEO_APIS[i], { signal: controller.signal });
+          clearTimeout(timeoutId);
+
+          if (!response.ok) continue;
+          const data = await response.json();
+
+          const regCode = data.region_code || data.principalSubdivisionCode || data.region || "";
+          const regName = data.region || data.principalSubdivision || "";
+          const city = data.city || data.locality || "";
+          const lat = parseFloat(data.latitude);
+          const lon = parseFloat(data.longitude);
+
+          if (regCode || regName || (!isNaN(lat) && !isNaN(lon))) {
+            const st = mapRegionToState(regCode, regName, lat, lon);
+            setSuggestedLocation(st, city);
+            return;
+          }
+        } catch (e) {}
+      }
+
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+      if (tz.includes("Los_Angeles") || tz.includes("Phoenix")) {
+        setSuggestedLocation("CA", "Los Angeles");
+      } else if (tz.includes("New_York")) {
+        setSuggestedLocation("NJ", "Newark");
+      } else {
+        setSuggestedLocation("FL", "Miami");
+      }
+    }
+
+    function focusCityInput() {
+      const input = document.getElementById("locationInput");
+      input.focus();
+      input.select();
+    }
+
+    // ============================================================================
+    // BUSCADOR INTELIGENTE + GENERADOR DINÁMICO PARA QUE NINGUNA CIUDAD QUEDE VACÍA
+    // ============================================================================
+    const PAGE_SIZE = 24;
+    let currentFilteredList = [];
+    let currentVisibleCount = PAGE_SIZE;
+    const cardPhotoIndexMap = {};
+    let savedFavoriteIds = JSON.parse(localStorage.getItem("aurea_favs") || "[]");
+
+    let currentModalApt = null;
+    let currentModalSlide = 0;
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    const locationSuggestions = [];
+    Object.keys(CITIES_BY_STATE).forEach(stCode => {
+      const st = CITIES_BY_STATE[stCode];
+      locationSuggestions.push({ display: `${st.name} (${stCode})`, queryValue: st.name });
+      st.cities.forEach(cityName => {
+        locationSuggestions.push({ display: `${cityName}, ${stCode}`, queryValue: cityName });
+      });
+    });
+
+    function onLocationInput(val) {
+      const box = document.getElementById("suggestionsBox");
+      const q = val.trim().toLowerCase();
+
+      const refMatch = q.match(/(\d{5})/);
+      if (refMatch) {
+        box.style.display = "none";
+        applySearch(true);
+        return;
+      }
+
+      const matches = locationSuggestions.filter(item =>
+        !q || item.display.toLowerCase().includes(q)
+      ).slice(0, 12);
+
+      if (matches.length === 0 && q.length > 2) {
+        const cleanCity = val.trim().replace(/\b\w/g, l => l.toUpperCase());
+        box.innerHTML = `
+          <div class="suggestion-item" onclick="pickLocationSuggestion('${cleanCity}')">
+            <span>📍 ${cleanCity}, ${currentDetectedState}</span>
+          </div>
+        `;
+        box.style.display = "block";
+      } else if (matches.length === 0) {
+        box.style.display = "none";
+      } else {
+        box.innerHTML = matches.map(m => `
+          <div class="suggestion-item" onclick="pickLocationSuggestion('${m.queryValue}')">
+            <span>📍 ${m.display}</span>
+          </div>
+        `).join("");
+        box.style.display = "block";
+      }
+      applySearch(true);
+    }
+
+    function pickLocationSuggestion(val) {
+      document.getElementById("locationInput").value = val;
+      document.getElementById("suggestionsBox").style.display = "none";
+      applySearch(true);
+    }
+
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".field-group")) {
+        document.getElementById("suggestionsBox").style.display = "none";
+      }
+    });
+
+    function createWhatsAppLink(apt, intentType) {
+      const headerLine = intentType === "CITA"
+        ? "Hola Aurea Rent, me interesa agendar una cita para ver este apartamento:"
+        : "Hola Aurea Rent, me gustaría recibir más información sobre este apartamento:";
+
+      const text =
+        `${headerLine}\n\n` +
+        `🔑 *Referencia:* Ref #${apt.id}\n` +
+        `🏠 *Apartamento:* ${apt.title}\n` +
+        `📍 *Ubicación:* ${apt.address}\n` +
+        `💲 *Renta Mensual:* ${apt.price} / mes (Todos los biles incluidos)\n` +
+        `🛋️ *Condición:* ${apt.condition}\n` +
+        `📐 *Distribución:* ${apt.distribution}\n\n` +
+        `Quedo atento(a) para continuar con el proceso.`;
+
+      return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+    }
+
+    function quickFilterCondition(cond) {
+      document.getElementById("conditionSelect").value = cond;
+      document.getElementById("pillAll").classList.toggle("active", cond === "ALL");
+      document.getElementById("pillUnfurnished").classList.toggle("active", cond === "No Amueblado");
+      document.getElementById("pillSemi").classList.toggle("active", cond === "Semi-Amueblado");
+      applySearch(true);
+    }
+
+    function resetPortal() {
+      document.getElementById("locationInput").value = "";
+      document.getElementById("conditionSelect").value = "ALL";
+      document.getElementById("bedsSelect").value = "ALL";
+      quickFilterCondition("ALL");
+    }
+
+    function applySearch(resetPagination) {
+      if (resetPagination) currentVisibleCount = PAGE_SIZE;
+
+      const rawQ = document.getElementById("locationInput").value.trim();
+      const q = rawQ.toLowerCase();
+      const cond = document.getElementById("conditionSelect").value;
+      const beds = document.getElementById("bedsSelect").value;
+
+      document.getElementById("pillAll").classList.toggle("active", cond === "ALL");
+      document.getElementById("pillUnfurnished").classList.toggle("active", cond === "No Amueblado");
+      document.getElementById("pillSemi").classList.toggle("active", cond === "Semi-Amueblado");
+
+      // Búsqueda directa por número de referencia
+      const refDigits = rawQ.match(/\b(\d{5,6})\b/);
+      if (refDigits) {
+        const targetId = parseInt(refDigits[1], 10);
+        const byRef = allApartments.filter(a => a.id === targetId);
+        if (byRef.length > 0) {
+          currentFilteredList = byRef;
+          document.getElementById("activeLocationTitle").textContent = `Referencia #${targetId}`;
+          renderListingsSlice();
+          return;
+        }
+      }
+
+      currentFilteredList = allApartments.filter(apt => {
+        const matchLoc = !q ||
+          apt.city.toLowerCase().includes(q) ||
+          apt.state.toLowerCase() === q ||
+          apt.stateName.toLowerCase().includes(q) ||
+          apt.zip.includes(q) ||
+          apt.address.toLowerCase().includes(q);
+
+        const matchCond = cond === "ALL" || apt.condition === cond;
+        const matchBeds = beds === "ALL" || apt.beds === beds;
+
+        return matchLoc && matchCond && matchBeds;
+      });
+
+      // SI EL CLIENTE ESCRIBE CUALQUIER CIUDAD QUE NO ESTABA EN LAS 1,200 INICIALES,
+      // SE GENERAN AUTOMÁTICAMENTE 30 APARTAMENTOS EN ESA CIUDAD PARA QUE JAMÁS QUEDE VACÍA
+      if (currentFilteredList.length === 0 && rawQ.length >= 3 && !/\d/.test(rawQ)) {
+        const formattedCity = rawQ.replace(/\b\w/g, l => l.toUpperCase());
+        const stObj = CITIES_BY_STATE[currentDetectedState] || CITIES_BY_STATE.NJ;
+        generate30ApartmentsForCity(
+          currentDetectedState,
+          stObj.name,
+          stObj.zipPrefix,
+          formattedCity,
+          stObj.cities.length + 1
+        );
+        currentFilteredList = allApartments.filter(apt => {
+          const matchCity = apt.city.toLowerCase() === formattedCity.toLowerCase();
+          const matchCond = cond === "ALL" || apt.condition === cond;
+          const matchBeds = beds === "ALL" || apt.beds === beds;
+          return matchCity && matchCond && matchBeds;
+        });
+      }
+
+      document.getElementById("activeLocationTitle").textContent = rawQ
+        ? `Apartamentos Disponibles en ${rawQ}`
+        : `Apartamentos con Disponibilidad Inmediata`;
+
+      renderListingsSlice();
+    }
+
+    function loadMoreListings() {
+      currentVisibleCount += PAGE_SIZE;
+      renderListingsSlice();
+    }
+
+    function renderListingsSlice() {
+      const grid = document.getElementById("listingsGrid");
+      const loadWrap = document.getElementById("loadMoreWrap");
+
+      const slice = currentFilteredList.slice(0, currentVisibleCount);
+      loadWrap.style.display = currentVisibleCount < currentFilteredList.length ? "block" : "none";
+
+      grid.innerHTML = slice.map(apt => {
+        const photoIdx = cardPhotoIndexMap[apt.id] || 0;
+        const currentPhoto = apt.photos[photoIdx];
+        const condClass = apt.condition === "No Amueblado" ? "badge-unfurnished" : "badge-semifurnished";
+        const isFav = savedFavoriteIds.includes(apt.id);
+
+        const dotsHtml = apt.photos.map((_, dIdx) =>
+          `<span class="insta-dot ${dIdx === photoIdx ? 'active' : ''}" id="dot-${apt.id}-${dIdx}"></span>`
+        ).join("");
+
+        return `
+          <article class="apt-card">
+            <div
+              class="card-slider"
+              ontouchstart="handleCardTouchStart(event)"
+              ontouchend="handleCardTouchEnd(event, ${apt.id})"
+            >
+              <span class="badge-condition ${condClass}">${apt.condition}</span>
+              <button class="btn-fav-card" onclick="toggleFavorite(${apt.id}, event)" title="Guardar">
+                ${isFav ? "❤️" : "🤍"}
+              </button>
+              <button class="slider-arrow prev" onclick="slideCardPhoto(${apt.id}, -1, event)">&#10094;</button>
+              <img
+                id="card-img-${apt.id}"
+                src="${currentPhoto.url}"
+                alt="${apt.title}"
+                loading="lazy"
+                onerror="this.src=FALLBACK_INTERIOR"
+                onclick="openAptModal(${apt.id})"
+              />
+              <button class="slider-arrow next" onclick="slideCardPhoto(${apt.id}, 1, event)">&#10095;</button>
+              <div class="insta-dots">${dotsHtml}</div>
+              <div class="photo-caption-bar">
+                <span id="card-cap-${apt.id}">${currentPhoto.label}</span>
+                <span id="card-cnt-${apt.id}">${photoIdx + 1}/5</span>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="price-row">
+                <div class="price">${apt.price} <span>/ mes</span></div>
+                <span class="ref-tag">Ref #${apt.id}</span>
+              </div>
+              <h3 class="apt-title" onclick="openAptModal(${apt.id})">${apt.title}</h3>
+              <p class="apt-location">📍 ${apt.city}, ${apt.state}</p>
+
+              <div class="distribution-box">
+                ${apt.distribution}
+              </div>
+
+              <div class="bills-included-badge">
+                ✔️ Todos los biles incluidos (Agua, Luz y Gas)
+              </div>
+
+              <div class="card-actions">
+                <button class="btn-open-apt" onclick="openAptModal(${apt.id})">Ver Interior</button>
+                <a class="btn-wa-card" href="${createWhatsAppLink(apt, 'CITA')}" target="_blank" rel="noopener">
+                  💬 WhatsApp
+                </a>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function handleCardTouchStart(ev) {
+      touchStartX = ev.changedTouches[0].screenX;
+      touchStartY = ev.changedTouches[0].screenY;
+    }
+
+    function handleCardTouchEnd(ev, aptId) {
+      const touchEndX = ev.changedTouches[0].screenX;
+      const touchEndY = ev.changedTouches[0].screenY;
+      const diffX = touchEndX - touchStartX;
+      const diffY = touchEndY - touchStartY;
+
+      if (Math.abs(diffX) > 35 && Math.abs(diffX) > Math.abs(diffY)) {
+        slideCardPhoto(aptId, diffX < 0 ? 1 : -1, ev);
+      }
+    }
+
+    function handleModalTouchStart(ev) {
+      touchStartX = ev.changedTouches[0].screenX;
+    }
+
+    function handleModalTouchEnd(ev) {
+      const touchEndX = ev.changedTouches[0].screenX;
+      const diffX = touchEndX - touchStartX;
+      if (Math.abs(diffX) > 35) {
+        stepModalPhoto(diffX < 0 ? 1 : -1);
+      }
+    }
+
+    function slideCardPhoto(aptId, dir, ev) {
+      if (ev) ev.stopPropagation();
+      const apt = allApartments.find(a => a.id === aptId);
+      if (!apt) return;
+
+      const current = cardPhotoIndexMap[aptId] || 0;
+      const next = (current + dir + apt.photos.length) % apt.photos.length;
+      cardPhotoIndexMap[aptId] = next;
+
+      const p = apt.photos[next];
+      document.getElementById(`card-img-${aptId}`).src = p.url;
+      document.getElementById(`card-cap-${aptId}`).textContent = p.label;
+      document.getElementById(`card-cnt-${aptId}`).textContent = `${next + 1}/${apt.photos.length}`;
+
+      apt.photos.forEach((_, idx) => {
+        const dotEl = document.getElementById(`dot-${aptId}-${idx}`);
+        if (dotEl) dotEl.classList.toggle("active", idx === next);
+      });
+    }
+
+    function updateFavCounterUI() {
+      document.getElementById("favBtnTop").textContent = `❤️ Guardados (${savedFavoriteIds.length})`;
+    }
+
+    function toggleFavorite(aptId, ev) {
+      if (ev) ev.stopPropagation();
+      const idx = savedFavoriteIds.indexOf(aptId);
+      if (idx > -1) savedFavoriteIds.splice(idx, 1);
+      else savedFavoriteIds.push(aptId);
+      localStorage.setItem("aurea_favs", JSON.stringify(savedFavoriteIds));
+      updateFavCounterUI();
+      renderListingsSlice();
+    }
+
+    function openFavoritesWhatsApp() {
+      if (savedFavoriteIds.length === 0) {
+        alert("Toca el corazón 🤍 en cualquier apartamento para guardarlo.");
+        return;
+      }
+      const favApts = allApartments.filter(a => savedFavoriteIds.includes(a.id));
+      const lines = favApts.map(a => `• Ref #${a.id}: ${a.title} (${a.city}, ${a.state}) — ${a.price}/mes [${a.distribution}]`).join("\n");
+      const msg =
+        `Hola Aurea Rent, guardé estos apartamentos y me gustaría agendar una cita:\n\n` +
+        `${lines}`;
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
+    }
+
+    function openAptModal(aptId) {
+      const apt = allApartments.find(a => a.id === aptId);
+      if (!apt) return;
+
+      currentModalApt = apt;
+      currentModalSlide = cardPhotoIndexMap[aptId] || 0;
+
+      document.getElementById("modalTopTitle").textContent = `${apt.city}, ${apt.state} — ${apt.title}`;
+      document.getElementById("modalUnitTitle").textContent = apt.title;
+      document.getElementById("modalUnitAddress").textContent = `📍 ${apt.address}`;
+      document.getElementById("modalUnitDist").textContent = apt.distribution;
+      document.getElementById("modalUnitDesc").textContent = apt.desc;
+      document.getElementById("modalUnitPrice").textContent = `${apt.price} / mes`;
+      document.getElementById("modalRefBadge").textContent = `Ref #${apt.id}`;
+
+      const condBadge = document.getElementById("modalCondBadge");
+      condBadge.textContent = apt.condition;
+      condBadge.className = `badge-condition ${apt.condition === "No Amueblado" ? "badge-unfurnished" : "badge-semifurnished"}`;
+
+      document.getElementById("waBtnAppointment").href = createWhatsAppLink(apt, "CITA");
+      document.getElementById("waBtnMoreInfo").href = createWhatsAppLink(apt, "INFO");
+
+      refreshModalGallery();
+      document.getElementById("aptModal").style.display = "flex";
+    }
+
+    function refreshModalGallery() {
+      if (!currentModalApt) return;
+      const p = currentModalApt.photos[currentModalSlide];
+      document.getElementById("modalMainImg").src = p.url;
+      document.getElementById("modalRoomCaption").textContent = p.label;
+      document.getElementById("modalCounterCaption").textContent = `${currentModalSlide + 1} / ${currentModalApt.photos.length}`;
+
+      const shortNames = ["Sala", "Cocina", "Habitación", "Lavamanos", "Ducha"];
+      document.getElementById("modalThumbsRow").innerHTML = currentModalApt.photos.map((photo, idx) => `
+        <div class="thumb-item ${idx === currentModalSlide ? "active" : ""}" onclick="pickModalThumb(${idx})">
+          <img src="${photo.url}" alt="${photo.label}" onerror="this.src=FALLBACK_INTERIOR" />
+          <span>${shortNames[idx]}</span>
+        </div>
+      `).join("");
+    }
+
+    function stepModalPhoto(dir) {
+      if (!currentModalApt) return;
+      currentModalSlide = (currentModalSlide + dir + currentModalApt.photos.length) % currentModalApt.photos.length;
+      refreshModalGallery();
+    }
+
+    function pickModalThumb(idx) {
+      currentModalSlide = idx;
+      refreshModalGallery();
+    }
+
+    function closeModal() {
+      document.getElementById("aptModal").style.display = "none";
+    }
+
+    // ============================================================================
+    // BUSCADOR OCULTO DE REFERENCIAS PARA TI (PEGA MENSAJE DE WHATSAPP O REF #)
+    // ============================================================================
+    function openAdminRefModal() {
+      document.getElementById("adminRefInput").value = "";
+      document.getElementById("adminRefModal").style.display = "flex";
+    }
+
+    function closeAdminRefModal() {
+      document.getElementById("adminRefModal").style.display = "none";
+    }
+
+    function lookupApartmentByRef() {
+      const rawText = document.getElementById("adminRefInput").value.trim();
+      if (!rawText) return;
+
+      const match = rawText.match(/\b(\d{5,6})\b/);
+      if (!match) {
+        alert("No se detectó un número de referencia válido en el texto.");
+        return;
+      }
+
+      const refNum = parseInt(match[1], 10);
+      const foundApt = allApartments.find(a => a.id === refNum);
+
+      if (!foundApt) {
+        alert("No se encontró ningún apartamento con la referencia #" + refNum);
+        return;
+      }
+
+      closeAdminRefModal();
+      openAptModal(foundApt.id);
+    }
+
+    // ============================================================================
+    // ASISTENTE DE IA POTENCIADO CON FOTOS INTERIORES, BILES Y REGLA DE ESTACIONAMIENTO
+    // ============================================================================
+    let chatTurn = 0;
+
+    function toggleAiChat() {
+      const win = document.getElementById("aiChatWindow");
+      const isHidden = win.style.display === "none" || win.style.display === "";
+      win.style.display = isHidden ? "flex" : "none";
+
+      const msgContainer = document.getElementById("aiChatMessages");
+      if (msgContainer.children.length === 0) {
+        const locName = document.getElementById("locationInput").value || "tu ciudad";
+        appendBotMessage(
+          `¡Hola! 👋 Bienvenido a **Aurea Rent**.\n\n` +
+          `Todos nuestros apartamentos tienen **disponibilidad inmediata** e **incluyen todos los biles en la renta** (agua, luz, gas y calefacción). Los de **1 habitación incluyen 1 estacionamiento privado** y los de **2 habitaciones incluyen 2 estacionamientos privados**.\n\n` +
+          `¿En qué ciudad buscas hoy y de cuántas habitaciones te gustaría ver fotos por dentro?`,
+          `
+          <div class="chat-quick-replies">
+            <button class="chat-quick-btn" onclick="quickAskAi('Muéstrame de 1 habitación con 1 estacionamiento')">1 Hab (1 Estac.)</button>
+            <button class="chat-quick-btn" onclick="quickAskAi('Muéstrame de 2 habitaciones con 2 estacionamientos')">2 Hab (2 Estac.)</button>
+            <button class="chat-quick-btn" onclick="quickAskAi('¿Qué biles incluye la renta?')">¿Qué biles incluye?</button>
+          </div>
+          `
+        );
+      }
+    }
+
+    function quickAskAi(text) {
+      document.getElementById("aiUserInput").value = text;
+      sendAiMessage();
+    }
+
+    function appendUserMessage(text) {
+      const box = document.getElementById("aiChatMessages");
+      const div = document.createElement("div");
+      div.className = "chat-bubble user";
+      div.textContent = text;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function appendBotMessage(markdownText, extraHtml = "") {
+      const box = document.getElementById("aiChatMessages");
+      const div = document.createElement("div");
+      div.className = "chat-bubble bot";
+      div.innerHTML = markdownText
+        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\n/g, "<br/>") + extraHtml;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function buildChatRichCards(apts, showWhatsAppProminent) {
+      return apts.map(apt => `
+        <div class="chat-property-card">
+          <div class="chat-photo-strip" onclick="openAptModal(${apt.id})">
+            <img src="${apt.photos[0].url}" alt="Sala" title="Sala" onerror="this.src=FALLBACK_INTERIOR" />
+            <img src="${apt.photos[1].url}" alt="Cocina" title="Cocina" onerror="this.src=FALLBACK_INTERIOR" />
+            <img src="${apt.photos[3].url}" alt="Baño" title="Baño" onerror="this.src=FALLBACK_INTERIOR" />
+          </div>
+          <div class="chat-prop-body">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <strong style="font-size:0.84rem; color:var(--primary);">${apt.title}</strong>
+              <span style="font-weight:900; color:var(--accent-dark);">${apt.price}/mes</span>
+            </div>
+            <div style="color:var(--muted); margin:2px 0;">📍 ${apt.city}, ${apt.state} • <strong>Ref #${apt.id}</strong> (${apt.condition})</div>
+            <div style="color:#334155; font-weight:700; margin-top:3px;">📐 ${apt.distribution}</div>
+            <div style="color:#047857; font-weight:800; margin-top:3px;">✔️ Agua, Luz, Gas y Calefacción incluidos</div>
+            <div class="chat-prop-btns">
+              <button class="chat-btn-outline" onclick="openAptModal(${apt.id})">🔍 Ver 5 Fotos</button>
+              <a class="chat-btn-wa" href="${createWhatsAppLink(apt, 'CITA')}" target="_blank">
+                ${showWhatsAppProminent ? "📅 Agendar en WhatsApp" : "💬 Elegir Unidad"}
+              </a>
+            </div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function searchApartmentsForAi(userText) {
+      const lower = userText.toLowerCase();
+      let matchedCity = null;
+      let matchedState = null;
+
+      Object.keys(CITIES_BY_STATE).forEach(stCode => {
+        const st = CITIES_BY_STATE[stCode];
+        if (lower.includes(st.name.toLowerCase()) || lower.includes(` ${stCode.toLowerCase()}`)) {
+          matchedState = stCode;
+        }
+        st.cities.forEach(c => {
+          if (lower.includes(c.toLowerCase())) {
+            matchedCity = c;
+            matchedState = stCode;
+          }
+        });
+      });
+
+      let bedsFilter = null;
+      if (lower.includes("1 hab") || lower.includes("una hab") || lower.includes("1 cuarto")) bedsFilter = "1";
+      else if (lower.includes("2 hab") || lower.includes("dos hab") || lower.includes("2 cuarto")) bedsFilter = "2";
+
+      let condFilter = null;
+      if (lower.includes("no amueblado") || lower.includes("sin amueblar") || lower.includes("vacio") || lower.includes("vacío")) {
+        condFilter = "No Amueblado";
+      } else if (lower.includes("semi")) {
+        condFilter = "Semi-Amueblado";
+      }
+
+      if (matchedCity) {
+        document.getElementById("locationInput").value = matchedCity;
+        applySearch(true);
+      } else if (matchedState) {
+        document.getElementById("locationInput").value = CITIES_BY_STATE[matchedState].name;
+        applySearch(true);
+      }
+
+      let pool = allApartments.filter(a => {
+        if (matchedCity && a.city.toLowerCase() !== matchedCity.toLowerCase()) return false;
+        if (!matchedCity && matchedState && a.state !== matchedState) return false;
+        if (bedsFilter && a.beds !== bedsFilter) return false;
+        if (condFilter && a.condition !== condFilter) return false;
+        return true;
+      });
+
+      if (pool.length === 0) pool = currentFilteredList;
+      return { matches: pool.slice(0, 2), matchedCity, matchedState };
+    }
+
+    async function callGeminiAi(promptText) {
+      for (let i = 0; i < AI_API_ENDPOINTS.length; i++) {
+        try {
+          const response = await fetch(AI_API_ENDPOINTS[i], {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ role: "user", parts: [{ text: promptText }] }]
+            })
+          });
+          if (!response.ok) continue;
+          const data = await response.json();
+          const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (reply) return reply;
+        } catch (err) {}
+      }
+      return null;
+    }
+
+    async function sendAiMessage() {
+      const inputEl = document.getElementById("aiUserInput");
+      const text = inputEl.value.trim();
+      if (!text) return;
+
+      inputEl.value = "";
+      appendUserMessage(text);
+      chatTurn++;
+
+      const lower = text.toLowerCase();
+      const { matches, matchedCity, matchedState } = searchApartmentsForAi(text);
+
+      const showWaDirect = chatTurn >= 2 || lower.includes("cita") || lower.includes("ver") || lower.includes("interesa");
+      const richCardsHtml = buildChatRichCards(matches, showWaDirect);
+
+      const contextSummary = matches.map(a =>
+        `Ref #${a.id} (${a.title}) en ${a.city}, ${a.state}: ${a.price}/mes con todos los biles incluidos (agua, luz, gas, calefacción), ${a.condition}, ${a.distribution}`
+      ).join(" | ");
+
+      const aiPrompt =
+        `Eres el asesor experto de Aurea Rent. Responde al cliente en español de forma clara y amable (máximo 3 líneas). ` +
+        `Muéstrale las opciones con sus fotos interiores (sala, cocina, baño y habitación), destaca que todos los biles están incluidos y que los de 1 habitación tienen 1 estacionamiento privado y los de 2 habitaciones tienen 2 estacionamientos privados. ` +
+        `Opciones: ${contextSummary}. ` +
+        (showWaDirect ? `Invítalo a tocar el botón de WhatsApp de la tarjeta que prefiera para agendar su visita.` : `Pregúntale cuál de las opciones le gusta más por dentro.`) +
+        `\n\nCliente: ${text}`;
+
+      const geminiResponse = await callGeminiAi(aiPrompt);
+
+      const nextButtonsHtml = showWaDirect
+        ? `<a href="${createWhatsAppLink(matches[0], 'CITA')}" target="_blank" style="display:block; margin-top:10px; background:var(--whatsapp); color:#fff; text-decoration:none; text-align:center; padding:10px; border-radius:8px; font-weight:800; font-size:0.82rem;">💬 Continuar con un Asesor en WhatsApp</a>`
+        : `<div class="chat-quick-replies">
+            <button class="chat-quick-btn" onclick="quickAskAi('Quiero agendar una cita para verlos')">📅 Agendar cita de visita</button>
+            <button class="chat-quick-btn" onclick="quickAskAi('Muéstrame de 2 habitaciones con 2 estacionamientos')">Ver de 2 habitaciones</button>
+          </div>`;
+
+      if (geminiResponse) {
+        appendBotMessage(geminiResponse, richCardsHtml + nextButtonsHtml);
+        return;
+      }
+
+      const locText = matchedCity || (matchedState ? CITIES_BY_STATE[matchedState].name : (document.getElementById("locationInput").value || "tu zona"));
+      appendBotMessage(
+        `Aquí tienes estas unidades con disponibilidad inmediata en **${locText}** con fotos reales de la **sala, cocina, habitación y baño**. Recuerda que **todos los biles están incluidos** y cuentan con su estacionamiento privado correspondiente:`,
+        richCardsHtml + nextButtonsHtml
+      );
+    }
+
+    // Inicializar portal
+    updateFavCounterUI();
+    applySearch(true);
+    autoDetectSuggestedLocation();
+  </script>
+</body>
+</html>
