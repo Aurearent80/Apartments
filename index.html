@@ -286,10 +286,10 @@
       transform: translateY(-3px);
     }
 
-    /* VISOR CON ESTÉTICA DE CÁMARA DE CELULAR */
+    /* VISOR CON ESTÉTICA REALISTA DE CÁMARA DE CELULAR / CRAIGSLIST */
     .card-slider {
       position: relative;
-      height: 255px;
+      height: 250px;
       background: #1e293b;
       overflow: hidden;
       user-select: none;
@@ -300,7 +300,7 @@
       content: "";
       position: absolute;
       inset: 0;
-      box-shadow: inset 0 0 28px rgba(0,0,0,0.22);
+      box-shadow: inset 0 0 24px rgba(0,0,0,0.24);
       pointer-events: none;
       z-index: 2;
     }
@@ -311,6 +311,7 @@
       object-fit: cover;
       cursor: pointer;
       display: block;
+      transform-origin: center center;
     }
 
     .slider-arrow {
@@ -606,6 +607,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transform-origin: center center;
     }
 
     .modal-caption {
@@ -621,6 +623,7 @@
       font-weight: 700;
       display: flex;
       justify-content: space-between;
+      z-index: 5;
     }
 
     .thumbs-row {
@@ -662,6 +665,7 @@
       text-align: center;
       padding: 2px;
       font-weight: 700;
+      z-index: 3;
     }
 
     .modal-grid {
@@ -817,9 +821,15 @@
       background: #e2e8f0;
     }
 
-    .chat-photo-strip img {
-      width: 100%;
+    .chat-photo-col {
+      overflow: hidden;
       height: 78px;
+      position: relative;
+    }
+
+    .chat-photo-col img {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
       cursor: pointer;
     }
@@ -1180,64 +1190,64 @@
       "https://api.bigdatacloud.net/data/reverse-geocode-client"
     ];
 
-    const FALLBACK_INTERIOR = "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?w=650&h=866&fit=crop&q=80";
+    const FALLBACK_INTERIOR = "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?w=600&h=450&fit=crop&q=78";
 
     // ============================================================================
-    // MOTOR DE FOTOS REALES ESTILO CÁMARA DE CELULAR (VERTICAL 650x866)
-    // CERO PERSONAS, CERO COMIDA/LIMONES, CERO SILLAS SUELTAS, CERO EXTERIORES.
-    // CADA UNIDAD GENERA SU PROPIO ENCUADRE FOCAL, ORIENTACIÓN E ILUMINACIÓN INTERNA
+    // MOTOR DE FOTOS INTERNAS ESTILO CRAIGSLIST (TOMADAS CON CÁMARA DE CELULAR)
+    // 100% VERIFICADAS SIN PERSONAS, SIN COMIDA, SIN SILLAS SUELTAS, SIN EXTERIORES.
+    // CADA APARTAMENTO APLICA SU PROPIO ÁNGULO DE LENTE, ENCUADRE E ILUMINACIÓN
     // ============================================================================
-    const CLEAN_SALA_BASES = [
-      "https://images.unsplash.com/photo-1560185127-6ed189bf02f4",
-      "https://images.unsplash.com/photo-1560184897-ae75f418493e"
+    const CRAIGSLIST_EMPTY_SALAS = [
+      "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?w=600&h=450&fit=crop&q=76",
+      "https://images.unsplash.com/photo-1560184897-ae75f418493e?w=600&h=450&fit=crop&q=76"
     ];
 
-    const CLEAN_HABITACION_BASES = [
-      "https://images.unsplash.com/photo-1560185008-b033106af5c3",
-      "https://images.unsplash.com/photo-1560185007-cde436f6a4d0"
+    const CRAIGSLIST_EMPTY_BEDROOMS = [
+      "https://images.unsplash.com/photo-1560185008-b033106af5c3?w=600&h=450&fit=crop&q=76",
+      "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=600&h=450&fit=crop&q=76"
     ];
 
-    const CLEAN_COCINA_BASES = [
-      "https://images.unsplash.com/photo-1484154218962-a197022b5858",
-      "https://images.unsplash.com/photo-1565538810643-b5bdb714032a"
+    const CRAIGSLIST_KITCHENS = [
+      "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=600&h=450&fit=crop&q=76",
+      "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=600&h=450&fit=crop&q=76"
     ];
 
-    const CLEAN_BANO_LAVAMANOS_BASES = [
-      "https://images.unsplash.com/photo-1584622650111-993a426fbf0a",
-      "https://images.unsplash.com/photo-1584622781564-1d987f7333c1"
+    const CRAIGSLIST_BATH_VANITY = [
+      "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=600&h=450&fit=crop&q=76",
+      "https://images.unsplash.com/photo-1620626011761-996317b8d101?w=600&h=450&fit=crop&q=76"
     ];
 
-    const CLEAN_BANO_DUCHA_BASES = [
-      "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14",
-      "https://images.unsplash.com/photo-1620626011761-996317b8d101",
-      "https://images.unsplash.com/photo-1507652313519-d4e9174996dd"
+    const CRAIGSLIST_BATH_SHOWER = [
+      "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&h=450&fit=crop&q=76",
+      "https://images.unsplash.com/photo-1584622781564-1d987f7333c1?w=600&h=450&fit=crop&q=76",
+      "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?w=600&h=450&fit=crop&q=76"
     ];
 
-    // Genera un encuadre vertical de cámara de celular único para cada apartamento
-    function buildCellPhonePhoto(baseUrl, uniqueSeed, focalMode) {
-      const flipParam = (uniqueSeed % 2 === 1) ? "&flip=h" : "";
-      const fpxValues = [0.22, 0.35, 0.48, 0.58, 0.72, 0.80];
-      const fpyValues = [0.44, 0.50, 0.56, 0.62];
-      const fpzValues = [1.05, 1.15, 1.24, 1.32];
+    // Genera un encuadre, orientación y balance de luz de cámara de celular único por foto
+    function buildPhoneCameraStyle(uniqueSeed, roomStep) {
+      const s = uniqueSeed + roomStep * 31;
+      const flipX = (s % 2 === 1) ? -1 : 1;
+      const zoomLevels = [1.02, 1.08, 1.14, 1.20, 1.26, 1.32];
+      const posX = [15, 28, 42, 50, 64, 78, 85][s % 7];
+      const posY = [25, 38, 50, 62, 72][(s >> 2) % 5];
+      const zoom = zoomLevels[(s >> 1) % zoomLevels.length];
 
-      const fpx = fpxValues[(uniqueSeed + focalMode) % fpxValues.length];
-      const fpy = fpyValues[(uniqueSeed * 3 + focalMode) % fpyValues.length];
-      const fpz = fpzValues[(uniqueSeed * 5 + focalMode) % fpzValues.length];
+      // Balance de blancos realista de cámara de celular (luz fría de tubo LED, luz neutra o luz cálida de plafón)
+      const phoneFilters = [
+        "brightness(0.97) contrast(1.04) saturate(0.88)",
+        "brightness(1.03) contrast(0.96) saturate(0.92) sepia(0.06)",
+        "brightness(0.95) contrast(1.08) saturate(0.82) hue-rotate(-4deg)",
+        "brightness(1.01) contrast(1.02) saturate(0.95) sepia(0.09) hue-rotate(3deg)",
+        "brightness(0.94) contrast(1.05) saturate(0.85)",
+        "brightness(1.04) contrast(0.98) saturate(0.90) sepia(0.04)"
+      ];
+      const filterStr = phoneFilters[s % phoneFilters.length];
 
-      // Variaciones sutiles de iluminación interior de cámara de celular (cálida / neutra / luz blanca)
-      const satValues = [-12, -6, 0, 5, -15];
-      const expValues = [-3, 0, 2, -2, 4];
-      const conValues = [-4, 0, 6, 3];
-
-      const sat = satValues[uniqueSeed % satValues.length];
-      const exp = expValues[(uniqueSeed + 2) % expValues.length];
-      const con = conValues[(uniqueSeed + 1) % conValues.length];
-
-      return `${baseUrl}?auto=format&w=650&h=866&fit=crop&crop=focalpoint&fp-x=${fpx}&fp-y=${fpy}&fp-z=${fpz}${flipParam}&sat=${sat}&exp=${exp}&con=${con}&q=78`;
+      return `transform: scale(${zoom}) scaleX(${flipX}); object-position: ${posX}% ${posY}%; filter: ${filterStr};`;
     }
 
     // ============================================================================
-    // MÁS DE 1,200 CIUDADES REALES EN NJ, FL, CA Y PA
+    // MÁS DE 1,600 CIUDADES Y LOCALIDADES REALES EN NJ, FL, CA Y PA
     // ============================================================================
     const CITIES_BY_STATE = {
       NJ: {
@@ -1278,7 +1288,11 @@
           "Salem","Penns Grove","Carneys Point","Woodstown","Somerville","Bound Brook","Manville","Bernardsville","Watchung","Warren NJ",
           "Bernards","Montgomery NJ","Branchburg","Green Brook","Newton","Hopatcong","Sparta","Vernon","Summit","Cranford",
           "New Providence","Scotch Plains","Springfield NJ","Berkeley Heights","Clark","Fanwood","Roselle Park","Kenilworth","Garwood","Mountainside",
-          "Phillipsburg","Hackettstown","Washington NJ","Belvidere","Lopatcong"
+          "Phillipsburg","Hackettstown","Washington NJ","Belvidere","Lopatcong","Alpha","Blairstown","Knowlton","Mansfield NJ","Oxford NJ",
+          "Allamuchy","Independence","Pohatcong","Greenwich NJ","Harmony","White Township","Franklin NJ","Hardyston","Wantage","Byram",
+          "Andover","Stanhope","Ogdensburg","Hamburg NJ","Sussex","Frankford","Hampton NJ","Montague","Sandyston","Stillwater",
+          "Fredon","Lafayette NJ","Green Township","Bedminster","Peapack-Gladstone","Far Hills","Rocky Hill","South Bound Brook","Millstone"," Mendham",
+          "Chester NJ","Long Hill","Morris Plains","Mountain Lakes","Netcong","Riverdale","Victory Gardens","Mine Hill","Mount Arlington","Harding"
         ]
       },
       FL: {
@@ -1319,7 +1333,12 @@
           "Orange Park","Fleming Island","Middleburg","Green Cove Springs","Keystone Heights","Fernandina Beach","Yulee","Callahan","Hilliard","Macclenny",
           "Lake City","Live Oak","Perry","Madison FL","Monticello","Quincy","Havana","Crawfordville","Sopchoppy","Carrabelle",
           "Apalachicola","Port St. Joe","Mexico Beach","Lynn Haven","Panama City Beach","Callaway","Springfield FL","Parker","Chipley","Bonifay",
-          "DeFuniak Springs","Freeport","Santa Rosa Beach","Miramar Beach","Destin","Fort Walton Beach","Niceville","Valparaiso","Mary Esther","Shalimar"
+          "DeFuniak Springs","Freeport","Santa Rosa Beach","Miramar Beach","Destin","Fort Walton Beach","Niceville","Valparaiso","Mary Esther","Shalimar",
+          "Milton","Pace","Gulf Breeze","Navarre","Jay","Century","Cantonment","Molino","Ensley","Ferry Pass",
+          "Bellview","Myrtle Grove","Warrington","Chattahoochee","Gretna","Midway FL","Bristol FL","Blountstown","Altha","Marianna",
+          "Graceville","Sneads","Cottondale","Malone","Chiefland","Williston","Bronson","Cedar Key","Inglis","Yankeetown",
+          "Inverness","Crystal River","Homosassa","Beverly Hills FL","Lecanto","Hernando","Citrus Springs","Dunnellon","Brooksville","Spring Hill",
+          "Weeki Wachee","Ridge Manor","Wildwood FL","Bushnell","Webster","Center Hill","Coleman","The Villages","Belleview","Silver Springs"
         ]
       },
       CA: {
@@ -1360,7 +1379,13 @@
           "Laguna Woods","Norco","Calimesa","Canyon Lake","Desert Hot Springs","Indian Wells","Rancho Mirage","Blythe","Twentynine Palms","Yucca Valley",
           "Barstow","Needles","Big Bear Lake","Loma Linda","Grand Terrace","Sanger","Reedley","Selma","Parlier","Kingsburg",
           "Kerman","Coalinga","Mendota","Firebaugh","Fowler","Orosi","Dinuba","Exeter CA","Lindsay","Woodlake",
-          "Corcoran","Lemoore","Avenal","Chowchilla","Atwater","Livingston CA","Gustine","Dos Palos"
+          "Corcoran","Lemoore","Avenal","Chowchilla","Atwater","Livingston CA","Gustine","Dos Palos","Sonora","Jackson CA",
+          "Sutter Creek","Ione","Placerville","South Lake Tahoe","Auburn","Rocklin","Loomis","Colfax","Grass Valley","Nevada City",
+          "Truckee","Marysville","Wheatland","Oroville","Paradise","Gridley","Biggs","Willows","Orland","Colusa",
+          "Williams","Red Bluff","Corning","Anderson","Shasta Lake","Yreka","Mount Shasta","Weed","Dunsmuir","Eureka",
+          "Arcata","Fortuna","Ferndale","Rio Dell","Crescent City","Ukiah","Willits","Fort Bragg","Lakeport","Clearlake",
+          "St. Helena","Calistoga","Yountville","American Canyon","Suisun City","Rio Vista","Dixon","Benicia","Pinole","Hercules",
+          "El Cerrito","San Pablo","Clayton CA","Lafayette CA","Moraga","Orinda","Piedmont","Emeryville","Albany CA","San Anselmo"
         ]
       },
       PA: {
@@ -1401,141 +1426,148 @@
           "Topton","Bally","Bechtelsville","Lititz","Manheim Borough","Mount Joy","Columbia","Millersville","Willow Street","Strasburg",
           "Quarryville","New Holland","Denver PA","Akron PA","Adamstown","Terre Hill","Marietta","East Petersburg","Mountville","Red Lion",
           "Dallastown","Yoe","Shrewsbury","New Freedom","Glen Rock PA","Spring Grove","Dillsburg","Wrightsville","Hallam","Manchester PA",
-          "Mount Wolf","Dover PA","Jacobus","Loganville","Stewartstown","Delta"
+          "Mount Wolf","Dover PA","Jacobus","Loganville","Stewartstown","Delta","Palmyra PA","Annville","Myerstown","Cornwall",
+          "Cleona","Richland PA","Jonestown","Fredericksburg PA","Hummelstown","Hershey","Steelton","Highspire","Paxtang","Penbrook",
+          "Millersburg","Lykens","Williamstown","Elizabethville","Halifax","Dauphin","Camp Hill","Lemoyne","New Cumberland","Wormleysburg",
+          "Mechanicsburg","Shiremanstown","Enola","Summerdale","Marysville PA","Duncannon","Newport PA","Millerstown","New Bloomfield","Shippensburg",
+          "Greencastle","Mercersburg","Mont Alto","Fayetteville","McConnellsburg","Huntingdon","Mount Union","Tyrone","Bellwood","Hollidaysburg",
+          "Roaring Spring","Martinsburg PA","Ebensburg","Patton","Portage","Cresson","Gallitzin","Nanty Glo","Somerset PA","Meyersdale"
         ]
       }
     };
 
-    // AMPLIO BANCO DE CALLES Y EDIFICIOS PARA QUE NINGÚN APARTAMENTO SE REPITA
     const STREET_NAMES = [
       "Oak St","Maple Ave","Washington Blvd","Main St","Park Ave","Cedar Ln","Pine St","Elm St","Lakeview Dr","Franklin Ave",
       "Jefferson St","Adams Ave","Lincoln Rd","Central Ave","Highland Ave","Madison St","Monroe Ave","Chestnut St","Walnut St","Broad St",
       "Market St","Union Ave","Lafayette St","Hamilton Ave","Harrison St","Jackson Ave","Wilson Blvd","Grant St","Fulton St","Liberty Ave",
-      "Spring St","Commerce St"," Bergen Ave","clinton St","Sycamore Dr","Willow Ln","Ridge Rd","Valley View Dr","Meadow Ln","Forest Ave",
+      "Spring St","Commerce St","Bergen Ave","Clinton St","Sycamore Dr","Willow Ln","Ridge Rd","Valley View Dr","Meadow Ln","Forest Ave",
       "Sunset Blvd","Sunrise Dr","River Rd","Prospect St","Grove St","Orchard St","Pearl St","State St","Church St","Mill Rd",
-      "Front St","Water St","Bridge St","depot St","Division St","Summit Ave","Hillcrest Dr","Fairview Ave","Woodland Dr","Colonial Way",
-      "Heritage Dr","Oxford St","Cambridge Rd","Lexington Ave","Concord St","Bunker Hill Rd","Hancock St","sherman Ave","Sheridan St","Garfield Ave",
-      "McKinley St","Roosevelt Blvd","Truman Way","kennedy Blvd","Marshal St","warren St","Mercer St","Somerset St","essex St","Sussex Ave",
-      "Cumberland St","York Rd","Lancaster Ave","Montgomery Ave","Bucks Ln","Berks St","Lehigh Ave","Cambria St","Tioga St","Venango St"
+      "Front St","Water St","Bridge St","Depot St","Division St","Summit Ave","Hillcrest Dr","Fairview Ave","Woodland Dr","Colonial Way"
     ];
 
     const BUILDING_PREFIXES = [
       "Parkside","Oakwood","Riverview","Highland","Meadowbrook","Pinecrest","Cedarwood","Maplewood","Westgate","Eastgate",
-      "Northgate","Southgate","Brookside","fairview","Hilltop","Sunnyvale","Greenwood","Silverlake","Clearview"," Bayside",
-      "Crestview","Valley","Central","Plaza","Terrace","Garden","Station","midtown","Uptown","Downtown",
-      "Belmont","Waverly","Kensington","Arlington","Lexington","clairmont","ridgemont","montclair","Fairmont","Woodmont"
+      "Northgate","Southgate","Brookside","Fairview","Hilltop","Sunnyvale","Greenwood","Silverlake","Clearview","Bayside",
+      "Crestview","Valley","Central","Plaza","Terrace","Garden","Station","Midtown","Uptown","Downtown",
+      "Belmont","Waverly","Kensington","Arlington","Lexington","Clairmont","Ridgemont","Montclair","Fairmont","Woodmont"
     ];
 
     const BUILDING_TYPES = ["Apartments","Residences","Court","Gardens","Flats","Manor","Place","Commons","Suites","Townhomes"];
 
     // ============================================================================
-    // GENERADOR DE APARTAMENTOS ÚNICOS (SIN REPETICIÓN DE FOTOS NI NOMBRES)
+    // MOTOR DETERMINÍSTICO DE APARTAMENTOS (30 POR CIUDAD EN LAS 1,600+ CIUDADES)
     // ============================================================================
     const allApartments = [];
     const generatedCitiesSet = new Set();
-    let refSeq = 10001;
 
-    function generate30ApartmentsForCity(stateCode, stateName, zipPrefix, cityName, cIdx) {
+    function buildSingleApartmentUnit(stateCode, stateName, zipPrefix, cityName, cIdx, u) {
+      const sIdx = ["NJ", "FL", "CA", "PA"].indexOf(stateCode);
+      const id = 100000 + (sIdx * 100000) + (cIdx * 30) + u;
+      const uniqueHash = (sIdx + 1) * 29399 + (cIdx + 1) * 11939 + (u + 1) * 4567;
+
+      const isUnfurnished = (u % 4 !== 3);
+      const condition = isUnfurnished ? "No Amueblado" : "Semi-Amueblado";
+
+      const bedsNum = (u % 2 === 0) ? 1 : 2;
+      const bathsNum = (bedsNum === 2 && u % 4 === 1) ? 2 : 1;
+
+      // 1 habitación = 1 estacionamiento privado | 2 habitaciones = 2 estacionamientos privados
+      const parkingText = bedsNum === 1 ? "1 estacionamiento privado" : "2 estacionamientos privados";
+      const habText = bedsNum === 1 ? "1 habitación" : "2 habitaciones";
+      const banoText = bathsNum === 1 ? "1 baño" : "2 baños";
+      const distribution = `${parkingText} • ${habText} • ${banoText} • sala • cocina`;
+
+      const qualityBonus = (u % 3 === 1) ? 90 : ((u % 3 === 2) ? 175 : 0);
+      const baseByBeds = bedsNum === 1
+        ? 1100 + (uniqueHash % 185)
+        : 1380 + (uniqueHash % 275);
+
+      const semiExtra = isUnfurnished ? 0 : 40;
+      const rawPrice = baseByBeds + qualityBonus + semiExtra;
+      const finalPriceNum = Math.min(1950, Math.max(1100, Math.round(rawPrice / 5) * 5));
+      const priceFormatted = `$${finalPriceNum.toLocaleString("en-US")}`;
+
+      const streetNumber = 104 + (uniqueHash % 8800);
+      const streetName = STREET_NAMES[(cIdx * 17 + u * 7 + sIdx * 13) % STREET_NAMES.length];
+      const bldgPrefix = BUILDING_PREFIXES[(cIdx * 11 + u * 5 + sIdx * 3) % BUILDING_PREFIXES.length];
+      const bldgType = BUILDING_TYPES[(cIdx * 7 + u * 3 + sIdx * 5) % BUILDING_TYPES.length];
+      const unitLetter = String.fromCharCode(65 + ((u + cIdx) % 8));
+      const floorNum = ((u + cIdx) % 3) + 1;
+      const zipFormatted = `${zipPrefix}${String((cIdx * 7 + (u % 5)) % 999).padStart(3, "0")}`;
+
+      const title = `${bldgPrefix} ${bldgType} — Unidad ${floorNum}${unitLetter}`;
+      const address = `${streetNumber} ${streetName}, Apt ${floorNum}${unitLetter}, ${cityName}, ${stateCode} ${zipFormatted}`;
+
+      const desc = isUnfurnished
+        ? `Apartamento residencial sin amueblar con disponibilidad inmediata. Incluye todos los biles en la renta mensual (agua, luz, gas y calefacción), pisos laminados de madera, paredes recién pintadas, cocina con gabinetes y ${parkingText}.`
+        : `Apartamento residencial semi-amueblado con disponibilidad inmediata. Incluye todos los biles en la renta mensual (agua, luz, gas y calefacción), cocina equipada con electrodomésticos, barra desayunador y ${parkingText}.`;
+
+      const salaUrl = CRAIGSLIST_EMPTY_SALAS[uniqueHash % CRAIGSLIST_EMPTY_SALAS.length];
+      const cocinaUrl = CRAIGSLIST_KITCHENS[(uniqueHash >> 1) % CRAIGSLIST_KITCHENS.length];
+      const habUrl = CRAIGSLIST_EMPTY_BEDROOMS[(uniqueHash >> 2) % CRAIGSLIST_EMPTY_BEDROOMS.length];
+      const lavamanosUrl = CRAIGSLIST_BATH_VANITY[(uniqueHash >> 3) % CRAIGSLIST_BATH_VANITY.length];
+      const duchaUrl = CRAIGSLIST_BATH_SHOWER[(uniqueHash >> 4) % CRAIGSLIST_BATH_SHOWER.length];
+      const gabinetesUrl = CRAIGSLIST_KITCHENS[(uniqueHash + 1) % CRAIGSLIST_KITCHENS.length];
+
+      const orderedRooms = [
+        { url: salaUrl, style: buildPhoneCameraStyle(uniqueHash, 1), label: "Sala Vacía y Piso Laminado", short: "Sala" },
+        { url: cocinaUrl, style: buildPhoneCameraStyle(uniqueHash, 2), label: "Cocina — Gabinetes y Estufa", short: "Cocina" },
+        { url: habUrl, style: buildPhoneCameraStyle(uniqueHash, 3), label: "Habitación con Closet y Ventana", short: "Habitación" },
+        { url: lavamanosUrl, style: buildPhoneCameraStyle(uniqueHash, 4), label: "Baño — Lavamanos y Espejo", short: "Lavamanos" },
+        { url: duchaUrl, style: buildPhoneCameraStyle(uniqueHash, 5), label: "Baño — Ducha y Cerámica", short: "Ducha" },
+        { url: gabinetesUrl, style: buildPhoneCameraStyle(uniqueHash + 99, 6), label: "Detalle de Alacena y Encimera", short: "Alacena" }
+      ];
+
+      const startOffset = u % 5;
+      const rotatedPhotos = [
+        ...orderedRooms.slice(startOffset),
+        ...orderedRooms.slice(0, startOffset)
+      ];
+
+      return {
+        id,
+        state: stateCode,
+        stateName,
+        city: cityName,
+        zip: zipFormatted,
+        title,
+        address,
+        priceNum: finalPriceNum,
+        price: priceFormatted,
+        beds: String(bedsNum),
+        baths: bathsNum,
+        condition,
+        distribution,
+        desc,
+        photos: rotatedPhotos
+      };
+    }
+
+    function ensureCityApartmentsGenerated(stateCode, cityName) {
       const key = `${cityName.toLowerCase()}_${stateCode}`;
       if (generatedCitiesSet.has(key)) return;
       generatedCitiesSet.add(key);
 
-      const sIdx = ["NJ", "FL", "CA", "PA"].indexOf(stateCode);
+      const stObj = CITIES_BY_STATE[stateCode];
+      let cIdx = stObj.cities.findIndex(c => c.toLowerCase() === cityName.toLowerCase());
+      if (cIdx === -1) {
+        cIdx = stObj.cities.length;
+        stObj.cities.push(cityName);
+        locationSuggestions.push({ display: `${cityName}, ${stateCode}`, queryValue: cityName, stateCode });
+      }
 
       for (let u = 0; u < 30; u++) {
-        const id = refSeq++;
-        // Hash primo único para cada unidad
-        const uniqueHash = (sIdx + 1) * 19391 + (cIdx + 1) * 7919 + (u + 1) * 3571;
-
-        const isUnfurnished = (u % 4 !== 3);
-        const condition = isUnfurnished ? "No Amueblado" : "Semi-Amueblado";
-
-        const bedsNum = (u % 2 === 0) ? 1 : 2;
-        const bathsNum = (bedsNum === 2 && u % 4 === 1) ? 2 : 1;
-
-        // 1 habitación = 1 estacionamiento privado | 2 habitaciones = 2 estacionamientos privados
-        const parkingText = bedsNum === 1 ? "1 estacionamiento privado" : "2 estacionamientos privados";
-        const habText = bedsNum === 1 ? "1 habitación" : "2 habitaciones";
-        const banoText = bathsNum === 1 ? "1 baño" : "2 baños";
-        const distribution = `${parkingText} • ${habText} • ${banoText} • sala • cocina`;
-
-        // Rango $1,100 a $1,950 según calidad
-        const qualityBonus = (u % 3 === 1) ? 90 : ((u % 3 === 2) ? 175 : 0);
-        const baseByBeds = bedsNum === 1
-          ? 1100 + (uniqueHash % 185)
-          : 1380 + (uniqueHash % 275);
-
-        const semiExtra = isUnfurnished ? 0 : 40;
-        const rawPrice = baseByBeds + qualityBonus + semiExtra;
-        const finalPriceNum = Math.min(1950, Math.max(1100, Math.round(rawPrice / 5) * 5));
-        const priceFormatted = `$${finalPriceNum.toLocaleString("en-US")}`;
-
-        // Dirección y nombre de edificio únicos sin repetirse
-        const streetNumber = 104 + (uniqueHash % 8800);
-        const streetName = STREET_NAMES[(cIdx * 17 + u * 7 + sIdx * 13) % STREET_NAMES.length];
-        const bldgPrefix = BUILDING_PREFIXES[(cIdx * 11 + u * 5 + sIdx * 3) % BUILDING_PREFIXES.length];
-        const bldgType = BUILDING_TYPES[(cIdx * 7 + u * 3 + sIdx * 5) % BUILDING_TYPES.length];
-        const unitLetter = String.fromCharCode(65 + ((u + cIdx) % 8));
-        const floorNum = ((u + cIdx) % 3) + 1;
-        const zipFormatted = `${zipPrefix}${String((cIdx * 7 + (u % 5)) % 999).padStart(3, "0")}`;
-
-        const title = `${bldgPrefix} ${bldgType} — Unidad ${floorNum}${unitLetter}`;
-        const address = `${streetNumber} ${streetName}, Apt ${floorNum}${unitLetter}, ${cityName}, ${stateCode} ${zipFormatted}`;
-
-        const desc = isUnfurnished
-          ? `Apartamento residencial sin amueblar con disponibilidad inmediata. Incluye todos los biles en la renta mensual (agua, luz, gas y calefacción), pisos laminados de madera, paredes recién pintadas, cocina con gabinetes y ${parkingText}.`
-          : `Apartamento residencial semi-amueblado con disponibilidad inmediata. Incluye todos los biles en la renta mensual (agua, luz, gas y calefacción), cocina con electrodomésticos, barra desayunador y ${parkingText}.`;
-
-        // 6 fotos interiores verticales estilo cámara de celular (Cero personas, cero limones, cero sillas sueltas)
-        const baseSala = CLEAN_SALA_BASES[uniqueHash % CLEAN_SALA_BASES.length];
-        const baseCocina = CLEAN_COCINA_BASES[(uniqueHash >> 1) % CLEAN_COCINA_BASES.length];
-        const baseGabinetes = CLEAN_COCINA_BASES[(uniqueHash >> 2) % CLEAN_COCINA_BASES.length];
-        const baseHab = CLEAN_HABITACION_BASES[(uniqueHash >> 3) % CLEAN_HABITACION_BASES.length];
-        const baseLavamanos = CLEAN_BANO_LAVAMANOS_BASES[(uniqueHash >> 4) % CLEAN_BANO_LAVAMANOS_BASES.length];
-        const baseDucha = CLEAN_BANO_DUCHA_BASES[(uniqueHash >> 5) % CLEAN_BANO_DUCHA_BASES.length];
-
-        const orderedRooms = [
-          { url: buildCellPhonePhoto(baseSala, uniqueHash + 1, 0), label: "Sala y Piso de Madera", short: "Sala" },
-          { url: buildCellPhonePhoto(baseCocina, uniqueHash + 2, 1), label: "Cocina y Electrodomésticos", short: "Cocina" },
-          { url: buildCellPhonePhoto(baseHab, uniqueHash + 3, 2), label: "Habitación y Closet", short: "Habitación" },
-          { url: buildCellPhonePhoto(baseLavamanos, uniqueHash + 4, 3), label: "Baño — Lavamanos y Espejo", short: "Lavamanos" },
-          { url: buildCellPhonePhoto(baseDucha, uniqueHash + 5, 4), label: "Baño — Ducha y Cerámica", short: "Ducha" },
-          { url: buildCellPhonePhoto(baseGabinetes, uniqueHash + 6, 5), label: "Gabinetes y Encimera de Cocina", short: "Gabinetes" }
-        ];
-
-        // Rotar con qué habitación empieza la portada para que en la cuadrícula se vean cocinas, salas, habitaciones y baños variados como en tus fotos
-        const startOffset = u % 4;
-        const rotatedPhotos = [
-          ...orderedRooms.slice(startOffset),
-          ...orderedRooms.slice(0, startOffset)
-        ];
-
-        allApartments.push({
-          id,
-          state: stateCode,
-          stateName,
-          city: cityName,
-          zip: zipFormatted,
-          title,
-          address,
-          priceNum: finalPriceNum,
-          price: priceFormatted,
-          beds: String(bedsNum),
-          baths: bathsNum,
-          condition,
-          distribution,
-          desc,
-          photos: rotatedPhotos
-        });
+        allApartments.push(buildSingleApartmentUnit(stateCode, stObj.name, stObj.zipPrefix, cityName, cIdx, u));
       }
     }
 
-    Object.keys(CITIES_BY_STATE).forEach((stateCode) => {
-      const stateInfo = CITIES_BY_STATE[stateCode];
-      stateInfo.cities.forEach((cityName, cIdx) => {
-        generate30ApartmentsForCity(stateCode, stateInfo.name, stateInfo.zipPrefix, cityName, cIdx);
-      });
-    });
+    function ensureStateSampleGenerated(stateCode) {
+      const stObj = CITIES_BY_STATE[stateCode];
+      // Genera inmediatamente las primeras 25 ciudades del estado y carga bajo demanda cualquiera de las 1,600+ ciudades al escribirla
+      for (let i = 0; i < Math.min(25, stObj.cities.length); i++) {
+        ensureCityApartmentsGenerated(stateCode, stObj.cities[i]);
+      }
+    }
 
     // ============================================================================
     // UBICACIÓN SUGERIDA AUTOMÁTICA
@@ -1581,13 +1613,15 @@
 
     function setSuggestedLocation(stateCode, detectedCity = "") {
       currentDetectedState = stateCode;
+      ensureStateSampleGenerated(stateCode);
+
       const stateObj = CITIES_BY_STATE[stateCode];
       let matchedCity = stateObj.cities.find(c => c.toLowerCase() === (detectedCity || "").toLowerCase());
 
-      if (!matchedCity && detectedCity && detectedCity.length > 2) {
-        generate30ApartmentsForCity(stateCode, stateObj.name, stateObj.zipPrefix, detectedCity, stateObj.cities.length + 1);
-        stateObj.cities.push(detectedCity);
-        locationSuggestions.push({ display: `${detectedCity}, ${stateCode}`, queryValue: detectedCity });
+      if (matchedCity) {
+        ensureCityApartmentsGenerated(stateCode, matchedCity);
+      } else if (detectedCity && detectedCity.length > 2) {
+        ensureCityApartmentsGenerated(stateCode, detectedCity);
         matchedCity = detectedCity;
       }
 
@@ -1639,7 +1673,7 @@
     }
 
     // ============================================================================
-    // BUSCADOR INTELIGENTE Y TARJETAS
+    // BUSCADOR DE LAS 1,600+ CIUDADES + CARGA DE 30 APARTAMENTOS POR CIUDAD
     // ============================================================================
     const PAGE_SIZE = 24;
     let currentFilteredList = [];
@@ -1656,17 +1690,20 @@
     const locationSuggestions = [];
     Object.keys(CITIES_BY_STATE).forEach(stCode => {
       const st = CITIES_BY_STATE[stCode];
-      locationSuggestions.push({ display: `${st.name} (${stCode})`, queryValue: st.name });
+      locationSuggestions.push({ display: `${st.name} (${stCode})`, queryValue: st.name, stateCode: stCode });
       st.cities.forEach(cityName => {
-        locationSuggestions.push({ display: `${cityName}, ${stCode}`, queryValue: cityName });
+        locationSuggestions.push({ display: `${cityName}, ${stCode}`, queryValue: cityName, stateCode: stCode });
       });
     });
+
+    // Inicializar muestra inicial de los 4 estados
+    ["NJ", "FL", "CA", "PA"].forEach(st => ensureStateSampleGenerated(st));
 
     function onLocationInput(val) {
       const box = document.getElementById("suggestionsBox");
       const q = val.trim().toLowerCase();
 
-      const refMatch = q.match(/(\d{5})/);
+      const refMatch = q.match(/(\d{6})/);
       if (refMatch) {
         box.style.display = "none";
         applySearch(true);
@@ -1675,12 +1712,12 @@
 
       const matches = locationSuggestions.filter(item =>
         !q || item.display.toLowerCase().includes(q)
-      ).slice(0, 12);
+      ).slice(0, 14);
 
       if (matches.length === 0 && q.length > 2) {
         const cleanCity = val.trim().replace(/\b\w/g, l => l.toUpperCase());
         box.innerHTML = `
-          <div class="suggestion-item" onclick="pickLocationSuggestion('${cleanCity}')">
+          <div class="suggestion-item" onclick="pickLocationSuggestion('${cleanCity}', '${currentDetectedState}')">
             <span>📍 ${cleanCity}, ${currentDetectedState}</span>
           </div>
         `;
@@ -1689,7 +1726,7 @@
         box.style.display = "none";
       } else {
         box.innerHTML = matches.map(m => `
-          <div class="suggestion-item" onclick="pickLocationSuggestion('${m.queryValue}')">
+          <div class="suggestion-item" onclick="pickLocationSuggestion('${m.queryValue}', '${m.stateCode}')">
             <span>📍 ${m.display}</span>
           </div>
         `).join("");
@@ -1698,7 +1735,10 @@
       applySearch(true);
     }
 
-    function pickLocationSuggestion(val) {
+    function pickLocationSuggestion(val, stCode) {
+      if (stCode && val !== CITIES_BY_STATE[stCode].name) {
+        ensureCityApartmentsGenerated(stCode, val);
+      }
       document.getElementById("locationInput").value = val;
       document.getElementById("suggestionsBox").style.display = "none";
       applySearch(true);
@@ -1743,6 +1783,27 @@
       quickFilterCondition("ALL");
     }
 
+    // Decodificador instantáneo de cualquier Ref # de los 50,000+ apartamentos
+    function getOrBuildApartmentByRef(refNum) {
+      let existing = allApartments.find(a => a.id === refNum);
+      if (existing) return existing;
+
+      if (refNum >= 100000 && refNum < 500000) {
+        const offset = refNum - 100000;
+        const sIdx = Math.floor(offset / 100000);
+        const rem = offset % 100000;
+        const cIdx = Math.floor(rem / 30);
+        const u = rem % 30;
+        const stateCode = ["NJ", "FL", "CA", "PA"][sIdx];
+        if (stateCode && CITIES_BY_STATE[stateCode].cities[cIdx]) {
+          const cityName = CITIES_BY_STATE[stateCode].cities[cIdx];
+          ensureCityApartmentsGenerated(stateCode, cityName);
+          return allApartments.find(a => a.id === refNum);
+        }
+      }
+      return null;
+    }
+
     function applySearch(resetPagination) {
       if (resetPagination) currentVisibleCount = PAGE_SIZE;
 
@@ -1755,12 +1816,23 @@
       document.getElementById("pillUnfurnished").classList.toggle("active", cond === "No Amueblado");
       document.getElementById("pillSemi").classList.toggle("active", cond === "Semi-Amueblado");
 
-      const refDigits = rawQ.match(/\b(\d{5,6})\b/);
+      // Si el usuario escribe una ciudad de nuestra lista de 1,600+, nos aseguramos de que sus 30 apartamentos estén generados
+      if (q.length >= 2) {
+        Object.keys(CITIES_BY_STATE).forEach(stCode => {
+          CITIES_BY_STATE[stCode].cities.forEach(cName => {
+            if (cName.toLowerCase().includes(q)) {
+              ensureCityApartmentsGenerated(stCode, cName);
+            }
+          });
+        });
+      }
+
+      const refDigits = rawQ.match(/\b(\d{6})\b/);
       if (refDigits) {
         const targetId = parseInt(refDigits[1], 10);
-        const byRef = allApartments.filter(a => a.id === targetId);
-        if (byRef.length > 0) {
-          currentFilteredList = byRef;
+        const found = getOrBuildApartmentByRef(targetId);
+        if (found) {
+          currentFilteredList = [found];
           document.getElementById("activeLocationTitle").textContent = `Referencia #${targetId}`;
           renderListingsSlice();
           return;
@@ -1783,14 +1855,7 @@
 
       if (currentFilteredList.length === 0 && rawQ.length >= 3 && !/\d/.test(rawQ)) {
         const formattedCity = rawQ.replace(/\b\w/g, l => l.toUpperCase());
-        const stObj = CITIES_BY_STATE[currentDetectedState] || CITIES_BY_STATE.NJ;
-        generate30ApartmentsForCity(
-          currentDetectedState,
-          stObj.name,
-          stObj.zipPrefix,
-          formattedCity,
-          stObj.cities.length + 1
-        );
+        ensureCityApartmentsGenerated(currentDetectedState, formattedCity);
         currentFilteredList = allApartments.filter(apt => {
           const matchCity = apt.city.toLowerCase() === formattedCity.toLowerCase();
           const matchCond = cond === "ALL" || apt.condition === cond;
@@ -1843,6 +1908,7 @@
               <img
                 id="card-img-${apt.id}"
                 src="${currentPhoto.url}"
+                style="${currentPhoto.style}"
                 alt="${apt.title}"
                 loading="lazy"
                 onerror="this.src=FALLBACK_INTERIOR"
@@ -1922,7 +1988,9 @@
       cardPhotoIndexMap[aptId] = next;
 
       const p = apt.photos[next];
-      document.getElementById(`card-img-${aptId}`).src = p.url;
+      const imgEl = document.getElementById(`card-img-${aptId}`);
+      imgEl.src = p.url;
+      imgEl.setAttribute("style", p.style);
       document.getElementById(`card-cap-${aptId}`).textContent = p.label;
       document.getElementById(`card-cnt-${aptId}`).textContent = `${next + 1}/${apt.photos.length}`;
 
@@ -1951,7 +2019,7 @@
         alert("Toca el corazón 🤍 en cualquier apartamento para guardarlo.");
         return;
       }
-      const favApts = allApartments.filter(a => savedFavoriteIds.includes(a.id));
+      const favApts = savedFavoriteIds.map(id => getOrBuildApartmentByRef(id)).filter(Boolean);
       const lines = favApts.map(a => `• Ref #${a.id}: ${a.title} (${a.city}, ${a.state}) — ${a.price}/mes [${a.distribution}]`).join("\n");
       const msg =
         `Hola Aurea Rent, guardé estos apartamentos y me gustaría agendar una cita:\n\n` +
@@ -1960,7 +2028,7 @@
     }
 
     function openAptModal(aptId) {
-      const apt = allApartments.find(a => a.id === aptId);
+      const apt = getOrBuildApartmentByRef(aptId);
       if (!apt) return;
 
       currentModalApt = apt;
@@ -1988,13 +2056,15 @@
     function refreshModalGallery() {
       if (!currentModalApt) return;
       const p = currentModalApt.photos[currentModalSlide];
-      document.getElementById("modalMainImg").src = p.url;
+      const mainImg = document.getElementById("modalMainImg");
+      mainImg.src = p.url;
+      mainImg.setAttribute("style", p.style);
       document.getElementById("modalRoomCaption").textContent = p.label;
       document.getElementById("modalCounterCaption").textContent = `${currentModalSlide + 1} / ${currentModalApt.photos.length}`;
 
       document.getElementById("modalThumbsRow").innerHTML = currentModalApt.photos.map((photo, idx) => `
         <div class="thumb-item ${idx === currentModalSlide ? "active" : ""}" onclick="pickModalThumb(${idx})">
-          <img src="${photo.url}" alt="${photo.label}" onerror="this.src=FALLBACK_INTERIOR" />
+          <img src="${photo.url}" style="${photo.style}" alt="${photo.label}" onerror="this.src=FALLBACK_INTERIOR" />
           <span>${photo.short}</span>
         </div>
       `).join("");
@@ -2031,14 +2101,14 @@
       const rawText = document.getElementById("adminRefInput").value.trim();
       if (!rawText) return;
 
-      const match = rawText.match(/\b(\d{5,6})\b/);
+      const match = rawText.match(/\b(\d{6})\b/);
       if (!match) {
-        alert("No se detectó un número de referencia válido en el texto.");
+        alert("No se detectó un número de referencia válido de 6 dígitos en el texto.");
         return;
       }
 
       const refNum = parseInt(match[1], 10);
-      const foundApt = allApartments.find(a => a.id === refNum);
+      const foundApt = getOrBuildApartmentByRef(refNum);
 
       if (!foundApt) {
         alert("No se encontró ningún apartamento con la referencia #" + refNum);
@@ -2105,9 +2175,9 @@
       return apts.map(apt => `
         <div class="chat-property-card">
           <div class="chat-photo-strip" onclick="openAptModal(${apt.id})">
-            <img src="${apt.photos[0].url}" alt="Interior 1" onerror="this.src=FALLBACK_INTERIOR" />
-            <img src="${apt.photos[1].url}" alt="Interior 2" onerror="this.src=FALLBACK_INTERIOR" />
-            <img src="${apt.photos[2].url}" alt="Interior 3" onerror="this.src=FALLBACK_INTERIOR" />
+            <div class="chat-photo-col"><img src="${apt.photos[0].url}" style="${apt.photos[0].style}" alt="Interior 1" onerror="this.src=FALLBACK_INTERIOR" /></div>
+            <div class="chat-photo-col"><img src="${apt.photos[1].url}" style="${apt.photos[1].style}" alt="Interior 2" onerror="this.src=FALLBACK_INTERIOR" /></div>
+            <div class="chat-photo-col"><img src="${apt.photos[2].url}" style="${apt.photos[2].style}" alt="Interior 3" onerror="this.src=FALLBACK_INTERIOR" /></div>
           </div>
           <div class="chat-prop-body">
             <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -2157,7 +2227,8 @@
         condFilter = "Semi-Amueblado";
       }
 
-      if (matchedCity) {
+      if (matchedCity && matchedState) {
+        ensureCityApartmentsGenerated(matchedState, matchedCity);
         document.getElementById("locationInput").value = matchedCity;
         applySearch(true);
       } else if (matchedState) {
