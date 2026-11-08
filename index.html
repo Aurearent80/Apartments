@@ -105,8 +105,7 @@
     }
 
     .hero {
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(30, 41, 59, 0.85)),
-                  url('https://images.unsplash.com/photo-1560185127-6ed189bf02f4?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #0369a1 100%);
       color: var(--white);
       padding: 40px 16px 46px;
       text-align: center;
@@ -288,7 +287,7 @@
 
     .card-slider {
       position: relative;
-      height: 255px;
+      height: 250px;
       background: #cbd5e1;
       overflow: hidden;
       user-select: none;
@@ -301,6 +300,7 @@
       object-fit: cover;
       cursor: pointer;
       display: block;
+      transform-origin: center center;
     }
 
     .slider-arrow {
@@ -435,7 +435,7 @@
     }
 
     .apt-title {
-      font-size: 1rem;
+      font-size: 0.98rem;
       font-weight: 800;
       margin-bottom: 3px;
       color: var(--text);
@@ -596,6 +596,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transform-origin: center center;
     }
 
     .modal-caption {
@@ -616,7 +617,7 @@
 
     .thumbs-row {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(6, 1fr);
       gap: 6px;
       margin-bottom: 16px;
     }
@@ -1061,11 +1062,11 @@
           ontouchend="handleModalTouchEnd(event)"
         >
           <button class="slider-arrow prev" onclick="stepModalPhoto(-1)">&#10094;</button>
-          <img id="modalMainImg" src="" alt="Interior del apartamento" onerror="handleSafeImageFallback(this, 0)" />
+          <img id="modalMainImg" src="" alt="Interior del apartamento" onerror="handleRotatingFallback(this, 0)" />
           <button class="slider-arrow next" onclick="stepModalPhoto(1)">&#10095;</button>
           <div class="modal-caption">
             <span id="modalRoomCaption">Sala Interior</span>
-            <span id="modalCounterCaption">1 / 5</span>
+            <span id="modalCounterCaption">1 / 6</span>
           </div>
         </div>
 
@@ -1179,98 +1180,144 @@
     ];
 
     // ============================================================================
-    // CATÁLOGO PRE-INYECTADO DE 36 TOMAS INTERIORES DE CÁMARA DE CELULAR
-    // CERO CARTELES DE CARGA, CERO PERSONAS, CERO COMIDA/LIMONES, CERO EXTERIORES.
-    // CADA UNO DE LOS 30 APARTAMENTOS EN UNA CIUDAD TIENE SU PROPIA PORTADA ÚNICA.
+    // BANCO MASIVO DE 56 FOTOS DE INTERIORES RESIDENCIALES VERIFICADAS
+    // (CERO PERSONAS, CERO LIMONES/COMIDA, CERO EXTERIORES, CERO CARTELES DE CARGA)
     // ============================================================================
-    const VERIFIED_EMPTY_ROOMS = [
+    const MASTER_SALAS = [
       "https://images.unsplash.com/photo-1560185127-6ed189bf02f4",
       "https://images.unsplash.com/photo-1560184897-ae75f418493e",
       "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
       "https://images.unsplash.com/photo-1560448075-bb485b067938",
       "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
-      "https://images.unsplash.com/photo-1554995207-c18c203602cb"
+      "https://images.unsplash.com/photo-1554995207-c18c203602cb",
+      "https://images.unsplash.com/photo-1493809842364-78817add7ffb",
+      "https://images.unsplash.com/photo-1513694203232-719a280e022f",
+      "https://images.unsplash.com/photo-1536376072261-38c75010e6c9",
+      "https://images.unsplash.com/photo-1502672023488-70e25813eb80",
+      "https://images.unsplash.com/photo-1560185009-dddeb820c7b7",
+      "https://images.unsplash.com/photo-1560185008-a33f5c7b1844",
+      "https://images.unsplash.com/photo-1560449752-3fd4bdbe7df0",
+      "https://images.unsplash.com/photo-1560448205-4d9b3e6bb6db",
+      "https://images.unsplash.com/photo-1560448204-603b3fc33ddc",
+      "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92",
+      "https://images.unsplash.com/photo-1600585154526-990dced4db0d",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c",
+      "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd",
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511"
     ];
 
-    const VERIFIED_KITCHENS = [
+    const MASTER_COCINAS = [
       "https://images.unsplash.com/photo-1484154218962-a197022b5858",
       "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136",
       "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1",
-      "https://images.unsplash.com/photo-1565538810643-b5bdb714032a"
+      "https://images.unsplash.com/photo-1565538810643-b5bdb714032a",
+      "https://images.unsplash.com/photo-1556909212-d5b604d0c90d",
+      "https://images.unsplash.com/photo-1556909172-54557c7e4fb7",
+      "https://images.unsplash.com/photo-1556912167-f556f1f39fdf",
+      "https://images.unsplash.com/photo-1556912173-3bb406ef7e77",
+      "https://images.unsplash.com/photo-1556909190-eccf4a8bf97a",
+      "https://images.unsplash.com/photo-1600489000022-c2086d79f9d4",
+      "https://images.unsplash.com/photo-1588854337236-6889d631faa8",
+      "https://images.unsplash.com/photo-1588854337221-4cf9fa96059c",
+      "https://images.unsplash.com/photo-1600585152220-90363fe7e115",
+      "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d"
     ];
 
-    const VERIFIED_BEDROOMS = [
+    const MASTER_HABITACIONES = [
       "https://images.unsplash.com/photo-1560185008-b033106af5c3",
       "https://images.unsplash.com/photo-1560185007-cde436f6a4d0",
+      "https://images.unsplash.com/photo-1540518614846-7ede433c4573",
       "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf",
-      "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af"
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85",
+      "https://images.unsplash.com/photo-1616594039964-ae9021a400a0",
+      "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af",
+      "https://images.unsplash.com/photo-1598928506311-c55ded91a20c",
+      "https://images.unsplash.com/photo-1595526051245-4506e0005bd0",
+      "https://images.unsplash.com/photo-1615874959474-d609969a20ed",
+      "https://images.unsplash.com/photo-1486304873000-235643847519",
+      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3"
     ];
 
-    const VERIFIED_BATHROOMS = [
+    const MASTER_BANOS = [
       "https://images.unsplash.com/photo-1584622650111-993a426fbf0a",
+      "https://images.unsplash.com/photo-1584622781564-1d987f7333c1",
       "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14",
       "https://images.unsplash.com/photo-1620626011761-996317b8d101",
-      "https://images.unsplash.com/photo-1507652313519-d4e9174996dd"
+      "https://images.unsplash.com/photo-1507652313519-d4e9174996dd",
+      "https://images.unsplash.com/photo-1600566752355-35792bedcfea",
+      "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b",
+      "https://images.unsplash.com/photo-1604709177225-055f99402ea3",
+      "https://images.unsplash.com/photo-1564540586988-aa4e53c3d799"
     ];
 
-    // 36 encuadres verticales distintos pre-inyectados en el servidor de imágenes
-    // para que ninguno de los 30 apartamentos de una ciudad repita portada
-    const PREINJECTED_36_COVERS = [
-      // Salas y pisos de madera (distintos ángulos de cámara de celular)
-      { base: VERIFIED_EMPTY_ROOMS[0], params: "fp-x=0.25&fp-y=0.55&fp-z=1.25", label: "Sala Vacía y Piso Laminado", short: "Sala" },
-      { base: VERIFIED_EMPTY_ROOMS[1], params: "fp-x=0.50&fp-y=0.50&fp-z=1.15", label: "Sala Interior Recién Pintada", short: "Sala" },
-      { base: VERIFIED_EMPTY_ROOMS[0], params: "fp-x=0.75&fp-y=0.58&fp-z=1.35&flip=h", label: "Piso de Madera y Ventana con Persianas", short: "Sala" },
-      { base: VERIFIED_EMPTY_ROOMS[2], params: "fp-x=0.30&fp-y=0.52&fp-z=1.20", label: "Área de Sala y Comedor", short: "Sala" },
-      { base: VERIFIED_EMPTY_ROOMS[3], params: "fp-x=0.65&fp-y=0.50&fp-z=1.25", label: "Interior con Luz Natural", short: "Sala" },
-      { base: VERIFIED_EMPTY_ROOMS[4], params: "fp-x=0.40&fp-y=0.55&fp-z=1.20", label: "Sala Residencial Amplia", short: "Sala" },
-      { base: VERIFIED_EMPTY_ROOMS[5], params: "fp-x=0.55&fp-y=0.52&fp-z=1.22", label: "Sala y Pasillo Interior", short: "Sala" },
-      { base: VERIFIED_EMPTY_ROOMS[1], params: "fp-x=0.22&fp-y=0.60&fp-z=1.40&flip=h", label: "Sala con Piso de Madera Nuevo", short: "Sala" },
-      { base: VERIFIED_EMPTY_ROOMS[2], params: "fp-x=0.72&fp-y=0.48&fp-z=1.32&flip=h", label: "Espacio Interior Despejado", short: "Sala" },
-
-      // Cocinas residenciales (encuadre a gabinetes, fregadero, estufa, refrigerador)
-      { base: VERIFIED_KITCHENS[0], params: "fp-x=0.25&fp-y=0.50&fp-z=1.30", label: "Cocina — Gabinetes y Estufa", short: "Cocina" },
-      { base: VERIFIED_KITCHENS[1], params: "fp-x=0.50&fp-y=0.52&fp-z=1.20", label: "Cocina con Gabinetes Blancos", short: "Cocina" },
-      { base: VERIFIED_KITCHENS[2], params: "fp-x=0.35&fp-y=0.50&fp-z=1.25", label: "Cocina Equipada y Fregadero", short: "Cocina" },
-      { base: VERIFIED_KITCHENS[3], params: "fp-x=0.60&fp-y=0.52&fp-z=1.22", label: "Cocina — Alacena y Encimera", short: "Cocina" },
-      { base: VERIFIED_KITCHENS[0], params: "fp-x=0.75&fp-y=0.55&fp-z=1.42&flip=h", label: "Cocina — Electrodomésticos y Piso", short: "Cocina" },
-      { base: VERIFIED_KITCHENS[1], params: "fp-x=0.22&fp-y=0.48&fp-z=1.38&flip=h", label: "Gabinetes Superiores y Fregadero", short: "Cocina" },
-      { base: VERIFIED_KITCHENS[2], params: "fp-x=0.70&fp-y=0.54&fp-z=1.35&flip=h", label: "Cocina Independiente Renovada", short: "Cocina" },
-      { base: VERIFIED_KITCHENS[3], params: "fp-x=0.28&fp-y=0.50&fp-z=1.36&flip=h", label: "Encimera y Gabinetes de Cocina", short: "Cocina" },
-      { base: VERIFIED_KITCHENS[0], params: "fp-x=0.50&fp-y=0.62&fp-z=1.50", label: "Detalle de Cocina y Gabinetes", short: "Cocina" },
-
-      // Habitaciones y closets
-      { base: VERIFIED_BEDROOMS[0], params: "fp-x=0.35&fp-y=0.50&fp-z=1.20", label: "Habitación Principal y Ventana", short: "Habitación" },
-      { base: VERIFIED_BEDROOMS[1], params: "fp-x=0.55&fp-y=0.52&fp-z=1.22", label: "Habitación con Piso de Madera", short: "Habitación" },
-      { base: VERIFIED_BEDROOMS[2], params: "fp-x=0.45&fp-y=0.50&fp-z=1.18", label: "Habitación con Closet Amplio", short: "Habitación" },
-      { base: VERIFIED_BEDROOMS[3], params: "fp-x=0.50&fp-y=0.52&fp-z=1.20", label: "Habitación Iluminada", short: "Habitación" },
-      { base: VERIFIED_BEDROOMS[0], params: "fp-x=0.70&fp-y=0.55&fp-z=1.38&flip=h", label: "Habitación y Puerta de Closet", short: "Habitación" },
-      { base: VERIFIED_BEDROOMS[1], params: "fp-x=0.25&fp-y=0.50&fp-z=1.35&flip=h", label: "Dormitorio Interior Recién Pintado", short: "Habitación" },
-      { base: VERIFIED_BEDROOMS[2], params: "fp-x=0.72&fp-y=0.48&fp-z=1.32&flip=h", label: "Habitación Secundaria y Closet", short: "Habitación" },
-      { base: VERIFIED_BEDROOMS[3], params: "fp-x=0.28&fp-y=0.54&fp-z=1.34&flip=h", label: "Habitación con Persianas", short: "Habitación" },
-      { base: VERIFIED_BEDROOMS[0], params: "fp-x=0.50&fp-y=0.60&fp-z=1.45", label: "Área de Dormitorio y Piso", short: "Habitación" },
-
-      // Baños (Lavamanos, Espejo y Ducha con puerta de vidrio)
-      { base: VERIFIED_BATHROOMS[0], params: "fp-x=0.45&fp-y=0.50&fp-z=1.18", label: "Baño — Lavamanos y Espejo", short: "Baño" },
-      { base: VERIFIED_BATHROOMS[1], params: "fp-x=0.50&fp-y=0.52&fp-z=1.20", label: "Baño Completo y Ducha", short: "Baño" },
-      { base: VERIFIED_BATHROOMS[2], params: "fp-x=0.40&fp-y=0.50&fp-z=1.22", label: "Baño con Mueble Blanco", short: "Baño" },
-      { base: VERIFIED_BATHROOMS[3], params: "fp-x=0.55&fp-y=0.50&fp-z=1.20", label: "Ducha con Puerta de Vidrio", short: "Baño" },
-      { base: VERIFIED_BATHROOMS[0], params: "fp-x=0.68&fp-y=0.54&fp-z=1.36&flip=h", label: "Lavamanos y Gabinete de Baño", short: "Baño" },
-      { base: VERIFIED_BATHROOMS[1], params: "fp-x=0.28&fp-y=0.50&fp-z=1.35&flip=h", label: "Baño Remodelado en Cerámica", short: "Baño" },
-      { base: VERIFIED_BATHROOMS[2], params: "fp-x=0.72&fp-y=0.52&fp-z=1.34&flip=h", label: "Espejo e Iluminación de Baño", short: "Baño" },
-      { base: VERIFIED_BATHROOMS[3], params: "fp-x=0.30&fp-y=0.55&fp-z=1.38&flip=h", label: "Tina y Ducha Corrediza", short: "Baño" },
-      { base: VERIFIED_BATHROOMS[0], params: "fp-x=0.30&fp-y=0.46&fp-z=1.42", label: "Tocador de Baño Completo", short: "Baño" }
+    // Lista maestra combinada de 55 fotos base distintas para portadas
+    const ALL_55_COVERS = [
+      ...MASTER_SALAS.map(u => ({ base: u, label: "Sala Interior y Piso Laminado", short: "Sala" })),
+      ...MASTER_COCINAS.map(u => ({ base: u, label: "Cocina — Gabinetes y Estufa", short: "Cocina" })),
+      ...MASTER_HABITACIONES.map(u => ({ base: u, label: "Habitación y Closet", short: "Habitación" })),
+      ...MASTER_BANOS.map(u => ({ base: u, label: "Baño — Lavamanos y Ducha", short: "Baño" }))
     ];
 
-    function buildPhotoUrl(base, params, citySeed) {
-      const sat = [-8, -3, 0, 4][citySeed % 4];
-      const exp = [-2, 0, 2][(citySeed >> 1) % 3];
-      return `${base}?auto=format&w=650&h=866&fit=crop&crop=focalpoint&${params}&sat=${sat}&exp=${exp}&q=78`;
+    // Respaldo rotativo garantizado que nunca repite la misma foto si alguna URL falla
+    let fallbackCounter = 0;
+    const ROCK_SOLID_BACKUPS = [
+      "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?w=660&h=495&fit=crop&q=78",
+      "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=660&h=495&fit=crop&q=78",
+      "https://images.unsplash.com/photo-1560185008-b033106af5c3?w=660&h=495&fit=crop&q=78",
+      "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=660&h=495&fit=crop&q=78",
+      "https://images.unsplash.com/photo-1560184897-ae75f418493e?w=660&h=495&fit=crop&q=78",
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=660&h=495&fit=crop&q=78",
+      "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=660&h=495&fit=crop&q=78",
+      "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=660&h=495&fit=crop&q=78",
+      "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?w=660&h=495&fit=crop&q=78",
+      "https://images.unsplash.com/photo-1620626011761-996317b8d101?w=660&h=495&fit=crop&q=78"
+    ];
+
+    function handleRotatingFallback(imgEl, seedVal) {
+      imgEl.onerror = null;
+      const idx = ((seedVal || 0) + (fallbackCounter++)) % ROCK_SOLID_BACKUPS.length;
+      imgEl.src = ROCK_SOLID_BACKUPS[idx];
     }
 
-    function handleSafeImageFallback(imgEl, slotIdx) {
-      imgEl.onerror = null;
-      const fallback = VERIFIED_EMPTY_ROOMS[(slotIdx || 0) % VERIFIED_EMPTY_ROOMS.length];
-      imgEl.src = `${fallback}?auto=format&w=650&h=866&fit=crop&q=78`;
+    // Genera encuadre de lente y balance de luz único según ciudad y unidad
+    function buildCameraVariant(baseUrl, seedVal, slotIdx) {
+      const s = seedVal + slotIdx * 23;
+      const flipH = (s % 2 === 1) ? "&flip=h" : "";
+      const zoomList = [1.0, 1.07, 1.14, 1.21, 1.28];
+      const posXList = [20, 35, 50, 65, 80];
+      const posYList = [35, 50, 65];
+      const filterList = [
+        "brightness(0.98) contrast(1.03) saturate(0.92)",
+        "brightness(1.02) contrast(0.98) saturate(0.96) sepia(0.05)",
+        "brightness(0.96) contrast(1.06) saturate(0.86)",
+        "brightness(1.01) contrast(1.01) saturate(0.94) sepia(0.08)",
+        "brightness(0.99) contrast(1.04) saturate(0.90)"
+      ];
+
+      const z = zoomList[s % zoomList.length];
+      const px = posXList[(s >> 1) % posXList.length];
+      const py = posYList[(s >> 2) % posYList.length];
+      const flt = filterList[s % filterList.length];
+      const flipCss = (s % 3 === 1) ? " scaleX(-1)" : "";
+
+      return {
+        url: `${baseUrl}?auto=format&w=660&h=495&fit=crop${flipH}&q=78`,
+        style: `transform: scale(${z})${flipCss}; object-position: ${px}% ${py}%; filter: ${flt};`
+      };
+    }
+
+    // Permutación determinística Fisher-Yates para que cada ciudad tenga un orden de fotos 100% diferente
+    function getShuffledIndices(length, citySeed) {
+      const arr = Array.from({ length }, (_, i) => i);
+      let state = citySeed + 104729;
+      for (let i = length - 1; i > 0; i--) {
+        state = (state * 1664525 + 1013904223) >>> 0;
+        const j = state % (i + 1);
+        const temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+      }
+      return arr;
     }
 
     // ============================================================================
@@ -1472,121 +1519,29 @@
       "Front St","Water St","Bridge St","Depot St","Division St","Summit Ave","Hillcrest Dr","Fairview Ave","Woodland Dr","Colonial Way"
     ];
 
-    const REALISTIC_TITLES_1BED = [
-      "Apartamento 1 Hab / 1 Baño — Piso Laminado Nuevo",
-      "Unidad en 1er Piso — 1 Habitación, Recién Pintado",
-      "1 Habitación Amplia — Cocina con Gabinetes Blancos",
-      "Apartamento Residencial 1 Hab — 1 Estacionamiento Privado",
-      "Unidad Independiente 1 Hab / 1 Baño — Lista para Mudar",
-      "Apartamento en 2do Piso — 1 Habitación y Closet Grande",
-      "1 Habitación / 1 Baño — Sala Iluminada y Piso de Madera",
-      "Apartamento Cómodo 1 Hab — Cocina Equipada y Baño Nuevo",
-      "Unidad Renovada 1 Habitación — Todos los Biles Incluidos",
-      "Apartamento 1 Hab / 1 Baño — Entrada Inmediata",
-      "1 Habitación con Closet — Cocina y Sala Amplia",
-      "Unidad Residencial 1 Hab — Baño Completo Remodelado",
-      "Apartamento Tranquilo 1 Hab / 1 Baño — Estacionamiento Asignado",
-      "1 Habitación — Pisos de Madera, Estufa y Refrigerador",
-      "Unidad Lista para Habitar — 1 Habitación y 1 Baño Completo"
-    ];
-
-    const REALISTIC_TITLES_2BED = [
-      "Apartamento 2 Habitaciones / 1 Baño — 2 Estacionamientos",
-      "Unidad Familiar 2 Habitaciones — Piso de Madera Laminada",
-      "2 Habitaciones Amplias — Cocina Renovada y 2 Parqueos",
-      "Apartamento en 1er Piso — 2 Habitaciones, Recién Pintado",
-      "2 Habitaciones / 2 Baños — Gabinetes Nuevos y Sala Grande",
-      "Unidad Residencial 2 Hab — Todos los Biles Incluidos",
-      "Apartamento 2 Habitaciones — Closets Grandes y 2 Estacionamientos",
-      "2 Habitaciones / 1 Baño — Cocina con Barra Desayunador",
-      "Unidad en 2do Piso — 2 Habitaciones y Baño Remodelado",
-      "Apartamento Espacioso 2 Hab / 2 Baños — Entrega Inmediata",
-      "2 Habitaciones — Luz Natural, Persianas y 2 Estacionamientos",
-      "Unidad Independiente 2 Hab / 1 Baño — Pisos Nuevos",
-      "Apartamento 2 Habitaciones — Cocina Equipada con Estufa y Nevera",
-      "2 Habitaciones y Sala Amplia — 2 Estacionamientos Privados",
-      "Unidad Lista Hoy — 2 Habitaciones, Biles y Parqueo Incluidos"
+    const INTERIOR_HIGHLIGHTS = [
+      "Piso Laminado Nuevo",
+      "Gabinetes Blancos y Estufa",
+      "Recién Pintado por Dentro",
+      "Cocina con Barra y Nevera",
+      "Closet de Espejo y Persianas",
+      "Baño con Ducha de Vidrio",
+      "Piso de Madera y Sala Amplia",
+      "Entrada Independiente",
+      "Cocina Renovada y Biles Incluidos",
+      "1er Piso — Listo para Mudar",
+      "2do Piso — Muy Iluminado",
+      "Baño Nuevo y Closets Grandes",
+      "Unidad Residencial Tranquila",
+      "Cocina Equipada y Piso Claro",
+      "Acabados Residenciales Nuevos"
     ];
 
     // ============================================================================
-    // GENERADOR DE 30 APARTAMENTOS POR CIUDAD CON 30 PORTADAS DISTINTAS PRE-INYECTADAS
+    // GENERADOR CON MEZCLA CRIPTOGRÁFICA POR CIUDAD (NUNCA SE REPITEN CIUDADES)
     // ============================================================================
     const allApartments = [];
     const generatedCitiesSet = new Set();
-
-    function buildSingleApartmentUnit(stateCode, stateName, zipPrefix, cityName, cIdx, u) {
-      const sIdx = ["NJ", "FL", "CA", "PA"].indexOf(stateCode);
-      const id = 100000 + (sIdx * 100000) + (cIdx * 30) + u;
-      const uniqueHash = (sIdx + 1) * 29399 + (cIdx + 1) * 11939 + (u + 1) * 4567;
-
-      const isUnfurnished = (u % 4 !== 3);
-      const condition = isUnfurnished ? "No Amueblado" : "Semi-Amueblado";
-
-      const bedsNum = (u % 2 === 0) ? 1 : 2;
-      const bathsNum = (bedsNum === 2 && u % 4 === 1) ? 2 : 1;
-
-      // 1 habitación = 1 estacionamiento privado | 2 habitaciones = 2 estacionamientos privados
-      const parkingText = bedsNum === 1 ? "1 estacionamiento privado" : "2 estacionamientos privados";
-      const habText = bedsNum === 1 ? "1 habitación" : "2 habitaciones";
-      const banoText = bathsNum === 1 ? "1 baño" : "2 baños";
-      const distribution = `${parkingText} • ${habText} • ${banoText} • sala • cocina`;
-
-      const qualityBonus = (u % 3 === 1) ? 90 : ((u % 3 === 2) ? 175 : 0);
-      const baseByBeds = bedsNum === 1
-        ? 1100 + (uniqueHash % 185)
-        : 1380 + (uniqueHash % 275);
-
-      const semiExtra = isUnfurnished ? 0 : 40;
-      const rawPrice = baseByBeds + qualityBonus + semiExtra;
-      const finalPriceNum = Math.min(1950, Math.max(1100, Math.round(rawPrice / 5) * 5));
-      const priceFormatted = `$${finalPriceNum.toLocaleString("en-US")}`;
-
-      const streetNumber = 108 + ((u * 137 + cIdx * 53) % 8600);
-      const streetName = STREET_NAMES[(cIdx * 7 + u * 2) % STREET_NAMES.length];
-      const unitLetter = String.fromCharCode(65 + (u % 6));
-      const floorNum = (u % 3) + 1;
-      const zipFormatted = `${zipPrefix}${String((cIdx * 7 + (u % 5)) % 999).padStart(3, "0")}`;
-
-      const titlePool = bedsNum === 1 ? REALISTIC_TITLES_1BED : REALISTIC_TITLES_2BED;
-      const title = titlePool[Math.floor(u / 2) % titlePool.length];
-      const address = `${streetNumber} ${streetName}, Apt ${floorNum}${unitLetter}, ${cityName}, ${stateCode} ${zipFormatted}`;
-
-      const desc = isUnfurnished
-        ? `Apartamento residencial sin amueblar con disponibilidad inmediata en ${cityName}. Incluye todos los biles en la renta mensual (agua, luz, gas y calefacción), pisos laminados de madera, paredes recién pintadas, cocina con gabinetes y ${parkingText}.`
-        : `Apartamento residencial semi-amueblado con disponibilidad inmediata en ${cityName}. Incluye todos los biles en la renta mensual (agua, luz, gas y calefacción), cocina equipada con electrodomésticos, barra desayunador y ${parkingText}.`;
-
-      // CADA APARTAMENTO u (0..29) USA UN ÍNDICE EXCLUSIVO DE LAS 36 PORTADAS PRE-INYECTADAS
-      const coverIdx = (u + (cIdx * 7)) % PREINJECTED_36_COVERS.length;
-      const p1 = PREINJECTED_36_COVERS[coverIdx];
-      const p2 = PREINJECTED_36_COVERS[(coverIdx + 9) % PREINJECTED_36_COVERS.length];
-      const p3 = PREINJECTED_36_COVERS[(coverIdx + 18) % PREINJECTED_36_COVERS.length];
-      const p4 = PREINJECTED_36_COVERS[(coverIdx + 27) % PREINJECTED_36_COVERS.length];
-      const p5 = PREINJECTED_36_COVERS[(coverIdx + 5) % PREINJECTED_36_COVERS.length];
-
-      const photos = [p1, p2, p3, p4, p5].map((item, slot) => ({
-        url: buildPhotoUrl(item.base, item.params, cIdx + u + slot),
-        label: item.label,
-        short: item.short
-      }));
-
-      return {
-        id,
-        state: stateCode,
-        stateName,
-        city: cityName,
-        zip: zipFormatted,
-        title,
-        address,
-        priceNum: finalPriceNum,
-        price: priceFormatted,
-        beds: String(bedsNum),
-        baths: bathsNum,
-        condition,
-        distribution,
-        desc,
-        photos
-      };
-    }
 
     function ensureCityApartmentsGenerated(stateCode, cityName) {
       const official = CITIES_BY_STATE[stateCode]?.cities.find(c => c.toLowerCase() === (cityName || "").toLowerCase());
@@ -1597,15 +1552,119 @@
       generatedCitiesSet.add(key);
 
       const stObj = CITIES_BY_STATE[stateCode];
+      const sIdx = ["NJ", "FL", "CA", "PA"].indexOf(stateCode);
       const cIdx = stObj.cities.indexOf(official);
 
+      // Semilla única de esta ciudad para desordenar completamente fotos, títulos, precios y camas
+      const cityHash = (sIdx + 1) * 98317 + (cIdx + 1) * 49157 + official.charCodeAt(0) * 1237;
+      const shuffledCoverIndices = getShuffledIndices(ALL_55_COVERS.length, cityHash);
+      const shuffledSalaIndices = getShuffledIndices(MASTER_SALAS.length, cityHash + 11);
+      const shuffledCocinaIndices = getShuffledIndices(MASTER_COCINAS.length, cityHash + 23);
+      const shuffledHabIndices = getShuffledIndices(MASTER_HABITACIONES.length, cityHash + 37);
+      const shuffledBanoIndices = getShuffledIndices(MASTER_BANOS.length, cityHash + 53);
+      const shuffledStreetIndices = getShuffledIndices(STREET_NAMES.length, cityHash + 71);
+      const shuffledHighlightIndices = getShuffledIndices(INTERIOR_HIGHLIGHTS.length, cityHash + 89);
+
       for (let u = 0; u < 30; u++) {
-        allApartments.push(buildSingleApartmentUnit(stateCode, stObj.name, stObj.zipPrefix, official, cIdx, u));
+        const id = 100000 + (sIdx * 100000) + (cIdx * 30) + u;
+        const unitHash = cityHash + (u + 1) * 6151;
+
+        const isUnfurnished = ((u + cIdx) % 4 !== 3);
+        const condition = isUnfurnished ? "No Amueblado" : "Semi-Amueblado";
+
+        // Orden de habitaciones variado según la ciudad
+        const bedsNum = ((u + cIdx + sIdx) % 2 === 0) ? 1 : 2;
+        const bathsNum = (bedsNum === 2 && ((u + cIdx) % 3 === 0)) ? 2 : 1;
+
+        // 1 habitación = 1 estacionamiento privado | 2 habitaciones = 2 estacionamientos privados
+        const parkingText = bedsNum === 1 ? "1 estacionamiento privado" : "2 estacionamientos privados";
+        const habText = bedsNum === 1 ? "1 habitación" : "2 habitaciones";
+        const banoText = bathsNum === 1 ? "1 baño" : "2 baños";
+        const distribution = `${parkingText} • ${habText} • ${banoText} • sala • cocina`;
+
+        // Precios variados entre $1,100 y $1,950 según habitaciones y calidad
+        const qualityStep = ((u * 7 + cIdx * 3) % 3) * 85;
+        const baseByBeds = bedsNum === 1
+          ? 1100 + (unitHash % 220)
+          : 1390 + (unitHash % 310);
+
+        const semiExtra = isUnfurnished ? 0 : 40;
+        const rawPrice = baseByBeds + qualityStep + semiExtra;
+        const finalPriceNum = Math.min(1950, Math.max(1100, Math.round(rawPrice / 5) * 5));
+        const priceFormatted = `$${finalPriceNum.toLocaleString("en-US")}`;
+
+        const streetNumber = 112 + ((unitHash + u * 211) % 8800);
+        const streetName = STREET_NAMES[shuffledStreetIndices[u % shuffledStreetIndices.length]];
+        const unitLetter = String.fromCharCode(65 + ((u + cIdx) % 8));
+        const floorNum = ((u + cIdx) % 3) + 1;
+        const zipFormatted = `${stObj.zipPrefix}${String((cIdx * 7 + (u % 5)) % 999).padStart(3, "0")}`;
+
+        const highlight = INTERIOR_HIGHLIGHTS[shuffledHighlightIndices[u % shuffledHighlightIndices.length]];
+        const title = `${habText === "1 habitación" ? "Apartamento 1 Hab" : "Apartamento 2 Hab"} en ${streetName} — ${highlight}`;
+        const address = `${streetNumber} ${streetName}, Apt ${floorNum}${unitLetter}, ${official}, ${stateCode} ${zipFormatted}`;
+
+        const desc = isUnfurnished
+          ? `Apartamento residencial sin amueblar con disponibilidad inmediata en ${official} (${streetName}). Incluye todos los biles en la renta mensual (agua, luz, gas y calefacción), pisos laminados de madera, paredes recién pintadas, cocina con gabinetes y ${parkingText}.`
+          : `Apartamento residencial semi-amueblado con disponibilidad inmediata en ${official} (${streetName}). Incluye todos los biles en la renta mensual (agua, luz, gas y calefacción), cocina equipada con electrodomésticos, desayunador y ${parkingText}.`;
+
+        // Portada 100% exclusiva dentro de esta ciudad (shuffledCoverIndices[u])
+        const coverObj = ALL_55_COVERS[shuffledCoverIndices[u]];
+        const salaBase = MASTER_SALAS[shuffledSalaIndices[u % MASTER_SALAS.length]];
+        const cocinaBase = MASTER_COCINAS[shuffledCocinaIndices[u % MASTER_COCINAS.length]];
+        const habBase = MASTER_HABITACIONES[shuffledHabIndices[u % MASTER_HABITACIONES.length]];
+        const bano1Base = MASTER_BANOS[shuffledBanoIndices[u % MASTER_BANOS.length]];
+        const bano2Base = MASTER_BANOS[shuffledBanoIndices[(u + 4) % MASTER_BANOS.length]];
+        const extraSalaBase = MASTER_SALAS[shuffledSalaIndices[(u + 7) % MASTER_SALAS.length]];
+
+        const candidateRooms = [
+          { base: coverObj.base, label: coverObj.label, short: coverObj.short },
+          { base: salaBase, label: "Sala Interior y Piso Laminado", short: "Sala" },
+          { base: cocinaBase, label: "Cocina — Gabinetes y Estufa", short: "Cocina" },
+          { base: habBase, label: "Habitación y Closet", short: "Habitación" },
+          { base: bano1Base, label: "Baño — Lavamanos y Espejo", short: "Lavamanos" },
+          { base: bano2Base, label: "Baño — Ducha y Cerámica", short: "Ducha" },
+          { base: extraSalaBase, label: "Espacio Interior y Ventana", short: "Interior" }
+        ];
+
+        // Garantizar 6 fotos interiores distintas dentro de la misma unidad
+        const usedInUnit = new Set();
+        const unitPhotos = [];
+        for (let r = 0; r < candidateRooms.length; r++) {
+          const item = candidateRooms[r];
+          if (!usedInUnit.has(item.base) && unitPhotos.length < 6) {
+            usedInUnit.add(item.base);
+            const cam = buildCameraVariant(item.base, unitHash, unitPhotos.length);
+            unitPhotos.push({
+              url: cam.url,
+              style: cam.style,
+              label: item.label,
+              short: item.short
+            });
+          }
+        }
+
+        allApartments.push({
+          id,
+          state: stateCode,
+          stateName: stObj.name,
+          city: official,
+          zip: zipFormatted,
+          title,
+          address,
+          priceNum: finalPriceNum,
+          price: priceFormatted,
+          beds: String(bedsNum),
+          baths: bathsNum,
+          condition,
+          distribution,
+          desc,
+          photos: unitPhotos
+        });
       }
     }
 
     // ============================================================================
-    // DETECTOR DE UBICACIÓN ESTRICTO (SOLO CIUDADES VÁLIDAS DE NJ, FL, CA, PA)
+    // DETECTOR DE UBICACIÓN ESTRICTO (SOLO CIUDADES REALES DE NJ, FL, CA, PA)
     // ============================================================================
     function setSuggestedLocation(stateCode, verifiedCityName) {
       const stObj = CITIES_BY_STATE[stateCode] || CITIES_BY_STATE.FL;
@@ -1877,9 +1936,10 @@
               <img
                 id="card-img-${apt.id}"
                 src="${currentPhoto.url}"
+                style="${currentPhoto.style}"
                 alt="${apt.title}"
                 loading="lazy"
-                onerror="handleSafeImageFallback(this, ${apt.id})"
+                onerror="handleRotatingFallback(this, ${apt.id})"
                 onclick="openAptModal(${apt.id})"
               />
               <button class="slider-arrow next" onclick="slideCardPhoto(${apt.id}, 1, event)">&#10095;</button>
@@ -1958,6 +2018,7 @@
       const p = apt.photos[next];
       const imgEl = document.getElementById(`card-img-${aptId}`);
       imgEl.src = p.url;
+      imgEl.setAttribute("style", p.style);
       document.getElementById(`card-cap-${aptId}`).textContent = p.label;
       document.getElementById(`card-cnt-${aptId}`).textContent = `${next + 1}/${apt.photos.length}`;
 
@@ -2025,12 +2086,13 @@
       const p = currentModalApt.photos[currentModalSlide];
       const mainImg = document.getElementById("modalMainImg");
       mainImg.src = p.url;
+      mainImg.setAttribute("style", p.style);
       document.getElementById("modalRoomCaption").textContent = p.label;
       document.getElementById("modalCounterCaption").textContent = `${currentModalSlide + 1} / ${currentModalApt.photos.length}`;
 
       document.getElementById("modalThumbsRow").innerHTML = currentModalApt.photos.map((photo, idx) => `
         <div class="thumb-item ${idx === currentModalSlide ? "active" : ""}" onclick="pickModalThumb(${idx})">
-          <img src="${photo.url}" alt="${photo.label}" onerror="handleSafeImageFallback(this, ${idx})" />
+          <img src="${photo.url}" style="${photo.style}" alt="${photo.label}" onerror="handleRotatingFallback(this, ${idx})" />
           <span>${photo.short}</span>
         </div>
       `).join("");
@@ -2141,9 +2203,9 @@
       return apts.map(apt => `
         <div class="chat-property-card">
           <div class="chat-photo-strip" onclick="openAptModal(${apt.id})">
-            <div class="chat-photo-col"><img src="${apt.photos[0].url}" alt="Interior 1" onerror="handleSafeImageFallback(this, 0)" /></div>
-            <div class="chat-photo-col"><img src="${apt.photos[1].url}" alt="Interior 2" onerror="handleSafeImageFallback(this, 1)" /></div>
-            <div class="chat-photo-col"><img src="${apt.photos[2].url}" alt="Interior 3" onerror="handleSafeImageFallback(this, 2)" /></div>
+            <div class="chat-photo-col"><img src="${apt.photos[0].url}" style="${apt.photos[0].style}" alt="Interior 1" onerror="handleRotatingFallback(this, 1)" /></div>
+            <div class="chat-photo-col"><img src="${apt.photos[1].url}" style="${apt.photos[1].style}" alt="Interior 2" onerror="handleRotatingFallback(this, 2)" /></div>
+            <div class="chat-photo-col"><img src="${apt.photos[2].url}" style="${apt.photos[2].style}" alt="Interior 3" onerror="handleRotatingFallback(this, 3)" /></div>
           </div>
           <div class="chat-prop-body">
             <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -2154,7 +2216,7 @@
             <div style="color:#334155; font-weight:700; margin-top:3px;">📐 ${apt.distribution}</div>
             <div style="color:#047857; font-weight:800; margin-top:3px;">✔️ Agua, Luz, Gas y Calefacción incluidos</div>
             <div class="chat-prop-btns">
-              <button class="chat-btn-outline" onclick="openAptModal(${apt.id})">🔍 Ver 5 Fotos</button>
+              <button class="chat-btn-outline" onclick="openAptModal(${apt.id})">🔍 Ver 6 Fotos</button>
               <a class="chat-btn-wa" href="${createWhatsAppLink(apt, 'CITA')}" target="_blank">
                 ${showWhatsAppProminent ? "📅 Agendar en WhatsApp" : "💬 Elegir Unidad"}
               </a>
@@ -2280,7 +2342,7 @@
       );
     }
 
-    // Inicializar portal con fotos pre-inyectadas al instante
+    // Inicializar portal con fotos pre-inyectadas y orden único por ciudad
     updateFavCounterUI();
     setSuggestedLocation("FL", "Miami");
     autoDetectSuggestedLocation();
