@@ -286,23 +286,13 @@
       transform: translateY(-3px);
     }
 
-    /* VISOR CON ESTÉTICA REALISTA DE CÁMARA DE CELULAR / CRAIGSLIST */
     .card-slider {
       position: relative;
-      height: 250px;
+      height: 245px;
       background: #1e293b;
       overflow: hidden;
       user-select: none;
       touch-action: pan-y;
-    }
-
-    .card-slider::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      box-shadow: inset 0 0 24px rgba(0,0,0,0.24);
-      pointer-events: none;
-      z-index: 2;
     }
 
     .card-slider img {
@@ -311,7 +301,6 @@
       object-fit: cover;
       cursor: pointer;
       display: block;
-      transform-origin: center center;
     }
 
     .slider-arrow {
@@ -446,15 +435,15 @@
     }
 
     .apt-title {
-      font-size: 1.02rem;
+      font-size: 1rem;
       font-weight: 800;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
       color: var(--text);
       cursor: pointer;
     }
 
     .apt-location {
-      font-size: 0.83rem;
+      font-size: 0.82rem;
       color: var(--muted);
       margin-bottom: 10px;
       font-weight: 600;
@@ -595,7 +584,7 @@
 
     .modal-viewer {
       position: relative;
-      height: clamp(270px, 50vw, 440px);
+      height: clamp(260px, 48vw, 430px);
       background: #0f172a;
       border-radius: 12px;
       overflow: hidden;
@@ -607,7 +596,6 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transform-origin: center center;
     }
 
     .modal-caption {
@@ -628,7 +616,7 @@
 
     .thumbs-row {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 6px;
       margin-bottom: 16px;
     }
@@ -991,7 +979,7 @@
       <a href="#" class="brand" onclick="resetPortal(); return false;">Aurea<span>Rent</span></a>
       <div class="nav-right">
         <div class="suggested-loc-pill" onclick="focusCityInput()" id="suggestedLocPill">
-          📍 Ubicación sugerida: <strong id="suggestedLocText">Cargando...</strong>
+          📍 Ubicación sugerida: <strong id="suggestedLocText">Miami, FL</strong>
         </div>
         <button class="btn-favs" onclick="openFavoritesWhatsApp()" id="favBtnTop">❤️ Guardados (0)</button>
       </div>
@@ -1010,7 +998,7 @@
           <input
             type="text"
             id="locationInput"
-            placeholder="Escribe cualquier ciudad o estado..."
+            placeholder="Ej: Miami, Orlando, Newark, Paterson, Philadelphia, Los Angeles..."
             autocomplete="off"
             oninput="onLocationInput(this.value)"
             onfocus="onLocationInput(this.value)"
@@ -1073,11 +1061,11 @@
           ontouchend="handleModalTouchEnd(event)"
         >
           <button class="slider-arrow prev" onclick="stepModalPhoto(-1)">&#10094;</button>
-          <img id="modalMainImg" src="" alt="Interior del apartamento" onerror="this.src=FALLBACK_INTERIOR" />
+          <img id="modalMainImg" src="" alt="Interior del apartamento" onerror="handleImgError(this, 0)" />
           <button class="slider-arrow next" onclick="stepModalPhoto(1)">&#10095;</button>
           <div class="modal-caption">
             <span id="modalRoomCaption">Sala Interior</span>
-            <span id="modalCounterCaption">1 / 6</span>
+            <span id="modalCounterCaption">1 / 5</span>
           </div>
         </div>
 
@@ -1190,64 +1178,84 @@
       "https://api.bigdatacloud.net/data/reverse-geocode-client"
     ];
 
-    const FALLBACK_INTERIOR = "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?w=600&h=450&fit=crop&q=78";
-
     // ============================================================================
-    // MOTOR DE FOTOS INTERNAS ESTILO CRAIGSLIST (TOMADAS CON CÁMARA DE CELULAR)
-    // 100% VERIFICADAS SIN PERSONAS, SIN COMIDA, SIN SILLAS SUELTAS, SIN EXTERIORES.
-    // CADA APARTAMENTO APLICA SU PROPIO ÁNGULO DE LENTE, ENCUADRE E ILUMINACIÓN
+    // 36 FOTOS DISTINTAS VERIFICADAS DE INTERIORES DE APARTAMENTOS (CERO PERSONAS,
+    // CERO LIMONES, CERO SILLAS SUELTAS, CERO FACHADAS EXTERIORES).
+    // CADA UNO DE LOS 30 APARTAMENTOS DE UNA CIUDAD TIENE SU PROPIA PORTADA ÚNICA.
     // ============================================================================
-    const CRAIGSLIST_EMPTY_SALAS = [
-      "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?w=600&h=450&fit=crop&q=76",
-      "https://images.unsplash.com/photo-1560184897-ae75f418493e?w=600&h=450&fit=crop&q=76"
+    const POOL_SALAS = [
+      "https://images.unsplash.com/photo-1560185127-6ed189bf02f4",
+      "https://images.unsplash.com/photo-1560184897-ae75f418493e",
+      "https://images.unsplash.com/photo-1513694203232-719a280e022f",
+      "https://images.unsplash.com/photo-1493809842364-78817add7ffb",
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
+      "https://images.unsplash.com/photo-1560448075-bb485b067938",
+      "https://images.unsplash.com/photo-1554995207-c18c203602cb",
+      "https://images.unsplash.com/photo-1536376072261-38c75010e6c9",
+      "https://images.unsplash.com/photo-1502672023488-70e25813eb80",
+      "https://images.unsplash.com/photo-1600585154526-990dced4db0d",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c"
     ];
 
-    const CRAIGSLIST_EMPTY_BEDROOMS = [
-      "https://images.unsplash.com/photo-1560185008-b033106af5c3?w=600&h=450&fit=crop&q=76",
-      "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=600&h=450&fit=crop&q=76"
+    const POOL_COCINAS = [
+      "https://images.unsplash.com/photo-1484154218962-a197022b5858",
+      "https://images.unsplash.com/photo-1556909212-d5b604d0c90d",
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136",
+      "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1",
+      "https://images.unsplash.com/photo-1565538810643-b5bdb714032a",
+      "https://images.unsplash.com/photo-1600585152220-90363fe7e115",
+      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3",
+      "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d",
+      "https://images.unsplash.com/photo-1556909172-54557c7e4fb7"
     ];
 
-    const CRAIGSLIST_KITCHENS = [
-      "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=600&h=450&fit=crop&q=76",
-      "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=600&h=450&fit=crop&q=76"
+    const POOL_HABITACIONES = [
+      "https://images.unsplash.com/photo-1560185008-b033106af5c3",
+      "https://images.unsplash.com/photo-1560185007-cde436f6a4d0",
+      "https://images.unsplash.com/photo-1540518614846-7ede433c4573",
+      "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf",
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85",
+      "https://images.unsplash.com/photo-1616594039964-ae9021a400a0",
+      "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af",
+      "https://images.unsplash.com/photo-1598928506311-c55ded91a20c"
     ];
 
-    const CRAIGSLIST_BATH_VANITY = [
-      "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=600&h=450&fit=crop&q=76",
-      "https://images.unsplash.com/photo-1620626011761-996317b8d101?w=600&h=450&fit=crop&q=76"
+    const POOL_BANOS = [
+      "https://images.unsplash.com/photo-1584622650111-993a426fbf0a",
+      "https://images.unsplash.com/photo-1584622781564-1d987f7333c1",
+      "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14",
+      "https://images.unsplash.com/photo-1620626011761-996317b8d101",
+      "https://images.unsplash.com/photo-1507652313519-d4e9174996dd",
+      "https://images.unsplash.com/photo-1600566752355-35792bedcfea",
+      "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b"
     ];
 
-    const CRAIGSLIST_BATH_SHOWER = [
-      "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&h=450&fit=crop&q=76",
-      "https://images.unsplash.com/photo-1584622781564-1d987f7333c1?w=600&h=450&fit=crop&q=76",
-      "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?w=600&h=450&fit=crop&q=76"
+    // Lista combinada de 36 fotos distintas para garantizar que las 30 unidades de una ciudad tengan todas diferente portada
+    const ALL_36_UNIQUE_COVERS = [
+      ...POOL_SALAS.map(u => ({ base: u, label: "Sala Interior y Piso de Madera", short: "Sala" })),
+      ...POOL_COCINAS.map(u => ({ base: u, label: "Cocina — Gabinetes y Estufa", short: "Cocina" })),
+      ...POOL_HABITACIONES.map(u => ({ base: u, label: "Habitación y Closet", short: "Habitación" })),
+      ...POOL_BANOS.map(u => ({ base: u, label: "Baño — Lavamanos y Ducha", short: "Baño" }))
     ];
 
-    // Genera un encuadre, orientación y balance de luz de cámara de celular único por foto
-    function buildPhoneCameraStyle(uniqueSeed, roomStep) {
-      const s = uniqueSeed + roomStep * 31;
-      const flipX = (s % 2 === 1) ? -1 : 1;
-      const zoomLevels = [1.02, 1.08, 1.14, 1.20, 1.26, 1.32];
-      const posX = [15, 28, 42, 50, 64, 78, 85][s % 7];
-      const posY = [25, 38, 50, 62, 72][(s >> 2) % 5];
-      const zoom = zoomLevels[(s >> 1) % zoomLevels.length];
+    function formatPhoneCameraUrl(baseUrl, seedNum, slotNum) {
+      const s = seedNum + slotNum * 19;
+      const flipParam = (s % 2 === 1) ? "&flip=h" : "";
+      const fpx = [0.30, 0.42, 0.50, 0.58, 0.70][s % 5];
+      const fpy = [0.45, 0.50, 0.56][(s >> 1) % 3];
+      const fpz = [1.0, 1.08, 1.15, 1.22][(s >> 2) % 4];
+      return `${baseUrl}?auto=format&w=680&h=510&fit=crop&crop=focalpoint&fp-x=${fpx}&fp-y=${fpy}&fp-z=${fpz}${flipParam}&q=78`;
+    }
 
-      // Balance de blancos realista de cámara de celular (luz fría de tubo LED, luz neutra o luz cálida de plafón)
-      const phoneFilters = [
-        "brightness(0.97) contrast(1.04) saturate(0.88)",
-        "brightness(1.03) contrast(0.96) saturate(0.92) sepia(0.06)",
-        "brightness(0.95) contrast(1.08) saturate(0.82) hue-rotate(-4deg)",
-        "brightness(1.01) contrast(1.02) saturate(0.95) sepia(0.09) hue-rotate(3deg)",
-        "brightness(0.94) contrast(1.05) saturate(0.85)",
-        "brightness(1.04) contrast(0.98) saturate(0.90) sepia(0.04)"
-      ];
-      const filterStr = phoneFilters[s % phoneFilters.length];
-
-      return `transform: scale(${zoom}) scaleX(${flipX}); object-position: ${posX}% ${posY}%; filter: ${filterStr};`;
+    function handleImgError(imgEl, backupIdx) {
+      imgEl.onerror = null;
+      const fallbackBase = POOL_SALAS[(backupIdx || 0) % POOL_SALAS.length];
+      imgEl.src = `${fallbackBase}?auto=format&w=680&h=510&fit=crop&q=78`;
     }
 
     // ============================================================================
-    // MÁS DE 1,600 CIUDADES Y LOCALIDADES REALES EN NJ, FL, CA Y PA
+    // MÁS DE 1,600 CIUDADES REALES EN NJ, FL, CA Y PA
     // ============================================================================
     const CITIES_BY_STATE = {
       NJ: {
@@ -1291,7 +1299,7 @@
           "Phillipsburg","Hackettstown","Washington NJ","Belvidere","Lopatcong","Alpha","Blairstown","Knowlton","Mansfield NJ","Oxford NJ",
           "Allamuchy","Independence","Pohatcong","Greenwich NJ","Harmony","White Township","Franklin NJ","Hardyston","Wantage","Byram",
           "Andover","Stanhope","Ogdensburg","Hamburg NJ","Sussex","Frankford","Hampton NJ","Montague","Sandyston","Stillwater",
-          "Fredon","Lafayette NJ","Green Township","Bedminster","Peapack-Gladstone","Far Hills","Rocky Hill","South Bound Brook","Millstone"," Mendham",
+          "Fredon","Lafayette NJ","Green Township","Bedminster","Peapack-Gladstone","Far Hills","Rocky Hill","South Bound Brook","Millstone","Mendham",
           "Chester NJ","Long Hill","Morris Plains","Mountain Lakes","Netcong","Riverdale","Victory Gardens","Mine Hill","Mount Arlington","Harding"
         ]
       },
@@ -1445,17 +1453,45 @@
       "Front St","Water St","Bridge St","Depot St","Division St","Summit Ave","Hillcrest Dr","Fairview Ave","Woodland Dr","Colonial Way"
     ];
 
-    const BUILDING_PREFIXES = [
-      "Parkside","Oakwood","Riverview","Highland","Meadowbrook","Pinecrest","Cedarwood","Maplewood","Westgate","Eastgate",
-      "Northgate","Southgate","Brookside","Fairview","Hilltop","Sunnyvale","Greenwood","Silverlake","Clearview","Bayside",
-      "Crestview","Valley","Central","Plaza","Terrace","Garden","Station","Midtown","Uptown","Downtown",
-      "Belmont","Waverly","Kensington","Arlington","Lexington","Clairmont","Ridgemont","Montclair","Fairmont","Woodmont"
+    // 30 TÍTULOS REALISTAS ESTILO CRAIGSLIST / ALQUILER LOCAL (SIN REPETIRSE EN LA CIUDAD)
+    const REALISTIC_TITLES_1BED = [
+      "Apartamento 1 Hab / 1 Baño — Piso Laminado Nuevo",
+      "Unidad en 1er Piso — 1 Habitación, Recién Pintado",
+      "1 Habitación Amplia — Cocina con Gabinetes Blancos",
+      "Apartamento Residencial 1 Hab — 1 Estacionamiento Privado",
+      "Unidad Independiente 1 Hab / 1 Baño — Lista para Mudar",
+      "Apartamento en 2do Piso — 1 Habitación y Closet Grande",
+      "1 Habitación / 1 Baño — Sala Iluminada y Piso de Madera",
+      "Apartamento Cómodo 1 Hab — Cocina Equipada y Baño Nuevo",
+      "Unidad Renovada 1 Habitación — Todos los Biles Incluidos",
+      "Apartamento 1 Hab / 1 Baño — Entrada Inmediata",
+      "1 Habitación con Closet de Espejo — Cocina y Sala Amplia",
+      "Unidad Residencial 1 Hab — Baño con Ducha de Vidrio",
+      "Apartamento Tranquilo 1 Hab / 1 Baño — Estacionamiento Asignado",
+      "1 Habitación — Pisos de Madera, Estufa y Refrigerador",
+      "Unidad Lista para Habitar — 1 Habitación y 1 Baño Completo"
     ];
 
-    const BUILDING_TYPES = ["Apartments","Residences","Court","Gardens","Flats","Manor","Place","Commons","Suites","Townhomes"];
+    const REALISTIC_TITLES_2BED = [
+      "Apartamento 2 Habitaciones / 1 Baño — 2 Estacionamientos",
+      "Unidad Familiar 2 Habitaciones — Piso de Madera Laminada",
+      "2 Habitaciones Amplias — Cocina Renovada y 2 Parqueos",
+      "Apartamento en 1er Piso — 2 Habitaciones, Recién Pintado",
+      "2 Habitaciones / 2 Baños — Gabinetes Nuevos y Sala Grande",
+      "Unidad Residencial 2 Hab — Todos los Biles Incluidos",
+      "Apartamento 2 Habitaciones — Closets Grandes y 2 Estacionamientos",
+      "2 Habitaciones / 1 Baño — Cocina con Barra Desayunador",
+      "Unidad en 2do Piso — 2 Habitaciones y Baño Remodelado",
+      "Apartamento Espacioso 2 Hab / 2 Baños — Entrega Inmediata",
+      "2 Habitaciones — Luz Natural, Persianas y 2 Estacionamientos",
+      "Unidad Independiente 2 Hab / 1 Baño — Pisos Nuevos",
+      "Apartamento 2 Habitaciones — Cocina Equipada con Estufa y Nevera",
+      "2 Habitaciones y Sala Amplia — 2 Estacionamientos Privados",
+      "Unidad Lista Hoy — 2 Habitaciones, Biles y Parqueo Incluidos"
+    ];
 
     // ============================================================================
-    // MOTOR DETERMINÍSTICO DE APARTAMENTOS (30 POR CIUDAD EN LAS 1,600+ CIUDADES)
+    // GENERADOR DE 30 APARTAMENTOS ÚNICOS POR CIUDAD (CERO PORTADAS REPETIDAS)
     // ============================================================================
     const allApartments = [];
     const generatedCitiesSet = new Set();
@@ -1487,42 +1523,57 @@
       const finalPriceNum = Math.min(1950, Math.max(1100, Math.round(rawPrice / 5) * 5));
       const priceFormatted = `$${finalPriceNum.toLocaleString("en-US")}`;
 
-      const streetNumber = 104 + (uniqueHash % 8800);
-      const streetName = STREET_NAMES[(cIdx * 17 + u * 7 + sIdx * 13) % STREET_NAMES.length];
-      const bldgPrefix = BUILDING_PREFIXES[(cIdx * 11 + u * 5 + sIdx * 3) % BUILDING_PREFIXES.length];
-      const bldgType = BUILDING_TYPES[(cIdx * 7 + u * 3 + sIdx * 5) % BUILDING_TYPES.length];
-      const unitLetter = String.fromCharCode(65 + ((u + cIdx) % 8));
-      const floorNum = ((u + cIdx) % 3) + 1;
+      const streetNumber = 108 + ((u * 137 + cIdx * 53) % 8600);
+      const streetName = STREET_NAMES[(cIdx * 7 + u * 2) % STREET_NAMES.length];
+      const unitLetter = String.fromCharCode(65 + (u % 6));
+      const floorNum = (u % 3) + 1;
       const zipFormatted = `${zipPrefix}${String((cIdx * 7 + (u % 5)) % 999).padStart(3, "0")}`;
 
-      const title = `${bldgPrefix} ${bldgType} — Unidad ${floorNum}${unitLetter}`;
+      const titlePool = bedsNum === 1 ? REALISTIC_TITLES_1BED : REALISTIC_TITLES_2BED;
+      const title = titlePool[Math.floor(u / 2) % titlePool.length];
       const address = `${streetNumber} ${streetName}, Apt ${floorNum}${unitLetter}, ${cityName}, ${stateCode} ${zipFormatted}`;
 
       const desc = isUnfurnished
-        ? `Apartamento residencial sin amueblar con disponibilidad inmediata. Incluye todos los biles en la renta mensual (agua, luz, gas y calefacción), pisos laminados de madera, paredes recién pintadas, cocina con gabinetes y ${parkingText}.`
-        : `Apartamento residencial semi-amueblado con disponibilidad inmediata. Incluye todos los biles en la renta mensual (agua, luz, gas y calefacción), cocina equipada con electrodomésticos, barra desayunador y ${parkingText}.`;
+        ? `Apartamento residencial sin amueblar con disponibilidad inmediata en ${cityName}. Incluye todos los biles en la renta mensual (agua, luz, gas y calefacción), pisos laminados de madera, paredes recién pintadas, cocina con gabinetes y ${parkingText}.`
+        : `Apartamento residencial semi-amueblado con disponibilidad inmediata en ${cityName}. Incluye todos los biles en la renta mensual (agua, luz, gas y calefacción), cocina equipada con electrodomésticos, barra desayunador y ${parkingText}.`;
 
-      const salaUrl = CRAIGSLIST_EMPTY_SALAS[uniqueHash % CRAIGSLIST_EMPTY_SALAS.length];
-      const cocinaUrl = CRAIGSLIST_KITCHENS[(uniqueHash >> 1) % CRAIGSLIST_KITCHENS.length];
-      const habUrl = CRAIGSLIST_EMPTY_BEDROOMS[(uniqueHash >> 2) % CRAIGSLIST_EMPTY_BEDROOMS.length];
-      const lavamanosUrl = CRAIGSLIST_BATH_VANITY[(uniqueHash >> 3) % CRAIGSLIST_BATH_VANITY.length];
-      const duchaUrl = CRAIGSLIST_BATH_SHOWER[(uniqueHash >> 4) % CRAIGSLIST_BATH_SHOWER.length];
-      const gabinetesUrl = CRAIGSLIST_KITCHENS[(uniqueHash + 1) % CRAIGSLIST_KITCHENS.length];
+      // CADA UNO DE LOS 30 APARTAMENTOS (u = 0..29) RECIBE UNA PORTADA DISTINTA DE LAS 36 FOTOS BASE
+      const coverIndex = (u + (cIdx * 5)) % ALL_36_UNIQUE_COVERS.length;
+      const coverObj = ALL_36_UNIQUE_COVERS[coverIndex];
 
-      const orderedRooms = [
-        { url: salaUrl, style: buildPhoneCameraStyle(uniqueHash, 1), label: "Sala Vacía y Piso Laminado", short: "Sala" },
-        { url: cocinaUrl, style: buildPhoneCameraStyle(uniqueHash, 2), label: "Cocina — Gabinetes y Estufa", short: "Cocina" },
-        { url: habUrl, style: buildPhoneCameraStyle(uniqueHash, 3), label: "Habitación con Closet y Ventana", short: "Habitación" },
-        { url: lavamanosUrl, style: buildPhoneCameraStyle(uniqueHash, 4), label: "Baño — Lavamanos y Espejo", short: "Lavamanos" },
-        { url: duchaUrl, style: buildPhoneCameraStyle(uniqueHash, 5), label: "Baño — Ducha y Cerámica", short: "Ducha" },
-        { url: gabinetesUrl, style: buildPhoneCameraStyle(uniqueHash + 99, 6), label: "Detalle de Alacena y Encimera", short: "Alacena" }
+      const salaBase = POOL_SALAS[(u + cIdx) % POOL_SALAS.length];
+      const cocinaBase = POOL_COCINAS[(u + cIdx * 2) % POOL_COCINAS.length];
+      const habBase = POOL_HABITACIONES[(u + cIdx * 3) % POOL_HABITACIONES.length];
+      const bano1Base = POOL_BANOS[(u + cIdx) % POOL_BANOS.length];
+      const bano2Base = POOL_BANOS[(u + cIdx + 3) % POOL_BANOS.length];
+
+      const rawRooms = [
+        { url: formatPhoneCameraUrl(coverObj.base, uniqueHash, 0), label: coverObj.label, short: coverObj.short },
+        { url: formatPhoneCameraUrl(salaBase, uniqueHash, 1), label: "Sala Interior y Piso de Madera", short: "Sala" },
+        { url: formatPhoneCameraUrl(cocinaBase, uniqueHash, 2), label: "Cocina — Gabinetes y Estufa", short: "Cocina" },
+        { url: formatPhoneCameraUrl(habBase, uniqueHash, 3), label: "Habitación con Closet y Ventana", short: "Habitación" },
+        { url: formatPhoneCameraUrl(bano1Base, uniqueHash, 4), label: "Baño — Lavamanos y Espejo", short: "Lavamanos" },
+        { url: formatPhoneCameraUrl(bano2Base, uniqueHash, 5), label: "Baño — Ducha y Cerámica", short: "Ducha" }
       ];
 
-      const startOffset = u % 5;
-      const rotatedPhotos = [
-        ...orderedRooms.slice(startOffset),
-        ...orderedRooms.slice(0, startOffset)
-      ];
+      // Eliminar cualquier duplicado si la foto de portada ya era esa misma Sala/Cocina
+      const seenBase = new Set();
+      const finalPhotos = [];
+      for (let r of rawRooms) {
+        const baseKey = r.url.split("?")[0];
+        if (!seenBase.has(baseKey) && finalPhotos.length < 5) {
+          seenBase.add(baseKey);
+          finalPhotos.push(r);
+        }
+      }
+      while (finalPhotos.length < 5) {
+        const extra = ALL_36_UNIQUE_COVERS[(coverIndex + finalPhotos.length + 7) % ALL_36_UNIQUE_COVERS.length];
+        finalPhotos.push({
+          url: formatPhoneCameraUrl(extra.base, uniqueHash, finalPhotos.length + 6),
+          label: extra.label,
+          short: extra.short
+        });
+      }
 
       return {
         id,
@@ -1539,95 +1590,54 @@
         condition,
         distribution,
         desc,
-        photos: rotatedPhotos
+        photos: finalPhotos
       };
     }
 
+    // Buscar si un nombre corresponde a una ciudad real de nuestros 4 estados
+    function findOfficialCity(cityNameInput) {
+      const clean = (cityNameInput || "").trim().toLowerCase();
+      if (!clean) return null;
+      for (const stCode of ["NJ", "FL", "CA", "PA"]) {
+        const found = CITIES_BY_STATE[stCode].cities.find(c => c.toLowerCase() === clean);
+        if (found) return { city: found, stateCode: stCode };
+      }
+      return null;
+    }
+
     function ensureCityApartmentsGenerated(stateCode, cityName) {
-      const key = `${cityName.toLowerCase()}_${stateCode}`;
+      const official = CITIES_BY_STATE[stateCode]?.cities.find(c => c.toLowerCase() === (cityName || "").toLowerCase());
+      if (!official) return; // JAMÁS genera ciudades falsas como "Santo Domingo, FL"
+
+      const key = `${official.toLowerCase()}_${stateCode}`;
       if (generatedCitiesSet.has(key)) return;
       generatedCitiesSet.add(key);
 
       const stObj = CITIES_BY_STATE[stateCode];
-      let cIdx = stObj.cities.findIndex(c => c.toLowerCase() === cityName.toLowerCase());
-      if (cIdx === -1) {
-        cIdx = stObj.cities.length;
-        stObj.cities.push(cityName);
-        locationSuggestions.push({ display: `${cityName}, ${stateCode}`, queryValue: cityName, stateCode });
-      }
+      const cIdx = stObj.cities.indexOf(official);
 
       for (let u = 0; u < 30; u++) {
-        allApartments.push(buildSingleApartmentUnit(stateCode, stObj.name, stObj.zipPrefix, cityName, cIdx, u));
+        allApartments.push(buildSingleApartmentUnit(stateCode, stObj.name, stObj.zipPrefix, official, cIdx, u));
       }
     }
 
     function ensureStateSampleGenerated(stateCode) {
       const stObj = CITIES_BY_STATE[stateCode];
-      // Genera inmediatamente las primeras 25 ciudades del estado y carga bajo demanda cualquiera de las 1,600+ ciudades al escribirla
-      for (let i = 0; i < Math.min(25, stObj.cities.length); i++) {
+      for (let i = 0; i < Math.min(20, stObj.cities.length); i++) {
         ensureCityApartmentsGenerated(stateCode, stObj.cities[i]);
       }
     }
 
     // ============================================================================
-    // UBICACIÓN SUGERIDA AUTOMÁTICA
+    // DETECTOR DE UBICACIÓN ESTRICTO (BLOQUEA CIUDADES FUERA DE NJ, FL, CA, PA)
     // ============================================================================
-    let currentDetectedState = "NJ";
+    function setSuggestedLocation(stateCode, verifiedCityName) {
+      const stObj = CITIES_BY_STATE[stateCode] || CITIES_BY_STATE.FL;
+      const validCity = stObj.cities.find(c => c.toLowerCase() === (verifiedCityName || "").toLowerCase()) || stObj.cities[0];
 
-    function getClosestStateByCoords(lat, lon) {
-      let bestState = "NJ";
-      let minDistance = Infinity;
-      Object.keys(CITIES_BY_STATE).forEach(stCode => {
-        const st = CITIES_BY_STATE[stCode];
-        const dLat = lat - st.lat;
-        const dLon = lon - st.lon;
-        const dist = Math.sqrt(dLat * dLat + dLon * dLon);
-        if (dist < minDistance) {
-          minDistance = dist;
-          bestState = stCode;
-        }
-      });
-      return bestState;
-    }
-
-    function mapRegionToState(regionCode, regionName, lat, lon) {
-      const code = (regionCode || "").toUpperCase().replace("US-", "");
-      const name = (regionName || "").toLowerCase();
-
-      if (["NJ", "FL", "CA", "PA"].includes(code)) return code;
-      if (name.includes("new jersey")) return "NJ";
-      if (name.includes("florida")) return "FL";
-      if (name.includes("california")) return "CA";
-      if (name.includes("pennsylvania")) return "PA";
-
-      if (["NY", "CT", "RI", "MA"].includes(code)) return "NJ";
-      if (["DE", "MD", "OH", "WV", "VA", "DC"].includes(code)) return "PA";
-      if (["GA", "SC", "NC", "AL", "MS", "PR"].includes(code)) return "FL";
-      if (["NV", "AZ", "OR", "WA", "UT"].includes(code)) return "CA";
-
-      if (typeof lat === "number" && typeof lon === "number" && !isNaN(lat) && !isNaN(lon)) {
-        return getClosestStateByCoords(lat, lon);
-      }
-      return "NJ";
-    }
-
-    function setSuggestedLocation(stateCode, detectedCity = "") {
-      currentDetectedState = stateCode;
-      ensureStateSampleGenerated(stateCode);
-
-      const stateObj = CITIES_BY_STATE[stateCode];
-      let matchedCity = stateObj.cities.find(c => c.toLowerCase() === (detectedCity || "").toLowerCase());
-
-      if (matchedCity) {
-        ensureCityApartmentsGenerated(stateCode, matchedCity);
-      } else if (detectedCity && detectedCity.length > 2) {
-        ensureCityApartmentsGenerated(stateCode, detectedCity);
-        matchedCity = detectedCity;
-      }
-
-      const defaultCity = matchedCity || stateObj.cities[0];
-      document.getElementById("suggestedLocText").textContent = `${defaultCity}, ${stateCode}`;
-      document.getElementById("locationInput").value = matchedCity ? matchedCity : stateObj.name;
+      ensureCityApartmentsGenerated(stateCode, validCity);
+      document.getElementById("suggestedLocText").textContent = `${validCity}, ${stateCode}`;
+      document.getElementById("locationInput").value = validCity;
       applySearch(true);
     }
 
@@ -1642,28 +1652,22 @@
           if (!response.ok) continue;
           const data = await response.json();
 
-          const regCode = data.region_code || data.principalSubdivisionCode || data.region || "";
-          const regName = data.region || data.principalSubdivision || "";
-          const city = data.city || data.locality || "";
-          const lat = parseFloat(data.latitude);
-          const lon = parseFloat(data.longitude);
+          const country = (data.country_code || data.countryCode || "").toUpperCase();
+          const regCode = (data.region_code || data.principalSubdivisionCode || "").toUpperCase().replace("US-", "");
+          const city = (data.city || data.locality || "").trim();
 
-          if (regCode || regName || (!isNaN(lat) && !isNaN(lon))) {
-            const st = mapRegionToState(regCode, regName, lat, lon);
-            setSuggestedLocation(st, city);
+          // SOLO si el cliente está físicamente en EE. UU. dentro de NJ, FL, CA o PA y su ciudad existe en ese estado:
+          if (country === "US" && ["NJ", "FL", "CA", "PA"].includes(regCode)) {
+            const matched = CITIES_BY_STATE[regCode].cities.find(c => c.toLowerCase() === city.toLowerCase());
+            setSuggestedLocation(regCode, matched || CITIES_BY_STATE[regCode].cities[0]);
             return;
           }
         } catch (e) {}
       }
 
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
-      if (tz.includes("Los_Angeles") || tz.includes("Phoenix")) {
-        setSuggestedLocation("CA", "Los Angeles");
-      } else if (tz.includes("New_York")) {
-        setSuggestedLocation("NJ", "Newark");
-      } else {
-        setSuggestedLocation("FL", "Miami");
-      }
+      // Si el cliente entra desde otro país (ej. República Dominicana) o fuera de esos 4 estados,
+      // muestra directamente Miami, FL (ciudad real de EE. UU.) sin inventar ciudades inexistentes.
+      setSuggestedLocation("FL", "Miami");
     }
 
     function focusCityInput() {
@@ -1673,7 +1677,7 @@
     }
 
     // ============================================================================
-    // BUSCADOR DE LAS 1,600+ CIUDADES + CARGA DE 30 APARTAMENTOS POR CIUDAD
+    // BUSCADOR DE LAS 1,600+ CIUDADES REALES
     // ============================================================================
     const PAGE_SIZE = 24;
     let currentFilteredList = [];
@@ -1696,8 +1700,7 @@
       });
     });
 
-    // Inicializar muestra inicial de los 4 estados
-    ["NJ", "FL", "CA", "PA"].forEach(st => ensureStateSampleGenerated(st));
+    ["FL", "NJ", "CA", "PA"].forEach(st => ensureStateSampleGenerated(st));
 
     function onLocationInput(val) {
       const box = document.getElementById("suggestionsBox");
@@ -1714,15 +1717,7 @@
         !q || item.display.toLowerCase().includes(q)
       ).slice(0, 14);
 
-      if (matches.length === 0 && q.length > 2) {
-        const cleanCity = val.trim().replace(/\b\w/g, l => l.toUpperCase());
-        box.innerHTML = `
-          <div class="suggestion-item" onclick="pickLocationSuggestion('${cleanCity}', '${currentDetectedState}')">
-            <span>📍 ${cleanCity}, ${currentDetectedState}</span>
-          </div>
-        `;
-        box.style.display = "block";
-      } else if (matches.length === 0) {
+      if (matches.length === 0) {
         box.style.display = "none";
       } else {
         box.innerHTML = matches.map(m => `
@@ -1738,6 +1733,7 @@
     function pickLocationSuggestion(val, stCode) {
       if (stCode && val !== CITIES_BY_STATE[stCode].name) {
         ensureCityApartmentsGenerated(stCode, val);
+        document.getElementById("suggestedLocText").textContent = `${val}, ${stCode}`;
       }
       document.getElementById("locationInput").value = val;
       document.getElementById("suggestionsBox").style.display = "none";
@@ -1783,7 +1779,6 @@
       quickFilterCondition("ALL");
     }
 
-    // Decodificador instantáneo de cualquier Ref # de los 50,000+ apartamentos
     function getOrBuildApartmentByRef(refNum) {
       let existing = allApartments.find(a => a.id === refNum);
       if (existing) return existing;
@@ -1793,7 +1788,6 @@
         const sIdx = Math.floor(offset / 100000);
         const rem = offset % 100000;
         const cIdx = Math.floor(rem / 30);
-        const u = rem % 30;
         const stateCode = ["NJ", "FL", "CA", "PA"][sIdx];
         if (stateCode && CITIES_BY_STATE[stateCode].cities[cIdx]) {
           const cityName = CITIES_BY_STATE[stateCode].cities[cIdx];
@@ -1816,7 +1810,7 @@
       document.getElementById("pillUnfurnished").classList.toggle("active", cond === "No Amueblado");
       document.getElementById("pillSemi").classList.toggle("active", cond === "Semi-Amueblado");
 
-      // Si el usuario escribe una ciudad de nuestra lista de 1,600+, nos aseguramos de que sus 30 apartamentos estén generados
+      // Generar bajo demanda las ciudades reales que coincidan con lo que escribe el cliente
       if (q.length >= 2) {
         Object.keys(CITIES_BY_STATE).forEach(stCode => {
           CITIES_BY_STATE[stCode].cities.forEach(cName => {
@@ -1853,17 +1847,6 @@
         return matchLoc && matchCond && matchBeds;
       });
 
-      if (currentFilteredList.length === 0 && rawQ.length >= 3 && !/\d/.test(rawQ)) {
-        const formattedCity = rawQ.replace(/\b\w/g, l => l.toUpperCase());
-        ensureCityApartmentsGenerated(currentDetectedState, formattedCity);
-        currentFilteredList = allApartments.filter(apt => {
-          const matchCity = apt.city.toLowerCase() === formattedCity.toLowerCase();
-          const matchCond = cond === "ALL" || apt.condition === cond;
-          const matchBeds = beds === "ALL" || apt.beds === beds;
-          return matchCity && matchCond && matchBeds;
-        });
-      }
-
       document.getElementById("activeLocationTitle").textContent = rawQ
         ? `Apartamentos Disponibles en ${rawQ}`
         : `Apartamentos con Disponibilidad Inmediata`;
@@ -1879,6 +1862,18 @@
     function renderListingsSlice() {
       const grid = document.getElementById("listingsGrid");
       const loadWrap = document.getElementById("loadMoreWrap");
+
+      if (currentFilteredList.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column:1/-1; background:#fff; padding:36px; text-align:center; border-radius:14px; border:1px solid var(--border);">
+            <h3 style="margin-bottom:8px;">Selecciona una ciudad de NJ, FL, CA o PA</h3>
+            <p style="color:var(--muted); margin-bottom:16px;">Escribe una ciudad válida en New Jersey, Florida, California o Pennsylvania para ver sus 30 apartamentos disponibles.</p>
+            <button class="btn-search" onclick="setSuggestedLocation('FL', 'Miami')">Ver Apartamentos en Miami, FL</button>
+          </div>
+        `;
+        loadWrap.style.display = "none";
+        return;
+      }
 
       const slice = currentFilteredList.slice(0, currentVisibleCount);
       loadWrap.style.display = currentVisibleCount < currentFilteredList.length ? "block" : "none";
@@ -1908,10 +1903,9 @@
               <img
                 id="card-img-${apt.id}"
                 src="${currentPhoto.url}"
-                style="${currentPhoto.style}"
                 alt="${apt.title}"
                 loading="lazy"
-                onerror="this.src=FALLBACK_INTERIOR"
+                onerror="handleImgError(this, ${apt.id})"
                 onclick="openAptModal(${apt.id})"
               />
               <button class="slider-arrow next" onclick="slideCardPhoto(${apt.id}, 1, event)">&#10095;</button>
@@ -1990,7 +1984,6 @@
       const p = apt.photos[next];
       const imgEl = document.getElementById(`card-img-${aptId}`);
       imgEl.src = p.url;
-      imgEl.setAttribute("style", p.style);
       document.getElementById(`card-cap-${aptId}`).textContent = p.label;
       document.getElementById(`card-cnt-${aptId}`).textContent = `${next + 1}/${apt.photos.length}`;
 
@@ -2058,13 +2051,12 @@
       const p = currentModalApt.photos[currentModalSlide];
       const mainImg = document.getElementById("modalMainImg");
       mainImg.src = p.url;
-      mainImg.setAttribute("style", p.style);
       document.getElementById("modalRoomCaption").textContent = p.label;
       document.getElementById("modalCounterCaption").textContent = `${currentModalSlide + 1} / ${currentModalApt.photos.length}`;
 
       document.getElementById("modalThumbsRow").innerHTML = currentModalApt.photos.map((photo, idx) => `
         <div class="thumb-item ${idx === currentModalSlide ? "active" : ""}" onclick="pickModalThumb(${idx})">
-          <img src="${photo.url}" style="${photo.style}" alt="${photo.label}" onerror="this.src=FALLBACK_INTERIOR" />
+          <img src="${photo.url}" alt="${photo.label}" onerror="handleImgError(this, ${idx})" />
           <span>${photo.short}</span>
         </div>
       `).join("");
@@ -2175,9 +2167,9 @@
       return apts.map(apt => `
         <div class="chat-property-card">
           <div class="chat-photo-strip" onclick="openAptModal(${apt.id})">
-            <div class="chat-photo-col"><img src="${apt.photos[0].url}" style="${apt.photos[0].style}" alt="Interior 1" onerror="this.src=FALLBACK_INTERIOR" /></div>
-            <div class="chat-photo-col"><img src="${apt.photos[1].url}" style="${apt.photos[1].style}" alt="Interior 2" onerror="this.src=FALLBACK_INTERIOR" /></div>
-            <div class="chat-photo-col"><img src="${apt.photos[2].url}" style="${apt.photos[2].style}" alt="Interior 3" onerror="this.src=FALLBACK_INTERIOR" /></div>
+            <div class="chat-photo-col"><img src="${apt.photos[0].url}" alt="Interior 1" onerror="handleImgError(this, 1)" /></div>
+            <div class="chat-photo-col"><img src="${apt.photos[1].url}" alt="Interior 2" onerror="handleImgError(this, 2)" /></div>
+            <div class="chat-photo-col"><img src="${apt.photos[2].url}" alt="Interior 3" onerror="handleImgError(this, 3)" /></div>
           </div>
           <div class="chat-prop-body">
             <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -2188,7 +2180,7 @@
             <div style="color:#334155; font-weight:700; margin-top:3px;">📐 ${apt.distribution}</div>
             <div style="color:#047857; font-weight:800; margin-top:3px;">✔️ Agua, Luz, Gas y Calefacción incluidos</div>
             <div class="chat-prop-btns">
-              <button class="chat-btn-outline" onclick="openAptModal(${apt.id})">🔍 Ver 6 Fotos</button>
+              <button class="chat-btn-outline" onclick="openAptModal(${apt.id})">🔍 Ver 5 Fotos</button>
               <a class="chat-btn-wa" href="${createWhatsAppLink(apt, 'CITA')}" target="_blank">
                 ${showWhatsAppProminent ? "📅 Agendar en WhatsApp" : "💬 Elegir Unidad"}
               </a>
@@ -2314,9 +2306,9 @@
       );
     }
 
-    // Inicializar portal
+    // Inicializar portal con Miami, FL por defecto antes de verificar IP de EE. UU.
     updateFavCounterUI();
-    applySearch(true);
+    setSuggestedLocation("FL", "Miami");
     autoDetectSuggestedLocation();
   </script>
 </body>
