@@ -975,6 +975,19 @@
     }
 
 
+    /* Evita que Edge muestre su botón "Visual Search" encima de las fotos:
+       el clic lo recibe el contenedor, no la imagen. */
+    .property-card img,
+    .modal-viewer img,
+    .thumbs-row img,
+    .chat-photo-col img {
+      pointer-events: none;
+      -webkit-user-drag: none;
+      user-select: none;
+    }
+
+    .chat-photo-col { cursor: pointer; }
+
     .app-toast {
       position: fixed;
       bottom: 24px;
@@ -1022,7 +1035,7 @@
     <div class="search-panel">
       <div class="search-grid">
         <div class="field-group full-mobile">
-          <label for="locationInput" id="locationFieldLabel">Dirección o referencia</label>
+          <label for="locationInput" id="locationFieldLabel">Ciudad, dirección o referencia</label>
           <input
             type="text"
             id="locationInput"
@@ -1100,7 +1113,7 @@
             <div class="info-panel" style="margin-bottom:10px;">
               <div style="font-size:0.74rem; text-transform:uppercase; color:var(--muted); font-weight:800; margin-bottom:4px;">Distribución e Inclusiones:</div>
               <div id="modalUnitDist" style="font-weight:800; font-size:0.92rem; color:var(--primary); margin-bottom:6px;"></div>
-              <div style="font-size:0.82rem; font-weight:700; color:#047857;">Consulta las condiciones de esta unidad por WhatsApp.</div>
+              <div id="modalIncluye" style="font-size:0.82rem; font-weight:700; color:#047857;">✓ Incluye agua, electricidad y recolección de basura.</div>
             </div>
 
             <p id="modalUnitDesc" style="font-size:0.87rem; color:#334155; line-height:1.55;"></p>
@@ -1133,31 +1146,361 @@
     
   </footer>
 
-    <script>const API_BASE='https://aurea-catalogo-apartamentos-live.secretkangaroo.chatgpt.site';
-const WHATSAPP='12135827384';
-let rows=[],page=1,total=0,active=null,slide=0,requestId=0;
-const $=id=>document.getElementById(id);
-let favorites;try{favorites=JSON.parse(localStorage.getItem('aurea-api-favoritos')||'[]');if(!Array.isArray(favorites))favorites=[];}catch{favorites=[];}
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function wa(a){return 'https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(`Hola Aurea Rent, me interesa este apartamento.\nReferencia: ${a.referencia}\nDirección: ${a.direccion}\nHabitaciones: ${a.habitaciones} · Baños: ${a.habitaciones} · Estacionamientos: ${a.habitaciones}\nSala y cocina · Precio mensual: ${a.moneda} ${a.precio}\nQuisiera consultar disponibilidad y condiciones.`);}
-async function applySearch(reset=true){if(reset){page=1;rows=[];}const current=++requestId;const params=new URLSearchParams({pagina:page,q:$('locationInput').value.trim()});if($('stateSelect').value!=='ALL')params.set('estado',$('stateSelect').value);if($('bedsSelect').value!=='ALL')params.set('habitaciones',$('bedsSelect').value);$('loadMoreWrap').hidden=true;
- try{const r=await fetch(API_BASE+'/api/catalogo?'+params);if(!r.ok)throw Error();const data=await r.json();if(current!==requestId)return;total=data.total;rows.push(...data.publicaciones);render();}catch{if(current!==requestId)return;$('listingsGrid').innerHTML='<p role="alert">No se pudo conectar con el catálogo. Vuelve a intentar en unos momentos.</p>';}}
-function render(){
- $('activeLocationTitle').textContent=total?`${total} apartamentos publicados`:'Catálogo de apartamentos';
- $('listingsGrid').innerHTML=rows.length?rows.map(a=>`<article class="property-card" style="background:white;border:1px solid var(--border);border-radius:14px;overflow:hidden"><button data-open="${a.referencia}" style="display:block;width:100%;border:0;background:#e2e8f0;cursor:pointer"><img src="${esc(a.fotos[0])}" alt="Apartamento en ${esc(a.direccion)}" loading="lazy" style="width:100%;height:240px;object-fit:cover"></button><div style="padding:18px"><span class="ref-tag">${a.referencia}</span><h3 style="margin:12px 0">${a.habitaciones===0?'Estudio':a.habitaciones+' habitaciones'}</h3><p>${esc(a.direccion)}</p><p style="color:var(--muted);margin:12px 0">${esc(a.moneda)} ${Number(a.precio).toLocaleString()} / mes · ${a.habitaciones} baños · ${a.habitaciones} estacionamientos · sala y cocina</p><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="pill-btn" data-open="${a.referencia}">Ver fotos</button><button class="pill-btn" data-fav="${a.referencia}">${favorites.includes(a.referencia)?'♥ Guardado':'♡ Guardar'}</button><a class="btn-wa-action" href="${wa(a)}" target="_blank" rel="noopener">WhatsApp</a></div></div></article>`).join(''):'<div style="grid-column:1/-1;text-align:center;padding:60px 20px;background:white;border-radius:14px"><h3>Aún no hay apartamentos para mostrar</h3><p style="color:var(--muted);margin-top:12px">Las nuevas publicaciones aparecerán aquí después de ser validadas.</p></div>';
- $('loadMoreWrap').hidden=rows.length>=total;updateFavorites();}
-function updateFavorites(){$('favBtnTop').textContent='❤️ Guardados ('+favorites.length+')';}
-function loadMoreListings(){page++;applySearch(false);}
-function onLocationInput(){clearTimeout(window.searchTimer);window.searchTimer=setTimeout(()=>applySearch(true),350);}
-function resetPortal(){$('locationInput').value='';$('bedsSelect').value='ALL';$('stateSelect').value='ALL';applySearch(true);}
-function openFavoritesWhatsApp(){if(!favorites.length)return showAppToast('Todavía no has guardado apartamentos.');window.open('https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent('Hola Aurea Rent, me interesan estas referencias: '+favorites.join(', ')),'_blank','noopener');}
-function showAppToast(text){$('appToast').textContent=text;$('appToast').classList.add('show');setTimeout(()=>$('appToast').classList.remove('show'),3500);}
-document.addEventListener('click',e=>{const open=e.target.closest('[data-open]');if(open)openAptModal(open.dataset.open);const fav=e.target.closest('[data-fav]');if(fav){const ref=fav.dataset.fav;favorites=favorites.includes(ref)?favorites.filter(x=>x!==ref):[...favorites,ref];try{localStorage.setItem('aurea-api-favoritos',JSON.stringify(favorites));}catch{}render();}});
-async function openAptModal(ref){try{let a=rows.find(x=>x.referencia===ref);if(!a){const r=await fetch(API_BASE+'/api/catalogo/'+encodeURIComponent(ref));if(!r.ok)throw Error();a=await r.json();}active=a;slide=0;$('modalTopTitle').textContent=a.referencia;$('modalRefBadge').textContent=a.referencia;$('modalCondBadge').textContent='Apartamento';$('modalUnitTitle').textContent=a.habitaciones===0?'Estudio':a.habitaciones+' habitaciones';$('modalUnitAddress').textContent=a.direccion;$('modalUnitDist').textContent=a.habitaciones+' habitaciones · '+a.habitaciones+' baños · sala · cocina · '+a.habitaciones+' estacionamientos';$('modalUnitDesc').textContent='Solicita información de esta unidad indicando su referencia.';$('modalUnitPrice').textContent=a.moneda+' '+Number(a.precio).toLocaleString()+' / mes';for(const id of ['waBtnAppointment','waBtnMoreInfo'])$(id).href=wa(a);$('modalThumbsRow').innerHTML=a.fotos.map((f,i)=>`<button data-slide="${i}" aria-label="Foto ${i+1}"><img src="${esc(f)}" alt="Foto ${i+1}" style="width:75px;height:60px;object-fit:cover"></button>`).join('');$('aptModal').style.display='flex';document.body.style.overflow='hidden';showSlide();}catch{showAppToast('No se encontró la referencia.');}}
-function showSlide(){if(!active)return;$('modalMainImg').src=active.fotos[slide];$('modalCounterCaption').textContent=(slide+1)+' / 5';$('modalRoomCaption').textContent='Foto del apartamento';}
-function stepModalPhoto(n){slide=(slide+n+5)%5;showSlide();}
-function closeModal(){$('aptModal').style.display='none';document.body.style.overflow='';active=null;}
-let touchX=0;function handleModalTouchStart(e){touchX=e.changedTouches[0].clientX;}function handleModalTouchEnd(e){const delta=e.changedTouches[0].clientX-touchX;if(Math.abs(delta)>40)stepModalPhoto(delta<0?1:-1);}
-$('modalThumbsRow').addEventListener('click',e=>{const b=e.target.closest('[data-slide]');if(b){slide=Number(b.dataset.slide);showSlide();}});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(active&&e.key==='ArrowRight')stepModalPhoto(1);if(active&&e.key==='ArrowLeft')stepModalPhoto(-1);});
-applySearch(true);
+    <script>
+// Catálogo público de Aurea Rent.
+// API_BASE vacío = la API está en el mismo sitio. En el index.html "para subir" a otro
+// alojamiento se sustituye por la dirección del servidor.
+const API_BASE = "https://aurea-catalogo.aurea-catalogo.workers.dev";
+const WHATSAPP = '12135827384';
+const INCLUYE = 'agua, electricidad y recolección de basura';
+
+let rows = [], total = 0, siguiente = null, active = null, slide = 0, requestId = 0, cargando = false;
+let ciudades = [];        // [{ c: 'Miami', e: 'FL', n: 12 }]
+let nombresEstado = { FL: 'Florida', CA: 'California', NJ: 'New Jersey', PA: 'Pennsylvania' };
+let ciudadSel = null;     // ciudad elegida de las sugerencias
+let miUbicacion = null;   // { ciudad, estado, nombreEstado } del visitante
+let filtroAutomatico = false;
+
+const $ = (id) => document.getElementById(id);
+let favorites;
+try { favorites = JSON.parse(localStorage.getItem('aurea-api-favoritos') || '[]'); if (!Array.isArray(favorites)) favorites = []; } catch { favorites = []; }
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const plano = (s) => String(s).normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase().trim();
+const etiqueta = (c) => `${c.c}, ${c.e}`;
+const habTexto = (n) => (n === 0 ? 'Estudio' : n + (n === 1 ? ' habitación' : ' habitaciones'));
+
+function wa(a) {
+  return 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(`Hola Aurea Rent, me interesa este apartamento.\nReferencia: ${a.referencia}\nDirección: ${a.direccion}\nHabitaciones: ${a.habitaciones} · Baños: ${a.habitaciones} · Estacionamientos: ${a.habitaciones}\nSala y cocina · Incluye ${INCLUYE}\nPrecio mensual: ${a.moneda} ${a.precio}\nQuisiera consultar disponibilidad y condiciones.`);
+}
+
+async function traer(ruta, ms) {
+  const control = new AbortController();
+  const reloj = setTimeout(() => control.abort(), ms);
+  try { const r = await fetch(API_BASE + ruta, { signal: control.signal }); return r.ok ? await r.json() : null; } catch { return null; } finally { clearTimeout(reloj); }
+}
+
+// ---------- Búsqueda ----------
+
+async function applySearch(reset = true) {
+  if (!reset && (cargando || !siguiente)) return;
+  const texto = $('locationInput').value.trim();
+  // Si el texto ya no coincide con la ciudad elegida, vuelve a ser búsqueda libre.
+  if (ciudadSel && plano(texto) !== plano(etiqueta(ciudadSel))) ciudadSel = null;
+  if (ciudadSel && $('stateSelect').value !== 'ALL' && $('stateSelect').value !== ciudadSel.e) { ciudadSel = null; $('locationInput').value = ''; }
+  if (reset) { rows = []; siguiente = null; }
+  const current = ++requestId;
+  cargando = true;
+  const params = new URLSearchParams();
+  if (ciudadSel) { params.set('ciudad', ciudadSel.c); params.set('estado', ciudadSel.e); }
+  else {
+    params.set('q', $('locationInput').value.trim());
+    if ($('stateSelect').value !== 'ALL') params.set('estado', $('stateSelect').value);
+  }
+  if ($('bedsSelect').value !== 'ALL') params.set('habitaciones', $('bedsSelect').value);
+  if (!reset && siguiente) params.set('antes', siguiente);
+  $('loadMoreWrap').hidden = true;
+  try {
+    const r = await fetch(API_BASE + '/api/catalogo?' + params);
+    if (!r.ok) throw Error();
+    const data = await r.json();
+    if (current !== requestId) return;
+    if (data.total !== null) total = data.total;
+    siguiente = data.siguiente;
+    rows.push(...data.publicaciones);
+    render();
+  } catch {
+    if (current !== requestId) return;
+    $('listingsGrid').innerHTML = '<p role="alert">No se pudo conectar con el catálogo. Vuelve a intentar en unos momentos.</p>';
+  } finally {
+    if (current === requestId) cargando = false;
+  }
+}
+
+function lugarActual() {
+  if (ciudadSel) return etiqueta(ciudadSel);
+  if ($('stateSelect').value !== 'ALL') return nombresEstado[$('stateSelect').value] || '';
+  return '';
+}
+
+function tarjeta(a) {
+  const portada = (a.miniaturas && a.miniaturas[0]) || a.fotos[0];
+  return `<article class="property-card" style="background:white;border:1px solid var(--border);border-radius:14px;overflow:hidden"><button data-open="${esc(a.referencia)}" style="display:block;width:100%;border:0;background:#e2e8f0;cursor:pointer"><img src="${esc(portada)}" alt="Apartamento en ${esc(a.direccion)}" loading="lazy" decoding="async" width="480" height="360" style="width:100%;height:240px;object-fit:cover;display:block"></button><div style="padding:18px"><span class="ref-tag">${esc(a.referencia)}</span><h3 style="margin:12px 0 4px">${habTexto(a.habitaciones)}</h3><p>${esc(a.direccion)}</p><p style="color:var(--muted);margin:10px 0">${esc(a.moneda)} ${Number(a.precio).toLocaleString()} / mes · ${a.habitaciones} ${a.habitaciones === 1 ? 'baño' : 'baños'} · ${a.habitaciones} ${a.habitaciones === 1 ? 'estacionamiento' : 'estacionamientos'} · sala y cocina</p><div class="bills-included-badge">✓ Incluye ${INCLUYE}</div><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="pill-btn" data-open="${esc(a.referencia)}">Ver fotos</button><button class="pill-btn" data-fav="${esc(a.referencia)}">${favorites.includes(a.referencia) ? '♥ Guardado' : '♡ Guardar'}</button><a class="btn-wa-action" href="${wa(a)}" target="_blank" rel="noopener">WhatsApp</a></div></div></article>`;
+}
+
+function render() {
+  const lugar = lugarActual();
+  const libre = !ciudadSel && $('locationInput').value.trim();
+  const cuenta = total >= 1000 && libre ? 'Más de 1.000' : Number(total).toLocaleString('es');
+  $('activeLocationTitle').textContent = total
+    ? `${cuenta} ${total === 1 ? 'apartamento' : 'apartamentos'}${lugar ? ' en ' + lugar : total === 1 ? ' publicado' : ' publicados'}`
+    : 'Catálogo de apartamentos';
+  if (rows.length) {
+    $('listingsGrid').innerHTML = rows.map(tarjeta).join('');
+  } else {
+    const hayFiltro = lugar || libre || $('bedsSelect').value !== 'ALL';
+    $('listingsGrid').innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;background:white;border-radius:14px"><h3>${hayFiltro ? 'Aún no hay apartamentos' + (lugar ? ' en ' + esc(lugar) : ' con esa búsqueda') : 'Aún no hay apartamentos para mostrar'}</h3><p style="color:var(--muted);margin:12px 0 18px">Las nuevas publicaciones aparecen aquí en cuanto se publican.</p>${hayFiltro ? '<button class="btn-load-more" onclick="resetPortal()">Ver todos los apartamentos</button>' : ''}</div>`;
+  }
+  $('loadMoreWrap').hidden = !siguiente;
+  updateFavorites();
+}
+
+function updateFavorites() { $('favBtnTop').textContent = '❤️ Guardados (' + favorites.length + ')'; }
+function loadMoreListings() { applySearch(false); }
+function resetPortal() {
+  ciudadSel = null; filtroAutomatico = false;
+  $('locationInput').value = ''; $('bedsSelect').value = 'ALL'; $('stateSelect').value = 'ALL';
+  ocultarSugerencias();
+  applySearch(true);
+}
+function openFavoritesWhatsApp() {
+  if (!favorites.length) return showAppToast('Todavía no has guardado apartamentos.');
+  window.open('https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent('Hola Aurea Rent, me interesan estas referencias: ' + favorites.join(', ')), '_blank', 'noopener');
+}
+function showAppToast(text) { $('appToast').textContent = text; $('appToast').classList.add('show'); setTimeout(() => $('appToast').classList.remove('show'), 3500); }
+
+// ---------- Sugerencias de ciudad ----------
+
+window.ultimoValor = '';
+function ocultarSugerencias() { $('suggestionsBox').style.display = 'none'; }
+
+function elegirCiudad(c) {
+  ciudadSel = c; filtroAutomatico = false;
+  clearTimeout(window.searchTimer);
+  $('locationInput').value = window.ultimoValor = etiqueta(c);
+  $('stateSelect').value = c.e;
+  ocultarSugerencias();
+  applySearch(true);
+}
+
+function pintarSugerencias(valor) {
+  const q = plano(valor || '');
+  let lista;
+  if (!q) {
+    // Sin texto: primero la ciudad del visitante, luego las de su estado, luego las que más apartamentos tienen.
+    lista = ciudades.filter((c) => c.n > 0 || (miUbicacion && c.e === miUbicacion.estado));
+    if (miUbicacion) lista = [...lista].sort((a, b) => (b.e === miUbicacion.estado) - (a.e === miUbicacion.estado) || b.n - a.n);
+    if (miUbicacion && miUbicacion.ciudad) {
+      const mia = ciudades.find((c) => c.e === miUbicacion.estado && plano(c.c) === plano(miUbicacion.ciudad)) || { c: miUbicacion.ciudad, e: miUbicacion.estado, n: 0 };
+      lista = [mia, ...lista.filter((c) => c !== mia)];
+    }
+  } else {
+    const empieza = [], contiene = [];
+    for (const c of ciudades) {
+      const nombre = plano(etiqueta(c)), estado = plano(nombresEstado[c.e] || '');
+      if (nombre.startsWith(q) || estado.startsWith(q)) empieza.push(c);
+      else if (nombre.includes(q)) contiene.push(c);
+    }
+    lista = [...empieza, ...contiene];
+  }
+  lista = lista.slice(0, 8);
+  if (!lista.length) return ocultarSugerencias();
+  $('suggestionsBox').innerHTML = lista.map((c, i) => {
+    const cerca = miUbicacion && !q && i === 0 && miUbicacion.ciudad && plano(c.c) === plano(miUbicacion.ciudad);
+    return `<div class="suggestion-item" data-ciudad="${esc(c.c)}" data-estado="${esc(c.e)}"><span>${cerca ? '📍 ' : ''}${esc(c.c)}, ${esc(nombresEstado[c.e] || c.e)}</span><span style="color:var(--muted);font-size:.78rem">${cerca ? 'Cerca de ti' : c.n ? c.n + (c.n === 1 ? ' apartamento' : ' apartamentos') : ''}</span></div>`;
+  }).join('');
+  $('suggestionsBox').style.display = 'block';
+}
+
+function onLocationInput(valor) {
+  pintarSugerencias(valor);
+  clearTimeout(window.searchTimer);
+  // Solo se busca al escribir; al enfocar el campo solo se muestran las sugerencias.
+  if (document.activeElement === $('locationInput') && valor !== window.ultimoValor) {
+    window.ultimoValor = valor;
+    window.searchTimer = setTimeout(() => applySearch(true), 400);
+  }
+}
+
+function pintarPildoraUbicacion() {
+  if (!miUbicacion || !miUbicacion.estado) return;
+  const b = document.createElement('button');
+  b.className = 'suggested-loc-pill';
+  b.id = 'pildoraUbicacion';
+  b.innerHTML = `📍 Cerca de ti: <strong>${esc(miUbicacion.ciudad ? miUbicacion.ciudad + ', ' + miUbicacion.estado : miUbicacion.nombreEstado)}</strong>`;
+  b.onclick = () => {
+    if (miUbicacion.ciudad) elegirCiudad({ c: miUbicacion.ciudad, e: miUbicacion.estado });
+    else { $('stateSelect').value = miUbicacion.estado; applySearch(true); }
+  };
+  document.querySelector('.nav-right').prepend(b);
+}
+
+// ---------- Clics generales ----------
+
+document.addEventListener('click', (e) => {
+  const sugerida = e.target.closest('.suggestion-item');
+  if (sugerida) return elegirCiudad({ c: sugerida.dataset.ciudad, e: sugerida.dataset.estado });
+  if (!e.target.closest('#locationInput')) ocultarSugerencias();
+  const open = e.target.closest('[data-open]');
+  if (open) openAptModal(open.dataset.open);
+  const fav = e.target.closest('[data-fav]');
+  if (fav) {
+    const ref = fav.dataset.fav;
+    favorites = favorites.includes(ref) ? favorites.filter((x) => x !== ref) : [...favorites, ref];
+    try { localStorage.setItem('aurea-api-favoritos', JSON.stringify(favorites)); } catch { /* sin almacenamiento */ }
+    render();
+  }
+});
+
+// ---------- Detalle ----------
+
+let conocidos = new Map(); // apartamentos mostrados por el asistente
+
+async function openAptModal(ref) {
+  try {
+    let a = rows.find((x) => x.referencia === ref) || conocidos.get(ref);
+    if (!a) {
+      const r = await fetch(API_BASE + '/api/catalogo/' + encodeURIComponent(ref));
+      if (!r.ok) throw Error();
+      a = await r.json();
+    }
+    active = a; slide = 0;
+    $('modalTopTitle').textContent = a.referencia;
+    $('modalRefBadge').textContent = a.referencia;
+    $('modalCondBadge').textContent = 'Apartamento';
+    $('modalUnitTitle').textContent = habTexto(a.habitaciones);
+    $('modalUnitAddress').textContent = a.direccion;
+    $('modalUnitDist').textContent = habTexto(a.habitaciones) + ' · ' + a.habitaciones + (a.habitaciones === 1 ? ' baño' : ' baños') + ' · sala · cocina · ' + a.habitaciones + (a.habitaciones === 1 ? ' estacionamiento' : ' estacionamientos');
+    if ($('modalIncluye')) $('modalIncluye').textContent = '✓ Incluye ' + INCLUYE + '.';
+    $('modalUnitDesc').textContent = 'Solicita información de esta unidad indicando su referencia.';
+    $('modalUnitPrice').textContent = a.moneda + ' ' + Number(a.precio).toLocaleString() + ' / mes';
+    for (const id of ['waBtnAppointment', 'waBtnMoreInfo']) $(id).href = wa(a);
+    const minis = a.miniaturas || a.fotos;
+    $('modalThumbsRow').innerHTML = minis.map((f, i) => `<button data-slide="${i}" aria-label="Foto ${i + 1}" style="border:0;padding:0;background:none;cursor:pointer"><img src="${esc(f)}" alt="Foto ${i + 1}" loading="lazy" style="width:100%;height:60px;object-fit:cover;border-radius:8px;display:block"></button>`).join('');
+    $('aptModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    showSlide();
+  } catch { showAppToast('No se encontró la referencia.'); }
+}
+
+function showSlide() {
+  if (!active) return;
+  $('modalMainImg').src = active.fotos[slide];
+  $('modalCounterCaption').textContent = (slide + 1) + ' / ' + active.fotos.length;
+  $('modalRoomCaption').textContent = 'Foto del apartamento';
+}
+function stepModalPhoto(n) { if (!active) return; slide = (slide + n + active.fotos.length) % active.fotos.length; showSlide(); }
+function closeModal() { $('aptModal').style.display = 'none'; document.body.style.overflow = ''; active = null; }
+let touchX = 0;
+function handleModalTouchStart(e) { touchX = e.changedTouches[0].clientX; }
+function handleModalTouchEnd(e) { const delta = e.changedTouches[0].clientX - touchX; if (Math.abs(delta) > 40) stepModalPhoto(delta < 0 ? 1 : -1); }
+$('modalThumbsRow').addEventListener('click', (e) => { const b = e.target.closest('[data-slide]'); if (b) { slide = Number(b.dataset.slide); showSlide(); } });
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { closeModal(); ocultarSugerencias(); }
+  if (active && e.key === 'ArrowRight') stepModalPhoto(1);
+  if (active && e.key === 'ArrowLeft') stepModalPhoto(-1);
+  if (e.key === 'Enter' && e.target === $('locationInput')) { ocultarSugerencias(); clearTimeout(window.searchTimer); applySearch(true); }
+});
+
+// ---------- Asistente con IA ----------
+
+const charla = []; // [{ rol: 'usuario' | 'asistente', texto }]
+
+function crearAsistente() {
+  const fab = document.createElement('button');
+  fab.className = 'ai-fab'; fab.id = 'aiFab'; fab.type = 'button';
+  fab.innerHTML = '✨ Asistente de búsqueda';
+  const caja = document.createElement('div');
+  caja.className = 'ai-chat-window'; caja.id = 'aiChat';
+  caja.innerHTML = `<div class="ai-chat-header"><div class="ai-chat-header-title">✨ Asistente Aurea</div><button class="btn-close-chat" id="aiCerrar" aria-label="Cerrar asistente">✕</button></div><div class="ai-chat-messages" id="aiMensajes" aria-live="polite"></div><form class="ai-chat-input-area" id="aiForm"><input id="aiTexto" type="text" maxlength="400" placeholder="Ej. 2 habitaciones en Miami por menos de 2000" autocomplete="off"><button class="ai-chat-send" id="aiEnviar">Enviar</button></form>`;
+  document.body.append(fab, caja);
+  const alternar = (abrir) => {
+    caja.style.display = abrir ? 'flex' : 'none';
+    fab.style.display = abrir ? 'none' : 'flex';
+    if (abrir) {
+      if (!$('aiMensajes').children.length) saludo();
+      $('aiTexto').focus();
+    }
+  };
+  fab.onclick = () => alternar(true);
+  $('aiCerrar').onclick = () => alternar(false);
+  $('aiForm').onsubmit = (e) => { e.preventDefault(); preguntar($('aiTexto').value); };
+  $('aiMensajes').addEventListener('click', (e) => {
+    const rapido = e.target.closest('[data-rapido]');
+    if (rapido) preguntar(rapido.dataset.rapido);
+    const aplicar = e.target.closest('[data-aplicar]');
+    if (aplicar) { aplicarFiltros(JSON.parse(aplicar.dataset.aplicar)); alternar(false); }
+  });
+}
+
+function burbuja(clase, html) {
+  const b = document.createElement('div');
+  b.className = 'chat-bubble ' + clase;
+  b.innerHTML = html;
+  $('aiMensajes').append(b);
+  $('aiMensajes').scrollTop = $('aiMensajes').scrollHeight;
+  return b;
+}
+
+function saludo() {
+  const cerca = miUbicacion && miUbicacion.estado ? `1 habitación en ${miUbicacion.ciudad || miUbicacion.nombreEstado}` : '1 habitación en Miami';
+  burbuja('bot', `Hola 👋 Soy el asistente de Aurea Rent. Dime en qué ciudad buscas, cuántas habitaciones y tu presupuesto, y te muestro opciones.<div class="chat-quick-replies">${[cerca, '2 habitaciones en California', 'Menos de 1500 al mes', '¿Qué incluye el alquiler?'].map((t) => `<button type="button" class="chat-quick-btn" data-rapido="${esc(t)}">${esc(t)}</button>`).join('')}</div>`);
+}
+
+function tarjetaChat(a) {
+  conocidos.set(a.referencia, a);
+  const minis = (a.miniaturas || a.fotos).slice(0, 3);
+  return `<div class="chat-property-card"><div class="chat-photo-strip">${minis.map((f) => `<div class="chat-photo-col" data-open="${esc(a.referencia)}"><img src="${esc(f)}" alt="" loading="lazy"></div>`).join('')}</div><div class="chat-prop-body"><strong>${esc(a.moneda)} ${Number(a.precio).toLocaleString()} / mes · ${habTexto(a.habitaciones)}</strong><div>${esc(a.direccion)}</div><div style="color:#047857;font-weight:700">✓ Incluye ${INCLUYE}</div><div class="chat-prop-btns"><button type="button" class="chat-btn-outline" data-open="${esc(a.referencia)}">Ver fotos</button><a class="chat-btn-wa" href="${wa(a)}" target="_blank" rel="noopener">WhatsApp</a></div></div></div>`;
+}
+
+async function preguntar(texto) {
+  texto = String(texto || '').trim();
+  if (!texto || $('aiEnviar').disabled) return;
+  $('aiTexto').value = '';
+  burbuja('user', esc(texto));
+  charla.push({ rol: 'usuario', texto });
+  $('aiEnviar').disabled = true;
+  const espera = burbuja('bot', 'Buscando…');
+  try {
+    const r = await fetch(API_BASE + '/api/asistente', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mensajes: charla.slice(-10) }) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw Error(d.error || 'El asistente no está disponible ahora.');
+    charla.push({ rol: 'asistente', texto: d.respuesta });
+    let html = esc(d.respuesta);
+    if (d.filtros) {
+      if (d.publicaciones.length) {
+        const mas = d.total !== null && d.total > d.publicaciones.length;
+        html += `<div style="margin-top:8px;font-weight:700">${mas ? `Te muestro ${d.publicaciones.length} de ${d.total >= 1000 ? 'más de 1.000' : d.total}:` : d.publicaciones.length === 1 ? 'Encontré 1 apartamento:' : `Encontré ${d.publicaciones.length} apartamentos:`}</div>` + d.publicaciones.map(tarjetaChat).join('');
+        html += `<div class="chat-quick-replies"><button type="button" class="chat-quick-btn" data-aplicar="${esc(JSON.stringify(d.filtros))}">Ver todos en la página</button></div>`;
+      } else {
+        html += '<div style="margin-top:8px;font-weight:700">Por ahora no hay apartamentos publicados con esos datos. Prueba otra ciudad o un presupuesto mayor.</div>';
+      }
+    }
+    espera.innerHTML = html;
+  } catch (e) {
+    charla.pop();
+    espera.textContent = e.message || 'El asistente no está disponible ahora. Usa el buscador de arriba.';
+  } finally {
+    $('aiEnviar').disabled = false;
+    $('aiMensajes').scrollTop = $('aiMensajes').scrollHeight;
+  }
+}
+
+// Lleva los filtros que entendió el asistente al buscador principal.
+function aplicarFiltros(f) {
+  ciudadSel = null; filtroAutomatico = false;
+  $('stateSelect').value = f.estado || 'ALL';
+  $('bedsSelect').value = f.habitaciones ? String(f.habitaciones) : 'ALL';
+  if (f.ciudad && f.estado) { ciudadSel = { c: f.ciudad, e: f.estado }; $('locationInput').value = etiqueta(ciudadSel); }
+  else $('locationInput').value = f.ciudad || '';
+  applySearch(true);
+  document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ---------- Arranque ----------
+
+async function iniciar() {
+  crearAsistente();
+  // La ubicación y las ciudades se piden a la vez; si tardan, el catálogo no espera.
+  const [ub, cs] = await Promise.all([traer('/api/ubicacion', 1500), traer('/api/ciudades', 1500)]);
+  if (cs && Array.isArray(cs.ciudades)) { ciudades = cs.ciudades; nombresEstado = cs.estados || nombresEstado; }
+  if (ub && ub.estado) {
+    miUbicacion = ub;
+    // Quien entra desde uno de los cuatro estados ve primero los de su estado.
+    $('stateSelect').value = ub.estado;
+    filtroAutomatico = true;
+    pintarPildoraUbicacion();
+  }
+  applySearch(true);
+}
+iniciar();
 </script></body></html>
